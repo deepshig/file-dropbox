@@ -8,3 +8,5 @@ The file size(s) being sent are 100’s of Kbs to 10’s of Mbs. Although sendin
 ![Architecture](Archi_overview.png)
 
 
+## Technologies
+
