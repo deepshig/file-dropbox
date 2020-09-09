@@ -10,3 +10,5 @@ The file size(s) being sent are 100’s of Kbs to 10’s of Mbs. Although sendin
 
 ## Technologies
 
+![Architecture1](Architecture-1.png)
+![Architecture2](Architecture-2.png)
