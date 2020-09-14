@@ -12,3 +12,7 @@ The file size(s) being sent are 100’s of Kbs to 10’s of Mbs. Although sendin
 
 ![Architecture1](Architecture-1.png)
 ![Architecture2](Architecture-2.png)
+![Architecture3](Architecture-3.png)
+![Architecture4](Architecture-4.png)
+![Architecture5](Architecture-5.png)
+![Architecture6](Architecture-6.png)
