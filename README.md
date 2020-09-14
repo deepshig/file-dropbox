@@ -11,8 +11,14 @@ The file size(s) being sent are 100’s of Kbs to 10’s of Mbs. Although sendin
 ## Technologies
 
 ![Architecture1](Architecture-1.png)
+General overiew of architecture. Taking in a file on an exposed Nginx server at ports 80/443. Handling flow through internal services hosted in docker containers, sitting behind a WSGI (flask development for testing).
 ![Architecture2](Architecture-2.png)
+Synchronous portion of application returns success on successful stashing to in-memory DB, insert to index DB, and new task published on RabbitMQ server. Asynchornous side of application: Subscribers listening for jobs.
 ![Architecture3](Architecture-3.png)
+More detailed view of synchronous side of application. Including dumb authenticator. Client supplying ID, Auth checks SQL DB for roles, returns role (Cookies, central, TBD).
 ![Architecture4](Architecture-4.png)
+Example of Asynchronous worker and flow of application returning update views to web app on completion.
 ![Architecture5](Architecture-5.png)
+Dedicated file manager service to handle any communications between internal services and DB's.
 ![Architecture6](Architecture-6.png)
+Example File retrieval flow.
