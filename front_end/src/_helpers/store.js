@@ -1,4 +1,5 @@
-import { createStore } from 'redux'
+import { createStore, combineReducers } from 'redux';
+
 
 const initialState = {
   sidebarShow: 'responsive'
