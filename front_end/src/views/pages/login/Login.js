@@ -21,7 +21,7 @@ class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      UID: '',
+      UID: 'test',
       token: '' // TODO: Get token to Redux Store
     }
 
