@@ -1,19 +1,21 @@
-import { userConstants } from '../_constants';
+import { userConstants } from '../_constants/user.constants';
 
-let user = 'user';
-const initialState = user ? { loggedIn: true, user } : {};
+let user = '';
+let token = '';
+const initialState = user ? { loggedIn: true, user, token } : {};
 
 export function authentication(state = initialState, action) {
     switch (action.type) {
         case userConstants.LOGIN_REQUEST:
             return {
                 loggingIn: true,
-                user: action.user
+                user: action.UID,
             };
         case userConstants.LOGIN_SUCCESS:
             return {
                 loggedIn: true,
-                user: action.user
+                user: action.UID,
+                token: action.token
             };
         case userConstants.LOGIN_FAILURE:
             return {};

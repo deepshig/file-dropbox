@@ -9,14 +9,15 @@ import * as serviceWorker from './serviceWorker';
 import { icons } from './assets/icons'
 
 import { CookiesProvider } from 'react-cookie';
-import { Provider, ReactReduxContext } from 'react-redux'
-import store from './_helpers/store'
-
+import { Provider, ReactReduxContext } from 'react-redux';
+import store from './_helpers/store';
+// import { createStore } from 'redux';
+// import allReducers from './_reducers';
 React.icons = icons
 
 ReactDOM.render(
     <CookiesProvider>
-        <Provider context={ReactReduxContext} store={store}>
+        <Provider store={store}>
             <App/>
         </Provider>
     </CookiesProvider>,

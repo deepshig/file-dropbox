@@ -1,6 +1,8 @@
 import React, {Component} from 'react'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux';
+import {callLogin, setLogin} from "../../../_actions";
+import store from "../../../_helpers/store";
 import {
   CButton,
   CCard,
@@ -30,19 +32,21 @@ class Login extends Component {
     this.setState({ UID: evt.target.value });
   }
   handleClick(){
+    store.dispatch(callLogin(this.state.UID))
     fetch("http://127.0.0.1:5000/auth/test", {
       method: "POST",
       crossDomain: true,
       credentials: 'include',
       headers: {
-        "Content-Type":"application/json",
-        "Accept":"application/json",
+        "Content-Type": "application/json",
+        "Accept": "application/json",
       },
       body: JSON.stringify({
         UID: this.state.UID,
       })
-    }).then(response=>response.json())
-        .then((responseJson)=>console.log(responseJson))
+    }).then(response => response.json())
+        .then((responseJson) => store.dispatch(setLogin(this.state.UID, responseJson)))
+
   }
   render()
   {
@@ -101,15 +105,6 @@ class Login extends Component {
     )
   }
 }
-// function mapStateToProps(state) {
-//   // const { token } = state.token;
-//   return {
-//     'true'
-//     // token
-//   };
-// }
-//
-// const connectedLoginPage = connect(mapStateToProps)(Login);
+connect()(Login);
 
-// export { connectedLoginPage as Login };
 export {Login}

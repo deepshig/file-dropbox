@@ -22,3 +22,6 @@ Example of Asynchronous worker and flow of application returning update views to
 Dedicated file manager service to handle any communications between internal services and DB's.
 ![Architecture6](Architecture/Architecture-6.png)
 Example File retrieval flow.
+
+## Changelog
+React App currently getting a JWT token generated from a static endpoint working only for 'test' user
