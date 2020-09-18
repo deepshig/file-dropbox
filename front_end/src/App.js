@@ -5,6 +5,9 @@ import './scss/style.scss';
 import { withCookies } from 'react-cookie';
 import TheLayout from "./containers/TheLayout";
 import {Login} from "./views/pages/login/Login";
+import io from "socket.io-client"
+
+let io = io.connect('http://127.0.0.1:3000')
 
 const loading = (
   <div className="pt-3 text-center">

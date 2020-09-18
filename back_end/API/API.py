@@ -8,6 +8,8 @@ CORS(app, supports_credentials=True)
 app.config['JWT_SECRET_KEY'] = 'super-secret-key'
 jwt = JWTManager(app)
 
+# TODO: Unite apps to single Flask instance, or well define ports, or route from main API.
+
 @app.route('/api/')
 def index():
     return 'Hello, World!'
@@ -16,6 +18,7 @@ def index():
 @app.route('/api/views')
 def views():
     return 'Hello, World!'  # Talk to File service manager to call user table
+
 
 if __name__ == '__main__':
     app.run(debug=True, use_debugger=False, use_reloader=False, passthrough_errors=True)

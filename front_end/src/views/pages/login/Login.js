@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { connect } from 'react-redux';
 import {callLogin, setLogin} from "../../../_actions";
 import store from "../../../_helpers/store";
+
 import {
   CButton,
   CCard,
@@ -33,7 +34,7 @@ class Login extends Component {
   }
   handleClick(){
     store.dispatch(callLogin(this.state.UID))
-    fetch("http://127.0.0.1:5000/auth/test", {
+    fetch("http://127.0.0.1:3000/auth/test", {
       method: "POST",
       crossDomain: true,
       credentials: 'include',

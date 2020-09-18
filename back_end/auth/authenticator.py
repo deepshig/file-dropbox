@@ -4,8 +4,7 @@ from flask_jwt_extended import JWTManager, jwt_required, create_access_token, ge
 
 import uuid
 app = Flask(__name__)
-CORS(app, supports_credentials=True)
-app.config['JWT_SECRET_KEY'] = 'super-secret-key'
+
 jwt = JWTManager(app)
 
 
@@ -30,4 +29,4 @@ def protected():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, use_debugger=False, use_reloader=False, passthrough_errors=True)
+    app.run(debug=True, use_debugger=False, use_reloader=False, passthrough_errors=True, port=3000  )
