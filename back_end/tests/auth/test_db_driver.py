@@ -19,9 +19,17 @@ def test_db_driver():
     return test_db
 
 
+def tear_down(cursor, db_driver):
+    cursor.execute("TRUNCATE users;")
+    db_driver.connection.commit()
+    cursor.close()
+    db_driver.connection.close()
+
+
 def test_create_users_table(test_db_driver):
     cursor = test_db_driver.connection.cursor()
     table_exists_query = '''SELECT exists(SELECT relname FROM pg_class WHERE relname='users');'''
+    test_db_driver.connection.commit()
 
     test_db_driver.create_users_table()
     try:
@@ -31,5 +39,4 @@ def test_create_users_table(test_db_driver):
     except psycopg2.Error as err:
         print("Error while checking if table exists : ", err)
     finally:
-        cursor.close()
-        test_db_driver.connection.close()
+        tear_down(cursor, test_db_driver)
