@@ -39,3 +39,6 @@ class Authenticator:
             return result
         else:
             return result
+
+    def logout(self, user_id):
+        return self.db.logout(user_id)

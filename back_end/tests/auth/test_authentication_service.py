@@ -98,6 +98,30 @@ def test_login():
     assert fetched_user["logged_in"] == True
 
 
+def test_logout():
+    auth = Authenticator(test_db_config)
+    user_id = uuid.uuid4()
+    """
+    failure : user does not exit
+    """
+    result = auth.logout(user_id)
+    assert result["user_logged_out"] == False
+    assert result["error"] == ERROR_USER_NOT_FOUND
+
+    """
+    success
+    """
+    cursor = auth.db.db_driver.connection.cursor()
+    create_test_user(auth.db, cursor, user_id, uuid.uuid4())
+    result = auth.logout(user_id)
+    assert result["user_logged_out"] == True
+
+    fetched_user = get_test_user(auth.db, cursor, user_id)
+    assert fetched_user["user_fetched"] == True
+    assert fetched_user["id"] == user_id
+    assert fetched_user["logged_in"] == False
+
+
 def create_test_user(db, cursor, user_id, access_token):
     create_user_query = '''INSERT INTO users(id, role, access_token, logged_in, created_at, updated_at) VALUES ((%s), (%s), (%s), (%s), now(), now())'''
     psycopg2.extras.register_uuid()
