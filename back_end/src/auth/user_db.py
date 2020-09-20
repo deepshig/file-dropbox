@@ -32,6 +32,31 @@ class UserDB:
         finally:
             cursor.close()
 
+    def get_user(self, user_id):
+        psycopg2.extras.register_uuid()
+        get_user_query = '''SELECT id, role, access_token, logged_in, created_at, updated_at FROM users WHERE id = (%s)'''
+
+        cursor = self.db_driver.connection.cursor()
+        try:
+            cursor.execute(get_user_query, [user_id])
+            self.db_driver.connection.commit()
+        except psycopg2.Error as err:
+            return {"user_fetched": False,
+                    "error": err}
+        else:
+            user = cursor.fetchone()
+            if user is not None:
+                return {"user_fetched": True,
+                        "id": user[0],
+                        "role": user[1],
+                        "access_token": user[2],
+                        "logged_in": user[3]}
+            else:
+                return {"user_fetched": False,
+                        "error": "User not found"}
+        finally:
+            cursor.close()
+
 
 db_config = {"user": "postgres",
              "password": "postgres",
@@ -42,4 +67,4 @@ db_config = {"user": "postgres",
 user_details = {"id": str(uuid.uuid4()),
                 "role": "dummy",
                 "access_token": uuid.uuid4(),
-                "logged_in": True}x
+                "logged_in": True}

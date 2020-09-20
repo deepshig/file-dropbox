@@ -8,7 +8,6 @@ sys.path.append('../')
 from src.auth.user_db import UserDB  # NOQA
 
 
-@pytest.fixture(scope="session")
 def test_db():
     test_db_config = {"user": "postgres",
                       "password": "postgres",
@@ -27,19 +26,23 @@ def tear_down(cursor, db_driver):
     db_driver.connection.close()
 
 
-def test_create_user(test_db):
+def test_create_user():
+    """
+    success
+    """
+    db = test_db()
     user_details = {"id": uuid.uuid4(),
                     "role": "dummy",
                     "access_token": uuid.uuid4(),
                     "logged_in": True}
-    result = test_db.create_user(user_details)
+    result = db.create_user(user_details)
     assert result["user_created"] == True
 
     fetch_user_query = '''SELECT * FROM users WHERE id = %s'''
     try:
-        cursor = test_db.db_driver.connection.cursor()
+        cursor = db.db_driver.connection.cursor()
         cursor.execute(fetch_user_query, [user_details["id"]])
-        test_db.db_driver.connection.commit()
+        db.db_driver.connection.commit()
 
         fetched_user = cursor.fetchone()
 
@@ -48,5 +51,48 @@ def test_create_user(test_db):
         assert fetched_user[3] == user_details["logged_in"]
     except psycopg2.Error as err:
         print("Error while checking if user created : ", err)
-    finally:
-        tear_down(cursor, test_db.db_driver)
+
+    """
+    failure : when user_id is not uuid
+    """
+    user_details = {"id": "some_random_id",
+                    "role": "dummy",
+                    "access_token": uuid.uuid4(),
+                    "logged_in": True}
+    result = db.create_user(user_details)
+    assert result["user_created"] == False
+    assert result["error"].pgcode == '22P02'
+
+    # tear_down(cursor, db.db_driver)
+
+
+def test_get_user():
+    db = test_db()
+    """
+    failure : user does not exist
+    """
+    new_user_id = uuid.uuid4()
+    fetched_user = db.get_user(new_user_id)
+    print(new_user_id)
+    print(fetched_user)
+    assert fetched_user["user_fetched"] == False
+
+    """
+    success
+    """
+    user_id = uuid.uuid4()
+    access_token = uuid.uuid4()
+
+    create_user_query = '''INSERT INTO users(id, role, access_token, logged_in, created_at, updated_at) VALUES ((%s), (%s), (%s), (%s), now(), now())'''
+    cursor = db.db_driver.connection.cursor()
+    psycopg2.extras.register_uuid()
+
+    try:
+        cursor.execute(create_user_query, [
+            user_id, "dummy", access_token, False])
+        db.db_driver.connection.commit()
+    except psycopg2.Error as err:
+        print("Error in creating test user : ", err)
+
+    fetched_user = db.get_user(user_id)
+    assert fetched_user["user_fetched"] == True
