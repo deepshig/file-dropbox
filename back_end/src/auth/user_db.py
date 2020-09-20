@@ -98,15 +98,3 @@ class UserDB:
                         "error": ERROR_USER_NOT_FOUND}
         finally:
             cursor.close()
-
-
-db_config = {"user": "postgres",
-             "password": "postgres",
-             "host": "127.0.0.1",
-             "port": "5432",
-             "db_name": "user_auth_test"}
-
-user_details = {"id": str(uuid.uuid4()),
-                "role": "dummy",
-                "access_token": uuid.uuid4(),
-                "logged_in": True}
