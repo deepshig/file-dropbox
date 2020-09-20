@@ -1,10 +1,10 @@
+# import db_driver
 import psycopg2
 import uuid
 import sys
 from psycopg2 import Error, extras
 sys.path.append('../')
 from . import db_driver  # NOQA
-# from db_driver import DBDriver  # NOQA
 
 ERROR_USER_NOT_FOUND = "User not found"
 

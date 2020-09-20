@@ -1,5 +1,6 @@
 import uuid
 from . import user_db
+# import user_db
 
 ERROR_UNAUTHORISED_REQUEST = "User not authorised to fetch this resource"
 
@@ -16,6 +17,7 @@ class Authenticator:
 
         result = self.db.create_user(user_details)
         if result["user_created"]:
+            user_details["user_created"] = True
             return user_details
         else:
             return result

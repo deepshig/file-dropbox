@@ -28,6 +28,7 @@ def test_create_user():
     """
     auth = Authenticator(test_db_config)
     result = auth.create_user("admin")
+    assert result["user_created"] == True
     assert result["role"] == "admin"
 
     cursor = auth.db.db_driver.connection.cursor()
