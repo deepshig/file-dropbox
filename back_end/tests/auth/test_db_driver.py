@@ -2,7 +2,7 @@ import pytest
 import sys
 import psycopg2
 from psycopg2 import Error
-sys.path.insert(0, '..')
+sys.path.append('../')
 
 from src.auth.db_driver import DBDriver  # NOQA
 
@@ -29,7 +29,6 @@ def tear_down(cursor, db_driver):
 def test_create_users_table(test_db_driver):
     cursor = test_db_driver.connection.cursor()
     table_exists_query = '''SELECT exists(SELECT relname FROM pg_class WHERE relname='users');'''
-    test_db_driver.connection.commit()
 
     test_db_driver.create_users_table()
     try:
