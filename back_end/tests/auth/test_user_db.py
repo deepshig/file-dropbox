@@ -5,7 +5,7 @@ import psycopg2
 from psycopg2 import Error
 sys.path.append('../')
 
-from src.auth.user_db import UserDB  # NOQA
+from src.auth.user_db import UserDB, ERROR_USER_NOT_FOUND  # NOQA
 
 
 def test_db():
@@ -76,6 +76,7 @@ def test_get_user():
     print(new_user_id)
     print(fetched_user)
     assert fetched_user["user_fetched"] == False
+    assert fetched_user["error"] == ERROR_USER_NOT_FOUND
 
     """
     success
@@ -96,3 +97,49 @@ def test_get_user():
 
     fetched_user = db.get_user(user_id)
     assert fetched_user["user_fetched"] == True
+
+
+def test_login():
+    db = test_db()
+    """
+    failure : user doesn't exist
+    """
+    user_id = uuid.uuid4()
+    access_token = uuid.uuid4()
+
+    result = db.login(user_id, access_token)
+    assert result["user_logged_in"] == False
+    assert result["error"] == ERROR_USER_NOT_FOUND
+
+    """
+    success
+    """
+    user_id = uuid.uuid4()
+    access_token = uuid.uuid4()
+    create_user_query = '''INSERT INTO users(id, role, access_token, logged_in, created_at, updated_at) VALUES ((%s), (%s), (%s), (%s), now(), now())'''
+    cursor = db.db_driver.connection.cursor()
+    psycopg2.extras.register_uuid()
+    try:
+        cursor.execute(create_user_query, [
+            user_id, "dummy", access_token, False])
+        db.db_driver.connection.commit()
+    except psycopg2.Error as err:
+        print("Error in creating test user : ", err)
+
+    result = db.login(user_id, access_token)
+    assert result["user_logged_in"] == True
+
+    fetch_user_query = '''SELECT * FROM users WHERE id = %s'''
+    try:
+
+        cursor.execute(fetch_user_query, [user_id])
+        db.db_driver.connection.commit()
+
+        fetched_user = cursor.fetchone()
+
+        assert fetched_user[2] == access_token
+        assert fetched_user[3] == True
+    except psycopg2.Error as err:
+        print("Error while checking if user logged in : ", err)
+    finally:
+        tear_down(cursor, db.db_driver)

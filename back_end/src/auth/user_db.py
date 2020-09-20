@@ -6,6 +6,8 @@ sys.path.append('../')
 from . import db_driver  # NOQA
 # from db_driver import DBDriver  # NOQA
 
+ERROR_USER_NOT_FOUND = "User not found"
+
 
 class UserDB:
     def __init__(self, db_config):
@@ -53,7 +55,27 @@ class UserDB:
                         "logged_in": user[3]}
             else:
                 return {"user_fetched": False,
-                        "error": "User not found"}
+                        "error": ERROR_USER_NOT_FOUND}
+        finally:
+            cursor.close()
+
+    def login(self, user_id, access_token):
+        psycopg2.extras.register_uuid()
+        login_query = '''UPDATE users SET access_token = (%s), logged_in = (%s), updated_at = now() WHERE id = (%s)'''
+
+        cursor = self.db_driver.connection.cursor()
+        try:
+            cursor.execute(login_query, [access_token, True, user_id])
+            self.db_driver.connection.commit()
+        except psycopg2.Error as err:
+            return {"user_logged_in": False,
+                    "error": err}
+        else:
+            if cursor.rowcount == 1:
+                return {"user_logged_in": True}
+            else:
+                return {"user_logged_in": False,
+                        "error": ERROR_USER_NOT_FOUND}
         finally:
             cursor.close()
 
