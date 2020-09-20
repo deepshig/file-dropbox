@@ -2,3 +2,4 @@ flask
 flask_cors
 pytest
 psycopg2
+flask-injector

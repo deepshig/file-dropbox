@@ -1,4 +1,5 @@
 import uuid
+from injector import inject
 from . import user_db
 # import user_db
 
@@ -6,8 +7,9 @@ ERROR_UNAUTHORISED_REQUEST = "User not authorised to fetch this resource"
 
 
 class Authenticator:
-    def __init__(self, db_config):
-        self.db = user_db.UserDB(db_config)
+    @inject
+    def __init__(self, auth_db: user_db.UserDB):
+        self.db = auth_db
 
     def create_user(self, role):
         user_details = {"id": uuid.uuid4(),

@@ -5,7 +5,7 @@ import psycopg2
 from psycopg2 import Error
 sys.path.append('../')
 
-from src.auth.user_db import ERROR_USER_NOT_FOUND  # NOQA
+from src.auth.user_db import UserDB, ERROR_USER_NOT_FOUND  # NOQA
 from src.auth.authentication_service import Authenticator, ERROR_UNAUTHORISED_REQUEST  # NOQA
 
 test_db_config = {"user": "postgres",
@@ -26,7 +26,9 @@ def test_create_user():
     """
     success
     """
-    auth = Authenticator(test_db_config)
+    db = UserDB(test_db_config)
+    auth = Authenticator(db)
+
     result = auth.create_user("admin")
     assert result["user_created"] == True
     assert result["role"] == "admin"
@@ -43,7 +45,9 @@ def test_get_user():
     """
     failure : user does not exist
     """
-    auth = Authenticator(test_db_config)
+    db = UserDB(test_db_config)
+    auth = Authenticator(db)
+
     user_id = uuid.uuid4()
     access_token = uuid.uuid4()
 
@@ -76,7 +80,9 @@ def test_get_user():
 
 
 def test_login():
-    auth = Authenticator(test_db_config)
+    db = UserDB(test_db_config)
+    auth = Authenticator(db)
+
     user_id = uuid.uuid4()
     """
     failure : user does not exit
@@ -100,7 +106,9 @@ def test_login():
 
 
 def test_logout():
-    auth = Authenticator(test_db_config)
+    db = UserDB(test_db_config)
+    auth = Authenticator(db)
+
     user_id = uuid.uuid4()
     """
     failure : user does not exit
