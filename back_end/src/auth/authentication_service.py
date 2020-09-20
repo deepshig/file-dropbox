@@ -30,3 +30,12 @@ class Authenticator:
                         "error": ERROR_UNAUTHORISED_REQUEST}
         else:
             return fetched_user
+
+    def login(self, user_id):
+        access_token = uuid.uuid4()
+        result = self.db.login(user_id, access_token)
+        if result["user_logged_in"]:
+            result["access_token"] = access_token
+            return result
+        else:
+            return result
