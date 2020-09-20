@@ -79,6 +79,26 @@ class UserDB:
         finally:
             cursor.close()
 
+    def logout(self, user_id):
+        psycopg2.extras.register_uuid()
+        logout_query = '''UPDATE users SET logged_in = (%s) WHERE id = (%s)'''
+
+        cursor = self.db_driver.connection.cursor()
+        try:
+            cursor.execute(logout_query, [False, user_id])
+            self.db_driver.connection.commit()
+        except psycopg2.Error as err:
+            return {"user_logged_out": False,
+                    "error": err}
+        else:
+            if cursor.rowcount == 1:
+                return {"user_logged_out": True}
+            else:
+                return {"user_logged_out": False,
+                        "error": ERROR_USER_NOT_FOUND}
+        finally:
+            cursor.close()
+
 
 db_config = {"user": "postgres",
              "password": "postgres",
