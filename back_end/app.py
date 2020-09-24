@@ -2,7 +2,7 @@ from flask import Flask
 from werkzeug.middleware.dispatcher import DispatcherMiddleware
 from flask_cors import CORS
 from back_end.API import socket, API
-from back_end.auth import authenticator
+from back_end.src.auth import authenticator
 app = Flask(__name__)
 
 CORS(app, supports_credentials=True)

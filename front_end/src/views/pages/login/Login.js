@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import { Link } from 'react-router-dom'
+import { Link, Redirect } from 'react-router-dom'
 import { connect } from 'react-redux';
 import {callLogin, setLogin} from "../../../_actions";
 import store from "../../../_helpers/store";
@@ -19,6 +19,7 @@ import {
   CRow
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
+import App from "../../../App";
 
 class Login extends Component {
   constructor(props) {
@@ -34,7 +35,7 @@ class Login extends Component {
   }
   handleClick(){
     store.dispatch(callLogin(this.state.UID))
-    fetch("http://127.0.0.1:3000/auth/test", {
+    fetch("http://127.0.0.1:4000/auth/test", {
       method: "POST",
       crossDomain: true,
       credentials: 'include',
@@ -46,8 +47,8 @@ class Login extends Component {
         UID: this.state.UID,
       })
     }).then(response => response.json())
-        .then((responseJson) => store.dispatch(setLogin(this.state.UID, responseJson)))
-
+        .then((response) => store.dispatch(setLogin(this.state.UID, response['access_token'])))
+        .then(<Redirect to="/dashboard" />)
   }
   render()
   {
@@ -71,17 +72,11 @@ class Login extends Component {
                           </CInputGroupPrepend>
                           <CInput value={this.state.UID} onChange={evt => this.updateInputValue(evt)} type="text" placeholder="Username" autoComplete="username"/>
                         </CInputGroup>
-                        {/*<CInputGroup className="mb-4">*/}
-                        {/*  <CInputGroupPrepend>*/}
-                        {/*    <CInputGroupText>*/}
-                        {/*      <CIcon name="cil-lock-locked"/>*/}
-                        {/*    </CInputGroupText>*/}
-                        {/*  </CInputGroupPrepend>*/}
-                        {/*  <CInput type="password" placeholder="Password" autoComplete="current-password"/>*/}
-                        {/*</CInputGroup>*/}
                         <CRow>
                           <CCol xs="6">
-                            <CButton onClick={() => this.handleClick()} color="primary" className="px-4">Login</CButton>
+                            <Link to="/">
+                              <CButton onClick={() => this.handleClick()} color="primary" className="px-4">Login</CButton>
+                            </Link>
                           </CCol>
 
                         </CRow>

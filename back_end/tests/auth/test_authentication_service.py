@@ -1,4 +1,3 @@
-import pytest
 import uuid
 import sys
 import psycopg2

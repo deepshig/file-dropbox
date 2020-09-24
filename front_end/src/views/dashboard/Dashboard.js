@@ -10,7 +10,7 @@ import {
   CCol,
   CProgress,
   CRow,
-  CCallout
+  CCallout, CForm, CFormGroup, CLabel, CInput, CFormText, CTextarea, CSelect, CInputRadio, CInputCheckbox, CInputFile
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 
@@ -22,35 +22,84 @@ const WidgetsBrand = lazy(() => import('../widgets/WidgetsBrand.js'))
 const Dashboard = () => {
   return (
     <>
-      <WidgetsDropdown />
+      {/*<WidgetsDropdown />*/}
       <CCard>
         <CCardBody>
           <CRow>
-            <CCol sm="5">
-              <h4 id="traffic" className="card-title mb-0">Traffic</h4>
-              <div className="small text-muted">November 2017</div>
-            </CCol>
-            <CCol sm="7" className="d-none d-md-block">
-              <CButton color="primary" className="float-right">
-                <CIcon name="cil-cloud-download"/>
-              </CButton>
-              <CButtonGroup className="float-right mr-3">
-                {
-                  ['Day', 'Month', 'Year'].map(value => (
-                    <CButton
-                      color="outline-secondary"
-                      key={value}
-                      className="mx-0"
-                      active={value === 'Month'}
-                    >
-                      {value}
-                    </CButton>
-                  ))
-                }
-              </CButtonGroup>
+            <CCol xs="12">
+              <CCard>
+                <CCardHeader>
+                  Upload File(s)
+                  <small> Elements</small>
+                </CCardHeader>
+                <CCardBody>
+                  <CForm action="" method="post" encType="multipart/form-data" className="form-horizontal">
+                    <CFormGroup row>
+                      <CCol md="3">
+                        <CLabel>Static</CLabel>
+                      </CCol>
+                      <CCol xs="12" md="9">
+                        <p className="form-control-static">Username</p>
+                      </CCol>
+                    </CFormGroup>
+                    <CFormGroup row>
+                      <CCol md="3">
+                        <CLabel htmlFor="text-input">Text Input</CLabel>
+                      </CCol>
+                      <CCol xs="12" md="9">
+                        <CInput id="text-input" name="text-input" placeholder="Text" />
+                        <CFormText>This is a help text</CFormText>
+                      </CCol>
+                    </CFormGroup>
+                    <CFormGroup row>
+                      <CCol md="3">
+                        <CLabel htmlFor="date-input">Date Input</CLabel>
+                      </CCol>
+                      <CCol xs="12" md="9">
+                        <CInput type="date" id="date-input" name="date-input" placeholder="date" />
+                      </CCol>
+                    </CFormGroup>
+                    <CFormGroup row>
+                      <CCol md="3">
+                        <CLabel htmlFor="select">Select</CLabel>
+                      </CCol>
+                      <CCol xs="12" md="9">
+                        <CSelect custom name="select" id="select">
+                          <option value="0">Please select</option>
+                          <option value="1">Option #1</option>
+                          <option value="2">Option #2</option>
+                          <option value="3">Option #3</option>
+                        </CSelect>
+                      </CCol>
+                    </CFormGroup>
+                    <CFormGroup row>
+                      <CCol md="3">
+                        <CLabel>Multiple File input</CLabel>
+                      </CCol>
+                      <CCol xs="12" md="9">
+                        <CInputFile
+                            id="file-multiple-input"
+                            name="file-multiple-input"
+                            multiple
+                            custom
+                        />
+                        <CLabel htmlFor="file-multiple-input" variant="custom-file">
+                          Choose Files...
+                        </CLabel>
+                      </CCol>
+                    </CFormGroup>
+
+                  </CForm>
+                </CCardBody>
+                <CCardFooter>
+                  <CButton type="submit" size="sm" color="primary"><CIcon name="cil-scrubber" /> Submit</CButton>
+                  <CButton type="reset" size="sm" color="danger"><CIcon name="cil-ban" /> Reset</CButton>
+                </CCardFooter>
+              </CCard>
+
             </CCol>
           </CRow>
-          <MainChartExample style={{height: '300px', marginTop: '40px'}}/>
+          {/*<MainChartExample style={{height: '300px', marginTop: '40px'}}/>*/}
         </CCardBody>
         <CCardFooter>
           <CRow className="text-center">

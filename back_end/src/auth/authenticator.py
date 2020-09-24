@@ -4,8 +4,11 @@ from flask_jwt_extended import JWTManager, jwt_required, create_access_token, ge
 
 import uuid
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'super-secret-key'
 
 jwt = JWTManager(app)
+
+CORS(app, supports_credentials=True)
 
 
 @app.route('/auth/test', methods=['POST'])
@@ -30,4 +33,4 @@ def protected():
 
 if __name__ == '__main__':
     app.run(debug=True, use_debugger=False, use_reloader=False,
-            passthrough_errors=True, port=3000)
+            passthrough_errors=True, port=4000)
