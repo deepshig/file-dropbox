@@ -8,7 +8,7 @@ from back_end.app import app
 socket = SocketIO(app, cors_allowed_origins="*")
 
 
-@socket_blueprint.route('/<something>',)
+@socket_blueprint.route('/',)
 def test(something):
     print('hi %s', something)
 
