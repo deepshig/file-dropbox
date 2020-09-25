@@ -1,34 +1,35 @@
-from flask import Flask
-# from back_end import app
+from flask import Flask, Blueprint
 from flask_socketio import SocketIO, send, emit
-from flask_cors import CORS
 import random
 from time import sleep
+from . import socket_blueprint
+from back_end.app import app
 
-# TODO Import flask error. Export flask=, pycharm
-app = Flask(__name__)
-app.config['SECRET_KEY'] = 'super-secret-key'
-CORS(app)
-
-socketIO = SocketIO(app, cors_allowed_origins="*")
+socket = SocketIO(app, cors_allowed_origins="*")
 
 
-@socketIO.on('connect')
+@socket_blueprint.route('/<something>',)
+def test(something):
+    print('hi %s', something)
+
+
+@socket.on('connect')
 def test_connect():
     print('someone connected to websocket')
     emit('responseMessage', {'data': 'Connected! ayy'})
 
 
-@socketIO.on('message')
+@socket.on('message')
 def handleMessage(msg):
     print(msg)
     # send(message=msg, broadcast=True)
     if msg["status"] == "On":
         for i in range(5):
+            print("HIT")
             emit('responseMessage', {'temperature': round(random.random() * 10, 3)})
             sleep(.5)
     return None
 
 
-if __name__ == '__main__':
-    app.run(debug=True, use_debugger=False, use_reloader=False, passthrough_errors=True, port=5000)
+# if __name__ == '__main__':
+#     app.run(debug=True, use_debugger=False, use_reloader=False, passthrough_errors=True, port=5000)
