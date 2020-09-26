@@ -1,9 +1,10 @@
+import jwt
 from flask import Flask, make_response, jsonify
 from flask_restful import Resource, Api, output_json
 from uuid import UUID
-from . import authentication_service, user_db
-# import authentication_service
-# import user_db
+# from . import authentication_service, user_db
+import authentication_service
+import user_db
 
 app = Flask(__name__)
 api = Api(app)
@@ -11,6 +12,7 @@ api = Api(app)
 ERROR_ROLE_NOT_FOUND = "Invalid role"
 ERROR_INVALID_USER_ID = "Inavlid User ID"
 ERROR_INTERNAL_SERVER = "Internal Server Error"
+SECRET_KEY = "i5uitypjchnar0rlz31yh0u5sgs8rui2baxxgw8e"
 
 db_config = {"user": "postgres",
              "password": "postgres",
@@ -36,6 +38,10 @@ def is_valid_uuid(uuid_str):
     return str(uuid_obj) == uuid_str
 
 
+def create_jwt(payload):
+    return jwt.encode(payload, SECRET_KEY, algorithm='HS256')
+
+
 class Ping(Resource):
     def get(self):
         return output_json({"ping": "pong"}, 200)
@@ -53,7 +59,8 @@ class CreateUser(Resource):
         if user_details["user_created"]:
             user_details["id"] = str(user_details["id"])
             user_details["access_token"] = str(user_details["access_token"])
-            return output_json(user_details, 201)
+            jwt = create_jwt(user_details)
+            return output_json({"jwt": jwt.decode()}, 201)
         else:
             return output_json({"msg": ERROR_INTERNAL_SERVER}, 500)
 
@@ -69,7 +76,8 @@ class LoginUser(Resource):
         response = svc.login(user_id)
         if response["user_logged_in"]:
             response["access_token"] = str(response["access_token"])
-            return output_json(response, 201)
+            jwt = create_jwt(response)
+            return output_json({"jwt": jwt.decode()}, 201)
         elif response["error"] == user_db.ERROR_USER_NOT_FOUND:
             return output_json(response, 400)
         else:

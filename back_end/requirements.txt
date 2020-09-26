@@ -3,3 +3,4 @@ flask_cors
 pytest
 psycopg2
 flask-restful
+pyjwt
