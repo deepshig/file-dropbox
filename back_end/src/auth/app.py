@@ -1,9 +1,11 @@
 from flask import Flask, make_response, jsonify
-from . import authentication_service
+from flask_restful import Resource, Api, output_json
+from . import authentication_service, user_db
 # import authentication_service
+# import user_db
 
 app = Flask(__name__)
-svc = None
+api = Api(app)
 
 ERROR_ROLE_NOT_FOUND = "Invalid role"
 ERROR_INTERNAL_SERVER = "Internal Server Error"
@@ -16,20 +18,20 @@ db_config = {"user": "postgres",
 
 accepted_roles = ["admin", "user", "developer"]
 
-# TODO : proper dependency injection
-
 
 def init(db_config):
-    svc = authentication_service.Authenticator(db_config)
+    db = user_db.UserDB(db_config)
+    svc = authentication_service.Authenticator(db)
     return svc
 
 
-@app.route('/ping', methods=['GET'])
-def ping():
-    return jsonify({"ping": "ping"}), 200
+class Ping(Resource):
+    def get(self):
+        return output_json({"ping": "pong"}, 200)
 
+
+api.add_resource(Ping, '/ping')
 
 if __name__ == '__main__':
-    svc = init(db_config)
     app.run(debug=True, use_debugger=False, use_reloader=False,
             passthrough_errors=True, port=3000)

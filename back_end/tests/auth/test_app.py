@@ -1,7 +1,6 @@
 import pytest
 import sys
 from flask.testing import FlaskClient
-from flask import jsonify, Flask
 sys.path.append('../')
 
 from src.auth.app import app, init  # NOQA
@@ -17,4 +16,4 @@ test_db_config = {"user": "postgres",
 def test_ping():
     resp = app.test_client().get('/ping')
     assert resp.status_code == 200
-    assert resp.data == b'{"ping":"ping"}\n'
+    assert resp.data == b'{"ping": "pong"}\n'
