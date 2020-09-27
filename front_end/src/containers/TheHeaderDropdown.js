@@ -23,7 +23,7 @@ class TheHeaderDropdown extends Component {
                         direction="down"
                     >
                         <CDropdownToggle className="c-header-nav-link" caret={false}>
-                            <CButton block shape="pill" color="dark">{user}</CButton>
+                            <CButton block color="dark">{user}</CButton>
                         </CDropdownToggle>
                         <CDropdownMenu className="pt-0" placement="bottom-end">
                             <CDropdownItem

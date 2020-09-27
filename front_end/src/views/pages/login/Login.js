@@ -1,9 +1,10 @@
 import React, {Component} from 'react'
 import { Link, Redirect } from 'react-router-dom'
 import { connect } from 'react-redux';
-import {callLogin, setLogin} from "../../../_actions";
+import {callLogin, createSocket, setLogin} from "../../../_actions";
 import store from "../../../_helpers/store";
-import history from "../../../_helpers/history"
+// import history from "../../../_helpers/history"
+
 import {
     CButton,
     CCard,
@@ -19,7 +20,6 @@ import {
     CRow
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
-import App from "../../../App";
 
 class Login extends Component {
 
@@ -27,7 +27,6 @@ class Login extends Component {
     super(props);
     this.state = {
       UID: 'test',
-      token: '' // TODO: Get token to Redux Store
     }
 
   }
@@ -48,7 +47,7 @@ class Login extends Component {
         UID: this.state.UID,
       })
     }).then(response => response.json())
-        .then((response) => store.dispatch(setLogin(this.state.UID, response['access_token'])))
+        .then((response) => {store.dispatch(setLogin(this.state.UID, response['access_token'])); store.dispatch(createSocket())})
         .then(<Redirect to="/dashboard" />)
   }
   render()

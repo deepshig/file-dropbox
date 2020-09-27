@@ -1,4 +1,5 @@
 import {userConstants} from "../_constants/user.constants";
+import {socketConstants} from "../_constants/socket.constants";
 
 export const callLogin = (UID) => {
     return{
@@ -11,5 +12,10 @@ export const setLogin = (UID, token) => {
         type: userConstants.LOGIN_SUCCESS,
         UID: UID,
         token: token
+    }
+}
+export const createSocket = () => {
+    return{
+        type: socketConstants.SOCKET_REQUEST,
     }
 }

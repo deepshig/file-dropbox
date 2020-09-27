@@ -22,6 +22,7 @@ import {
   TheHeaderDropdownNotif,
   TheHeaderDropdownTasks
 }  from './index'
+import TheHeaderStatus from "./TheHeaderStatus";
 
 const TheHeader = () => {
   const dispatch = useDispatch()
@@ -68,7 +69,7 @@ const TheHeader = () => {
       <CHeaderNav className="px-3">
         {/*<TheHeaderDropdownNotif/>*/}
         {/*<TheHeaderDropdownTasks/>*/}
-        {/*<TheHeaderDropdownMssg/>*/}
+        <TheHeaderStatus/>
         <TheHeaderDropdown/>
       </CHeaderNav>
 

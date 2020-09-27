@@ -1,12 +1,9 @@
 import React, { Component } from 'react';
 import { HashRouter, Route, Switch } from 'react-router-dom';
 import './scss/style.scss';
-// import TheLayout from "./containers/TheLayout";
 import {Login} from "./views/pages/login/Login";
-// import Test from "./views/pages/test/Test";
 import history from "./_helpers/history"
-
-// io.connect('http://127.0.0.1:5000')
+import store from "./_helpers/store"
 
 const loading = (
   <div className="pt-3 text-center">
@@ -24,6 +21,14 @@ const Page404 = React.lazy(() => import('./views/pages/page404/Page404'));
 const Page500 = React.lazy(() => import('./views/pages/page500/Page500'));
 
 class App extends Component {
+  componentDidMount() {
+      if (store.getState().authentication.token) {
+            console.log(store.getState().authentication.token)
+      }
+      else {
+        console.log("not Yet")
+      }
+    }
 
   render() {
     return (

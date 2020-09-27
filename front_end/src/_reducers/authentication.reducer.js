@@ -2,7 +2,7 @@ import { userConstants } from '../_constants/user.constants';
 
 let user = '';
 let token = '';
-const initialState = user ? { loggedIn: true, user, token } : {};
+const initialState = {loggedIn: false, user, token};
 
 export function authentication(state = initialState, action) {
     switch (action.type) {
