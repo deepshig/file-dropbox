@@ -1,17 +1,11 @@
-from flask import Flask, request, redirect, url_for, session, json, make_response, jsonify
+from flask import Flask, Blueprint, request, redirect, url_for, session, json, make_response, jsonify
 from flask_cors import CORS, cross_origin
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
 
-import uuid
-app = Flask(__name__)
-app.config['SECRET_KEY'] = 'super-secret-key'
-
-jwt = JWTManager(app)
-
-CORS(app, supports_credentials=True)
+auth_blueprint = Blueprint('auth', __name__, url_prefix='/auth')
 
 
-@app.route('/auth/test', methods=['POST'])
+@auth_blueprint.route('/test', methods=['POST'])
 def test():
     if not request.is_json:
         return jsonify({"msg": "Missing JSON request"}), 400
@@ -24,13 +18,13 @@ def test():
     return jsonify(access_token=access_token), 200
 
 
-@app.route('/auth/protected', methods=['GET'])
+@auth_blueprint.route('/protected', methods=['GET'])
 @jwt_required
 def protected():
     current_user = get_jwt_identity()
     return jsonify(logged_in_as=current_user), 200
 
 
-if __name__ == '__main__':
-    app.run(debug=True, use_debugger=False, use_reloader=False,
-            passthrough_errors=True, port=4000)
+# if __name__ == '__main__':
+#     app.run(debug=True, use_debugger=False, use_reloader=False,
+#             passthrough_errors=True, port=4000)

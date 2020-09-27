@@ -12,7 +12,7 @@ class Test extends Component {
     console.log("component unmounted")
   };
   componentDidMount() {
-    var sensorEndpoint = "http://localhost:5000"
+    var sensorEndpoint = "http://127.0.0.1:4000"
     this.socket = io.connect(sensorEndpoint, {
       reconnection: true,
       // transports: ['websocket']
