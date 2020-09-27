@@ -6,11 +6,11 @@ class Test extends Component {
   state = {
     socketData: "",
     socketStatus:"On"
-  }
+  };
   componentWillUnmount() {
     this.socket.close()
     console.log("component unmounted")
-  }
+  };
   componentDidMount() {
     var sensorEndpoint = "http://localhost:5000"
     this.socket = io.connect(sensorEndpoint, {
@@ -24,7 +24,7 @@ class Test extends Component {
       console.log("responseMessage", message)
     })
 
-  }
+  };
   handleEmit=()=>{
     if(this.state.socketStatus==="On"){
       this.socket.emit("message", {'data':'Stop Sending', 'status':'Off'})
@@ -35,7 +35,7 @@ class Test extends Component {
       this.setState({'socketStatus':"On"})
     }
     console.log("Emit Clicked")
-  }
+  };
   render() {
     return (
         <React.Fragment>
@@ -48,4 +48,4 @@ class Test extends Component {
 }
 connect()(Test);
 
-export {Test}
+export default Test

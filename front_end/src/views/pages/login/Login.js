@@ -3,25 +3,26 @@ import { Link, Redirect } from 'react-router-dom'
 import { connect } from 'react-redux';
 import {callLogin, setLogin} from "../../../_actions";
 import store from "../../../_helpers/store";
-
+import history from "../../../_helpers/history"
 import {
-  CButton,
-  CCard,
-  CCardBody,
-  CCardGroup,
-  CCol,
-  CContainer,
-  CForm,
-  CInput,
-  CInputGroup,
-  CInputGroupPrepend,
-  CInputGroupText,
-  CRow
+    CButton,
+    CCard,
+    CCardBody, CCardFooter,
+    CCardGroup,
+    CCol,
+    CContainer,
+    CForm,
+    CInput,
+    CInputGroup,
+    CInputGroupPrepend,
+    CInputGroupText,
+    CRow
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import App from "../../../App";
 
 class Login extends Component {
+
   constructor(props) {
     super(props);
     this.state = {
@@ -59,6 +60,7 @@ class Login extends Component {
             <CRow className="justify-content-center">
               <CCol md="8">
                 <CCardGroup>
+
                   <CCard className="p-4">
                     <CCardBody>
                       <CForm>
@@ -94,6 +96,11 @@ class Login extends Component {
                     </CCardBody>
                   </CCard>
                 </CCardGroup>
+                  <CCardFooter className="p-4">
+                      <Link to="/dashboard">
+                          <CButton block color="secondary" >Back</CButton>
+                      </Link>
+                  </CCardFooter>
               </CCol>
             </CRow>
           </CContainer>

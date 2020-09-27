@@ -14,6 +14,7 @@ import {
   CRow
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
+import {Link} from "react-router-dom";
 
 const Register = () => {
   return (
@@ -60,14 +61,9 @@ const Register = () => {
                 </CForm>
               </CCardBody>
               <CCardFooter className="p-4">
-                <CRow>
-                  <CCol xs="12" sm="6">
-                    <CButton className="btn-facebook mb-1" block><span>facebook</span></CButton>
-                  </CCol>
-                  <CCol xs="12" sm="6">
-                    <CButton className="btn-twitter mb-1" block><span>twitter</span></CButton>
-                  </CCol>
-                </CRow>
+                    <Link to="/dashboard">
+                        <CButton block color="secondary" >Back</CButton>
+                    </Link>
               </CCardFooter>
             </CCard>
           </CCol>

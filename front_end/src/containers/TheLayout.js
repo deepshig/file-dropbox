@@ -14,12 +14,6 @@ class TheLayout extends Component {
         };
     }
 
-    componentDidMount() {
-        // const { cookies } = this.props;
-        // cookies.set('token','123456789', { path: '/' , SameSite: 'None', Secure: true}); // TODO: Place this in a better place
-    }
-
-
     render()
     {
         return (

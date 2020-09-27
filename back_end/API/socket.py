@@ -20,7 +20,17 @@ def test_connect():
 
 
 @socketIO.on('message')
-def handleMessage(msg):
+def handleMessage(msg):  # TODO: Seperate Messages or JSON'ed?
+    print(msg)
+    # send(message=msg, broadcast=True)
+    if msg["status"] == "On":
+        for i in range(5):
+            emit('responseMessage', {'temperature': round(random.random() * 10, 3)})
+            sleep(.5)
+    return None
+
+@socketIO.on('upload')
+def handleUpload(msg):  # TODO: Seperate Messages or JSON'ed?
     print(msg)
     # send(message=msg, broadcast=True)
     if msg["status"] == "On":
