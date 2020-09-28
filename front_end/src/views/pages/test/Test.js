@@ -1,37 +1,30 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
-import io from 'socket.io-client';
-
+import {receiveSocketMessage, sendSocketMessage} from "../../../_actions";
+import store from "../../../_helpers/store"
 class Test extends Component {
   state = {
     socketData: "",
     socketStatus:"On"
   };
-  componentWillUnmount() {
-    this.socket.close()
-    console.log("component unmounted")
-  };
   componentDidMount() {
-    var sensorEndpoint = "http://127.0.0.1:4000"
-    this.socket = io.connect(sensorEndpoint, {
-      reconnection: true,
-      // transports: ['websocket']
-    });
-    console.log("component mounted")
-    this.socket.on("responseMessage", message => {
-      this.setState({'socketData': message.temperature})
 
-      console.log("responseMessage", message)
-    })
+      // this.socket.on("responseMessage", message => {
+      //     this.setState({'socketData': message.temperature})
+      //
+      //     console.log("responseMessage", message)
+      // })
+      store.dispatch(receiveSocketMessage("responseMessage", {'data':'Stop Sending', 'status':'Off'}));
 
   };
+
   handleEmit=()=>{
     if(this.state.socketStatus==="On"){
-      this.socket.emit("message", {'data':'Stop Sending', 'status':'Off'})
+      store.dispatch(sendSocketMessage("message", {'data':'Stop Sending', 'status':'Off'}));
       this.setState({'socketStatus':"Off"})
     }
     else{
-      this.socket.emit("message", {'data':'Start Sending', 'status':'On'})
+      store.dispatch(sendSocketMessage("message", {'data':'Start Sending', 'status':'On'}));
       this.setState({'socketStatus':"On"})
     }
     console.log("Emit Clicked")

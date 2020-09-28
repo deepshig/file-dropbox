@@ -6,16 +6,31 @@ export const callLogin = (UID) => {
         type: userConstants.LOGIN_REQUEST,
         UID: UID,
     }
-}
+};
 export const setLogin = (UID, token) => {
     return{
         type: userConstants.LOGIN_SUCCESS,
         UID: UID,
         token: token
     }
-}
+};
 export const createSocket = () => {
     return{
         type: socketConstants.SOCKET_REQUEST,
+        payload: "test",
     }
-}
+};
+export const sendSocketMessage = (ev, message) => {
+    return{
+        type: socketConstants.SEND_WEBSOCKET_MESSAGE,
+        event: ev,
+        payload: message,
+    }
+};
+export const receiveSocketMessage = (ev, message) => {
+    return{
+        type: socketConstants.SOCKET_MESSAGE_RECEIVE,
+        event: ev,
+        payload: message,
+    }
+};

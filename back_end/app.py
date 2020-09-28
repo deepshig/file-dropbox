@@ -39,7 +39,7 @@ def handleMessage(msg):
                 emit('responseMessage', {'data': get_jwt_identity()})
             else:
                 emit('responseMessage', {'temperature': round(random.random() * 10, 3)})
-            sleep(.5)
+                sleep(.5)
     return None
 
 

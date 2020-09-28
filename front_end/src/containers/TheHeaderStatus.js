@@ -8,23 +8,52 @@ import {
 } from '@coreui/react'
 
 class TheHeaderStatus extends Component {
+    constructor(props){
+        super(props);
+        this._isMounted = false;
+        this.state = { status: 'disconnected' };
+
+    }
+    startSubscribe(){
+        this.unsubscribe = store.subscribe(()=>{
+            const status = store.getState().socketReducer.status;
+            if (status !== this.state.status){
+                this._isMounted && this.setState({status})
+            }
+        })
+    }
+    componentDidMount(){
+        this._isMounted = true;
+        this._isMounted && this.startSubscribe();
+
+    }
+    componentWillUnmount(){
+        this._isMounted = false;
+    }
+
     ButtonRender(props){
         if(props.status === 'connected'){
-            return <CButton variant="outline" color="info" size="md" block>Connected</CButton>
-        }
-        if (props.status === 'connecting'){
-            return <CButton variant="outline" color="warning" size="md" block>Connecting</CButton>
+            return <CButton color="success" size="md" block>Connected</CButton>
         }
         return <CButton variant="outline" color="danger" size="md" block>Disconnected</CButton>
 
+
     }
     render () {
-        const socketStatus = store.getState().socketReducer.status;
         return (
                 <CRow className="align-items-center" style={{padding: "5px"}}>
                     {/*<CCol col="6" sm="4" md="2" xl className="mb-3 mb-xl-0">Connection: </CCol>*/}
                     <CCol col="6" sm="4" md="2" xl className="mb-3 mb-xl-0">
-                        <this.ButtonRender status={socketStatus}/>
+                        {/*{(function (){*/}
+                            {/*switch (socketStatus){*/}
+                                {/*case 'connected':*/}
+                                    {/*return <CButton color="success" size="md" block>Connected</CButton>;*/}
+                                {/*case 'disconnected':*/}
+                                    {/*return <CButton variant="outline" color="danger" size="md" block>Disconnected</CButton>;*/}
+                                {/*default:*/}
+                                    {/*return <div>Error</div>*/}
+                            {/*} })()}*/}
+                        <this.ButtonRender status={this.state.status}/>
                     </CCol>
                 </CRow>
         )

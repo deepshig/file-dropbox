@@ -34,7 +34,7 @@ class Login extends Component {
     this.setState({ UID: evt.target.value });
   }
   handleClick(){
-    store.dispatch(callLogin(this.state.UID))
+    store.dispatch(callLogin(this.state.UID));
     fetch("http://127.0.0.1:4000/auth/test", {
       method: "POST",
       crossDomain: true,
@@ -47,7 +47,7 @@ class Login extends Component {
         UID: this.state.UID,
       })
     }).then(response => response.json())
-        .then((response) => {store.dispatch(setLogin(this.state.UID, response['access_token'])); store.dispatch(createSocket())})
+        .then((response) => {store.dispatch(setLogin(this.state.UID, response['access_token'])); store.dispatch(createSocket())}) // TODO: pass token
         .then(<Redirect to="/dashboard" />)
   }
   render()
