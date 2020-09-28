@@ -11,23 +11,27 @@ class TheHeaderStatus extends Component {
     constructor(props){
         super(props);
         this._isMounted = false;
-        this.state = { status: 'disconnected' };
-
+        this.state = {
+            status: store.getState().socketReducer.status };
     }
     startSubscribe(){
         this.unsubscribe = store.subscribe(()=>{
             const status = store.getState().socketReducer.status;
+            console.log(status);
+            console.log(this.state.status);
             if (status !== this.state.status){
-                this._isMounted && this.setState({status})
+                console.log(this._isMounted);
+                this._isMounted && this.setState({status: status});
             }
-        })
+        });
     }
     componentDidMount(){
         this._isMounted = true;
         this._isMounted && this.startSubscribe();
 
-    }
+    } // TODO: Not remounting and subscribing on refresh...
     componentWillUnmount(){
+        this.unsubscribe();
         this._isMounted = false;
     }
 

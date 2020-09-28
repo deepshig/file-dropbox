@@ -17,7 +17,6 @@ export const setLogin = (UID, token) => {
 export const createSocket = () => {
     return{
         type: socketConstants.SOCKET_REQUEST,
-        payload: "test",
     }
 };
 export const sendSocketMessage = (ev, message) => {
@@ -31,6 +30,14 @@ export const receiveSocketMessage = (ev, message) => {
     return{
         type: socketConstants.SOCKET_MESSAGE_RECEIVE,
         event: ev,
+        payload: message,
+    }
+};
+export const storeSocketMessage = (message) => {
+    console.log("Stores");
+
+    return{
+        type: socketConstants.SOCKET_MESSAGE_STORE,
         payload: message,
     }
 };

@@ -8,14 +8,7 @@ class Test extends Component {
     socketStatus:"On"
   };
   componentDidMount() {
-
-      // this.socket.on("responseMessage", message => {
-      //     this.setState({'socketData': message.temperature})
-      //
-      //     console.log("responseMessage", message)
-      // })
-      store.dispatch(receiveSocketMessage("responseMessage", {'data':'Stop Sending', 'status':'Off'}));
-
+    store.dispatch(receiveSocketMessage("responseMessage", {'data':'Stop Sending', 'status':'Off'})); // TODO: WTF does this do?
   };
 
   handleEmit=()=>{

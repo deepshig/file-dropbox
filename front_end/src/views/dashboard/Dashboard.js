@@ -12,14 +12,62 @@ import {
 
 } from '@coreui/react';
 import CIcon from '@coreui/icons-react'
+import {sendSocketMessage} from "../../_actions";
 
 
 class Dashboard extends Component {
+    constructor(props){
+        super(props);
+        this._isMounted = false;
+        this.state = {
+            payload: store.getState().socketReducer.payload,
+            socketStatus: "On"
+        }
+    }
+    startSubscribe(){
+        this.unsubscribe = store.subscribe(()=>{
+            console.log("Sub");
+            const payload = store.getState().socketReducer.payload;
+            console.log(payload);
+            console.log(this.state.payload);
+            if (payload !== this.state.payload){
+                console.log(this._isMounted);
+                this._isMounted && this.setState({payload});
+            }
+        });
+    }
+    componentDidMount(){
+        this._isMounted = true;
+        this._isMounted && this.startSubscribe();
+
+    } // TODO: Not remounting and subscribing on refresh...
+    componentWillUnmount(){
+        this.unsubscribe();
+        this._isMounted = false;
+    }
+    handleEmit=()=>{
+        if(this.state.socketStatus==="On"){
+            store.dispatch(sendSocketMessage("message", {'data':'Stop Sending', 'status':'Off'}));
+            this.setState({'socketStatus':"Off"})
+        }
+        else{
+            store.dispatch(sendSocketMessage("message", {'data':'Start Sending', 'status':'On'}));
+            this.setState({'socketStatus':"On"})
+        }
+        console.log("Emit Clicked")
+    };
     render () {
         const user = store.getState().authentication.user;
         return (
 
             <>
+                <React.Fragment>
+                    <div>
+                        {this.state.payload}
+                        <div onClick={this.handleEmit}> Start/Stop</div>
+                    </div>
+                </React.Fragment>
+
                 <CCard>
                     <CCardBody>
                         <CRow>

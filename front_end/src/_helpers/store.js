@@ -7,7 +7,6 @@ import SocketClient from "./SocketClient"
 
 const socket = new SocketClient();
 
-
 const store = createStore(allReducers,
     composeWithDevTools(
         applyMiddleware(

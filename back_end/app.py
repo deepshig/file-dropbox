@@ -1,4 +1,4 @@
-from flask import Flask, Blueprint
+from flask import Flask, Blueprint, request
 from flask_cors import CORS, cross_origin
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
 from flask_socketio import SocketIO, send, emit
@@ -31,8 +31,10 @@ def test_connect():
 
 
 @socket.on('message')    # send(message=msg, broadcast=True)
-def handleMessage(msg):
+def handleMessage(msg, headers):
     print(msg)
+    token = headers['extraHeaders']['Authorization'].split(" ")[1]
+    print(token)
     if msg["status"] == "On":
         for i in range(5):
             if get_jwt_identity() is not None:
