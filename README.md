@@ -25,3 +25,5 @@ Example File retrieval flow.
 
 ## Changelog
 React App currently getting a JWT token generated from a static endpoint working only for 'test' user
+
+https://zgadzaj.com/development/docker/docker-compose/containers/rabbitmq

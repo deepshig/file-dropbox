@@ -1,11 +1,13 @@
 import jwt
-from flask import Flask, make_response, jsonify
+from flask import Flask, make_response, jsonify, request
 from flask_restful import Resource, Api, output_json
 from uuid import UUID
 # from . import authentication_service, user_db
 import authentication_service
 import user_db
 from flask_cors import CORS
+import uuid
+
 
 from flask_jwt_extended import JWTManager, get_jwt_identity, decode_token
 from flask_socketio import SocketIO, send, emit
@@ -98,11 +100,15 @@ class CreateUser(Resource):
     def __init__(self, svc):
         self.svc = svc
 
-    def post(self, role):
+    # def post(self, userid=uuid.uuid4()):
+    def post(self):
+        role = request.args.get('role', None)
+        userid = request.args.get('userid', uuid.uuid4())
+
         if role not in accepted_roles:
             return output_json({"msg": ERROR_ROLE_NOT_FOUND}, 400)
 
-        user_details = svc.create_user(role)
+        user_details = svc.create_user(role, userid)
         if user_details["user_created"]:
             user_details["id"] = str(user_details["id"])
             user_details["access_token"] = str(user_details["access_token"])
@@ -116,9 +122,13 @@ class LoginUser(Resource):
     def __init__(self, svc):
         self.svc = svc
 
-    def put(self, user_id):
-        if not is_valid_uuid(user_id):
+    def put(self):
+
+        user_id = request.args.get('userid', None)
+        if user_id is None:
             return output_json({"msg": ERROR_INVALID_USER_ID}, 400)
+        # if not is_valid_uuid(user_id):
+        #     return output_json({"msg": ERROR_INVALID_USER_ID}, 400)
 
         response = svc.login(user_id)
         if response["user_logged_in"]:
@@ -136,8 +146,8 @@ class LogoutUser(Resource):
         self.svc = svc
 
     def put(self, user_id):
-        if not is_valid_uuid(user_id):
-            return output_json({"msg": ERROR_INVALID_USER_ID}, 400)
+        # if not is_valid_uuid(user_id):
+        #     return output_json({"msg": ERROR_INVALID_USER_ID}, 400)
 
         response = svc.logout(user_id)
         if response["user_logged_out"]:
@@ -151,9 +161,11 @@ class LogoutUser(Resource):
 svc = init(db_config)
 
 api.add_resource(Ping, '/ping')
-api.add_resource(CreateUser, '/auth/signup/<string:role>',
+api.add_resource(CreateUser, '/auth/signup',
                  resource_class_kwargs={"svc": svc})
-api.add_resource(LoginUser, '/auth/login/<string:user_id>',
+# api.add_resource(CreateUser, '/auth/signup/<string:role>',
+#                  resource_class_kwargs={"svc": svc})
+api.add_resource(LoginUser, '/auth/login',
                  resource_class_kwargs={"svc": svc})
 api.add_resource(LogoutUser, '/auth/logout/<string:user_id>',
                  resource_class_kwargs={"svc": svc})

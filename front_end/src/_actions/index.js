@@ -14,6 +14,13 @@ export const setLogin = (UID, token) => {
         token: token
     }
 };
+export const setLoginfail = () => {
+    return{
+        type: userConstants.LOGIN_FAILURE,
+        UID: '',
+        token: ''
+    }
+};
 export const createSocket = () => {
     return{
         type: socketConstants.SOCKET_REQUEST,

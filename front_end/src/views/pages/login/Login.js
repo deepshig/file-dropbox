@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import { Link, Redirect } from 'react-router-dom'
 import { connect } from 'react-redux';
-import {callLogin, createSocket, setLogin} from "../../../_actions";
+import {callLogin, createSocket, setLogin, setLoginfail} from "../../../_actions";
 import store from "../../../_helpers/store";
 import jwt from 'jwt-decode';
 // import history from "../../../_helpers/history"
@@ -36,7 +36,7 @@ class Login extends Component {
   }
   handleClick(){
     store.dispatch(callLogin(this.state.UID));
-    fetch("http://127.0.0.1:4000/auth/login/" + this.state.UID, {
+    fetch("http://127.0.0.1:4000/auth/login?userid=" + this.state.UID, {
       method: "PUT",
       crossDomain: true,
       // credentials: 'include',
@@ -47,8 +47,15 @@ class Login extends Component {
       body: JSON.stringify({
         UID: this.state.UID,
       })
-    }).then(response => response.json())
-        .then((response) => {store.dispatch(setLogin(this.state.UID, jwt(response['jwt'])['access_token'])); store.dispatch(createSocket())}) // TODO: pass token
+    }).then((response) => {
+        if(response.status===400){
+            store.dispatch(setLoginfail());
+            return "";
+        }
+        else {
+            response.json().then((response) => {store.dispatch(setLogin(this.state.UID, jwt(response['jwt'])['access_token'])); store.dispatch(createSocket())})
+        }
+        })
         // .then((response) => console.log(jwt(response['jwt'])['access_token'])) // TODO: pass token
         .then(<Redirect to="/dashboard" />)
   }

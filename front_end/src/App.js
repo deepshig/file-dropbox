@@ -26,7 +26,7 @@ class App extends Component {
             console.log(store.getState().authentication.token)
       }
       else {
-        console.log("not Yet")
+        console.log("Not Token yet")
       }
     }
 

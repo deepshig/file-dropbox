@@ -13,17 +13,39 @@ import {
 import CIcon from '@coreui/icons-react'
 
 class TheHeaderDropdown extends Component {
+    constructor(props){
+        super(props);
+        this._isMounted = false;
+        this.state = {
+            user: store.getState().authentication.user };
+    }
+    startSubscribe(){
+        this.unsubscribe = store.subscribe(()=>{
+            const user = store.getState().authentication.user;
+            if ((user === undefined) ||  (user !== this.state.user)){
+                this._isMounted && this.setState({user});
+            }
+        });
+    }
+    componentDidMount(){
+        this._isMounted = true;
+        this._isMounted && this.startSubscribe();
+
+    } // TODO: Not remounting and subscribing on refresh...
+    componentWillUnmount(){
+        this.unsubscribe();
+        this._isMounted = false;
+    }
     render () {
-        const user = store.getState().authentication.user;
         return (
-            <div>{user
+            <div>{this.state.user
                 ?<CDropdown
                         inNav
                         className="c-header-nav-items mx-2"
                         direction="down"
                     >
                         <CDropdownToggle className="c-header-nav-link" caret={false}>
-                            <CButton block color="dark">{user}</CButton>
+                            <CButton block color="dark">{this.state.user}</CButton>
                         </CDropdownToggle>
                         <CDropdownMenu className="pt-0" placement="bottom-end">
                             <CDropdownItem
