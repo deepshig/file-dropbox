@@ -26,12 +26,8 @@ class Dashboard extends Component {
     }
     startSubscribe(){
         this.unsubscribe = store.subscribe(()=>{
-            console.log("Sub");
             const payload = store.getState().socketReducer.payload;
-            console.log(payload);
-            console.log(this.state.payload);
             if (payload !== this.state.payload){
-                console.log(this._isMounted);
                 this._isMounted && this.setState({payload});
             }
         });
@@ -63,7 +59,7 @@ class Dashboard extends Component {
             <>
                 <React.Fragment>
                     <div>
-                        {this.state.payload}
+                        Socket Testing: {this.state.payload}
                         <div onClick={this.handleEmit}> Start/Stop</div>
                     </div>
                 </React.Fragment>

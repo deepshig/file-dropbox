@@ -4,3 +4,4 @@ flask-jwt-extended
 flask-socketio
 psycopg2
 injector
+flask-restful

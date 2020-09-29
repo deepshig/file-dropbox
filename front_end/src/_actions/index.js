@@ -34,8 +34,6 @@ export const receiveSocketMessage = (ev, message) => {
     }
 };
 export const storeSocketMessage = (message) => {
-    console.log("Stores");
-
     return{
         type: socketConstants.SOCKET_MESSAGE_STORE,
         payload: message,
