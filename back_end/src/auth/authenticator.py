@@ -4,6 +4,7 @@ from flask_jwt_extended import JWTManager, jwt_required, create_access_token, ge
 
 auth_blueprint = Blueprint('auth', __name__, url_prefix='/auth')
 
+# TODO: Deprecated
 
 @auth_blueprint.route('/test', methods=['POST'])
 def test():

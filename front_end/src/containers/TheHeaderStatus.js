@@ -17,10 +17,7 @@ class TheHeaderStatus extends Component {
     startSubscribe(){
         this.unsubscribe = store.subscribe(()=>{
             const status = store.getState().socketReducer.status;
-            console.log(status);
-            console.log(this.state.status);
             if (status !== this.state.status){
-                console.log(this._isMounted);
                 this._isMounted && this.setState({status: status});
             }
         });

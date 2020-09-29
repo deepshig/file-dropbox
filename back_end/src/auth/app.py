@@ -5,14 +5,26 @@ from uuid import UUID
 # from . import authentication_service, user_db
 import authentication_service
 import user_db
+from flask_cors import CORS
+
+from flask_jwt_extended import JWTManager, get_jwt_identity, decode_token
+from flask_socketio import SocketIO, send, emit
+import random
+from time import sleep
 
 app = Flask(__name__)
+CORS(app, supports_credentials=True)
+socket = SocketIO(app, cors_allowed_origins="*")
+
 api = Api(app)
 
 ERROR_ROLE_NOT_FOUND = "Invalid role"
 ERROR_INVALID_USER_ID = "Inavlid User ID"
 ERROR_INTERNAL_SERVER = "Internal Server Error"
 SECRET_KEY = "i5uitypjchnar0rlz31yh0u5sgs8rui2baxxgw8e"
+
+app.config['SECRET_KEY'] = SECRET_KEY
+jwtMng = JWTManager(app)
 
 db_config = {"user": "postgres",
              "password": "postgres",
@@ -21,6 +33,41 @@ db_config = {"user": "postgres",
              "db_name": "user_auth"}
 
 accepted_roles = ["admin", "user", "developer"]
+
+
+#####################################
+#           Sockets                 #
+#####################################
+
+@socket.on('connect')
+def test_connect():
+
+    print('someone connected to websocket')
+    if get_jwt_identity() is not None:
+        emit('responseMessage', {'data': get_jwt_identity()})
+    else:
+        emit('responseMessage', {'data': 'Connected! ayy'})
+
+
+@socket.on('message')    # send(message=msg, broadcast=True)
+def handleMessage(msg, headers):
+    print(msg)
+    token = headers['extraHeaders']['Authorization'].split(" ")[1]
+    print(token)
+    if msg["status"] == "On":
+        for i in range(5):
+            if get_jwt_identity() is not None:
+                emit('responseMessage', {'data': get_jwt_identity()})
+            else:
+                emit('responseMessage', {'temperature': round(random.random() * 10, 3)})
+                sleep(.5)
+    return None
+
+
+####################################
+#       End Sockets                #
+####################################
+
 
 
 def init(db_config):
@@ -113,4 +160,4 @@ api.add_resource(LogoutUser, '/auth/logout/<string:user_id>',
 
 if __name__ == '__main__':
     app.run(debug=True, use_debugger=False, use_reloader=False,
-            passthrough_errors=True, port=3000)
+            passthrough_errors=True, port=4000)

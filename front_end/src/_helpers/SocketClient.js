@@ -37,7 +37,7 @@ export default class socketAPI {
                 }
             }, response => {
                 this.socket.on('responseMessage', response => store.dispatch(storeSocketMessage(response['temperature'])));
-                console.log(store.getState().socketReducer.payload);
+                // console.log(store.getState().socketReducer.payload);
 
                 return resolve();
             });
