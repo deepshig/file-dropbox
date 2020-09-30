@@ -1,0 +1,9 @@
+flask
+flask_cors
+pytest
+psycopg2
+flask-restful
+pyjwt
+
+flask-jwt-extended
+flask-socketio
