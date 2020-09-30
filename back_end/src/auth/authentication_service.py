@@ -8,8 +8,9 @@ class Authenticator:
     def __init__(self, auth_db: user_db.UserDB):
         self.db = auth_db
 
-    def create_user(self, role):
+    def create_user(self, role, name):
         user_details = {"id": uuid.uuid4(),
+                        "name": name,
                         "role": role,
                         "access_token": uuid.uuid4(),
                         "logged_in": True}

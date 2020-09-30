@@ -24,9 +24,9 @@ class DBDriver:
 
     def create_users_table(self):
         cursor = self.connection.cursor()
-        # TODO: Return id to UUID and add username field.
         create_table_query = '''CREATE TABLE IF NOT EXISTS users (
                                     id UUID PRIMARY KEY NOT NULL,
+                                    name VARCHAR,
                                     role VARCHAR NOT NULL,
                                     access_token UUID,
                                     logged_in BOOL DEFAULT FALSE NOT NULL,

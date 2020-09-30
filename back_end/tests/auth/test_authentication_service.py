@@ -28,14 +28,16 @@ def test_create_user():
     db = UserDB(test_db_config)
     auth = Authenticator(db)
 
-    result = auth.create_user("admin")
+    result = auth.create_user("admin", "user-1")
     assert result["user_created"] == True
     assert result["role"] == "admin"
+    assert result["name"] == "user-1"
 
     cursor = auth.db.db_driver.connection.cursor()
     fetched_user = get_test_user(auth.db, cursor, result["id"])
     assert fetched_user["user_fetched"] == True
     assert fetched_user["role"] == "admin"
+    assert fetched_user["name"] == "user-1"
 
     tear_down(cursor, auth.db.db_driver)
 
@@ -143,7 +145,7 @@ def create_test_user(db, cursor, user_id, access_token):
 
 
 def get_test_user(db, cursor, user_id):
-    get_user_query = '''SELECT id, role, access_token, logged_in, created_at, updated_at FROM users WHERE id = (%s)'''
+    get_user_query = '''SELECT id, name, role, access_token, logged_in, created_at, updated_at FROM users WHERE id = (%s)'''
     try:
         cursor.execute(get_user_query, [user_id])
         db.db_driver.connection.commit()
@@ -156,9 +158,10 @@ def get_test_user(db, cursor, user_id):
         if user is not None:
             return {"user_fetched": True,
                     "id": user[0],
-                    "role": user[1],
-                    "access_token": user[2],
-                    "logged_in": user[3]}
+                    "name": user[1],
+                    "role": user[2],
+                    "access_token": user[3],
+                    "logged_in": user[4]}
         else:
             return {"user_fetched": False,
                     "error": ERROR_USER_NOT_FOUND}
