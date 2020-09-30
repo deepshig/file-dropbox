@@ -1,6 +1,5 @@
 import uuid
 from src.auth import user_db
-# import user_db
 
 ERROR_UNAUTHORISED_REQUEST = "User not authorised to fetch this resource"
 

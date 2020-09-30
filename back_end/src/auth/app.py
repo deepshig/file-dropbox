@@ -2,11 +2,8 @@ import jwt
 from flask import Flask, make_response, jsonify, request
 from flask_restful import Resource, Api, output_json
 from uuid import UUID
-# from . import authentication_service, user_db
 from src.auth import authentication_service
 from src.auth import user_db
-# import authentication_service
-# import user_db
 from flask_cors import CORS
 import uuid
 
@@ -63,7 +60,8 @@ def handleMessage(msg, headers):
             if get_jwt_identity() is not None:
                 emit('responseMessage', {'data': get_jwt_identity()})
             else:
-                emit('responseMessage', {'temperature': round(random.random() * 10, 3)})
+                emit('responseMessage', {
+                     'temperature': round(random.random() * 10, 3)})
                 sleep(.5)
     return None
 
@@ -71,7 +69,6 @@ def handleMessage(msg, headers):
 ####################################
 #       End Sockets                #
 ####################################
-
 
 
 def init(db_config):
@@ -109,7 +106,6 @@ class CreateUser(Resource):
         if role not in accepted_roles:
             return output_json({"msg": ERROR_ROLE_NOT_FOUND}, 400)
 
-        # user_details = svc.create_user(role, userid)
         user_details = svc.create_user(role)
         if user_details["user_created"]:
             user_details["id"] = str(user_details["id"])
@@ -146,8 +142,8 @@ class LogoutUser(Resource):
         self.svc = svc
 
     def put(self, user_id):
-        # if not is_valid_uuid(user_id):
-        #     return output_json({"msg": ERROR_INVALID_USER_ID}, 400)
+        if not is_valid_uuid(user_id):
+            return output_json({"msg": ERROR_INVALID_USER_ID}, 400)
 
         response = svc.logout(user_id)
         if response["user_logged_out"]:

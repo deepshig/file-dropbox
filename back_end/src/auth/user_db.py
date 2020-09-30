@@ -1,8 +1,7 @@
-from src.auth  import db_driver
+from src.auth import db_driver
 import psycopg2
 import uuid
 from psycopg2 import Error, extras
-# from . import db_driver
 
 ERROR_USER_NOT_FOUND = "User not found"
 
