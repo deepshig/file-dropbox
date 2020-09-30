@@ -4,3 +4,4 @@ pytest
 psycopg2
 flask-restful
 pyjwt
+redis
