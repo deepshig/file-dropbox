@@ -10,7 +10,7 @@ services:
     - 5672:5672
     - 15672:15672
 
-  db:
+  postgresdb:
     image: postgres
     restart: always
     ports:
@@ -28,4 +28,25 @@ services:
     ports:
       - 8080:8080
     depends_on:
-      - db
+      - postgresdb
+
+  gateway:
+    build: back_end/gateway
+    ports:
+      - 4000:4000
+    depends_on:
+      - postgresdb
+    links:
+      - postgresdb
+    environment:
+      DATABASE_HOST: postgresdb
+    command: ["./wait-for-it.sh", "postgresdb:5432/auth_db", "--", "python", "./app.py"]
+
+  front-end:
+    build: front_end
+    ports:
+      - 3000:3000
+    stdin_open: true
+
+
+

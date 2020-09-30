@@ -5,7 +5,7 @@ from flask_socketio import SocketIO, send, emit
 import random
 from time import sleep
 
-from back_end.src.auth.authenticator import auth_blueprint
+from back_end.gateway.auth.authenticator import auth_blueprint
 from back_end.API import socket_blueprint
 
 app = Flask(__name__)

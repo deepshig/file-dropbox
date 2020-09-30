@@ -30,7 +30,7 @@ jwtMng = JWTManager(app)
 
 db_config = {"user": "postgres",
              "password": "postgres",
-             "host": "127.0.0.1",
+             "host": "postgresdb",
              "port": "5432",
              "db_name": "user_auth"}
 
@@ -172,4 +172,4 @@ api.add_resource(LogoutUser, '/auth/logout/<string:user_id>',
 
 if __name__ == '__main__':
     app.run(debug=True, use_debugger=False, use_reloader=False,
-            passthrough_errors=True, port=4000)
+            passthrough_errors=True, host='0.0.0.0', port=4000)
