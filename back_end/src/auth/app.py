@@ -1,12 +1,11 @@
 import jwt
 from flask import Flask, make_response, jsonify, request
-from flask_restful import Resource, Api, output_json
+from flask_restful import Resource, Api, output_json, reqparse
 from uuid import UUID
 from src.auth import authentication_service
 from src.auth import user_db
 from flask_cors import CORS
 import uuid
-
 
 from flask_jwt_extended import JWTManager, get_jwt_identity, decode_token
 from flask_socketio import SocketIO, send, emit
@@ -19,6 +18,8 @@ socket = SocketIO(app, cors_allowed_origins="*")
 
 api = Api(app)
 
+ERROR_ROLE_NOT_PROVIDED = "Role not provided"
+ERROR_NAME_NOT_PROVIDED = "Name not provided"
 ERROR_ROLE_NOT_FOUND = "Invalid role"
 ERROR_INVALID_USER_ID = "Inavlid User ID"
 ERROR_INTERNAL_SERVER = "Internal Server Error"
@@ -100,13 +101,19 @@ class CreateUser(Resource):
         self.svc = svc
 
     def post(self):
-        role = request.args.get('role', None)
-        userid = request.args.get('userid', uuid.uuid4())
+        parser = reqparse.RequestParser()
+        parser.add_argument('name', required=True, type=str,
+                            help=ERROR_NAME_NOT_PROVIDED)
+        parser.add_argument('role', required=True, type=str,
+                            help=ERROR_ROLE_NOT_PROVIDED)
+        args = parser.parse_args()
+
+        role, name = args["role"], args["name"]
 
         if role not in accepted_roles:
             return output_json({"msg": ERROR_ROLE_NOT_FOUND}, 400)
 
-        user_details = svc.create_user(role)
+        user_details = svc.create_user(role, name)
         if user_details["user_created"]:
             user_details["id"] = str(user_details["id"])
             user_details["access_token"] = str(user_details["access_token"])
@@ -159,8 +166,6 @@ svc = init(db_config)
 api.add_resource(Ping, '/ping')
 api.add_resource(CreateUser, '/auth/signup',
                  resource_class_kwargs={"svc": svc})
-# api.add_resource(CreateUser, '/auth/signup/<string:role>',
-#                  resource_class_kwargs={"svc": svc})
 api.add_resource(LoginUser, '/auth/login',
                  resource_class_kwargs={"svc": svc})
 api.add_resource(LogoutUser, '/auth/logout/<string:user_id>',
@@ -168,4 +173,4 @@ api.add_resource(LogoutUser, '/auth/logout/<string:user_id>',
 
 if __name__ == '__main__':
     app.run(debug=True, use_debugger=False, use_reloader=False,
-            passthrough_errors=True, host='0.0.0.0', port=4000)
+            passthrough_errors=True, host='0.0.0.0', port=3000)
