@@ -5,9 +5,9 @@ There is a requirement for a system which allows clients to connect to a pool on
 
 The file size(s) being sent are 100’s of Kbs to 10’s of Mbs. Although sending updates asynchronously, it is required that batches from similar timestamps are grouped, this can be through the range on the timestamp, or otherwise. A server, external to this system, will request a group's files at a given trigger event. The external server will then perform some operation for roughly 2 minutes. On completion the external server will return to our project system a single file intended to be shared back down to the entire client pool. 
 
-## Architecture1 Diagram
+## Architecture Diagram
 
-![Architecture1](Architecture/Architecture-7.png)
+![Architecture7](Architecture/Architecture-7.png)
 
 ## Changelog
 React App currently getting a JWT token generated from a static endpoint working only for 'test' user

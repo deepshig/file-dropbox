@@ -30,7 +30,7 @@ services:
       - postgresdb
 
   gateway:
-    build: back_end/gateway
+    build: back_end/src
     ports:
       - 4000:4000
     depends_on:

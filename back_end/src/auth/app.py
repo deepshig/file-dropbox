@@ -3,8 +3,8 @@ from flask import Flask, make_response, jsonify, request
 from flask_restful import Resource, Api, output_json
 from uuid import UUID
 # from . import authentication_service, user_db
-import authentication_service
-import user_db
+from back_end.src.auth import authentication_service
+from back_end.src.auth import user_db
 from flask_cors import CORS
 import uuid
 
