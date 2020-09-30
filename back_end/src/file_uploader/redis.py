@@ -2,6 +2,8 @@ import redis
 from redis import RedisError
 import sys
 
+ERROR_KEY_NOT_FOUND = "Key not found in redis"
+
 
 class RedisDriver:
     def __init__(self, redis_config):
@@ -25,3 +27,20 @@ class RedisDriver:
             error_str = "Error while connecting to redis : " + str(err)
             return {"success": False,
                     "error": error_str}
+
+    def get(self, key):
+        key_str = str(key)
+        try:
+            value = self.connection.get(key_str)
+        except RedisError as err:
+            error_str = "Error while retrieving value from redis : " + str(err)
+            return {"success": False,
+                    "error": error_str}
+
+        if value is not None:
+            value_str = value.decode("utf-8")
+            return {"success": True,
+                    "value": value_str}
+        else:
+            return {"success": False,
+                    "error": ERROR_KEY_NOT_FOUND}

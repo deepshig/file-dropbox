@@ -2,7 +2,7 @@ import pytest
 import sys
 sys.path.append('../')
 
-from src.file_uploader.redis import RedisDriver  # NOQA
+from src.file_uploader.redis import RedisDriver, ERROR_KEY_NOT_FOUND  # NOQA
 
 test_redis_config = {"host": "127.0.0.1",
                      "port": 6379}
@@ -23,7 +23,7 @@ def test_connect():
 def test_set():
     r = RedisDriver(test_redis_config)
     """
-    set normal string value
+    success : set normal string value
     """
     result = r.set("test_key", "test_value")
     assert result["success"] == True
@@ -31,9 +31,29 @@ def test_set():
     assert r.connection.get("test_key") == b'test_value'
 
     """
-    set non-string value
+    success : set non-string value
     """
     result = r.set("test_key2", {"k1": 1})
     print(result)
     assert result["success"] == True
+    teardown_redis(r.connection)
+
+
+def test_get():
+    r = RedisDriver(test_redis_config)
+    """
+    failure : key doesn't exist
+    """
+    result = r.get("random_key")
+    assert result["success"] == False
+    assert result["error"] == ERROR_KEY_NOT_FOUND
+
+    """
+    success
+    """
+    r.connection.set("hello", "world")
+
+    result = r.get("hello")
+    assert result["success"] == True
+    assert result["value"] == "world"
     teardown_redis(r.connection)
