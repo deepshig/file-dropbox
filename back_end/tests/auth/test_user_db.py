@@ -12,7 +12,7 @@ def test_db():
     test_db_config = {"user": "postgres",
                       "password": "postgres",
                       "host": "127.0.0.1",
-                      "port": "5432",
+                      "port": "5433",
                       "db_name": "user_auth_test"}
 
     db = UserDB(test_db_config)

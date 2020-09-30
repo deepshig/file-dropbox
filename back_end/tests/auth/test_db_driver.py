@@ -12,7 +12,7 @@ def test_db_driver():
     test_db_config = {"user": "postgres",
                       "password": "postgres",
                       "host": "127.0.0.1",
-                      "port": "5432",
+                      "port": "5433",
                       "db_name": "user_auth_test"}
     test_db = DBDriver()
     test_db.connect(test_db_config)

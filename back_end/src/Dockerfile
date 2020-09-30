@@ -11,7 +11,9 @@ COPY requirements.txt .
 RUN pip install -r requirements.txt
 
 # copy the content of the local gateway directory to the working directory
-COPY auth .
+#COPY ../src/auth/ .
+COPY ./auth/wait-for-it.sh .
+ADD auth ./src/auth
 
 # command to run on container start
 #CMD [ "python", "./app.py" ]

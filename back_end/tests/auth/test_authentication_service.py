@@ -10,7 +10,7 @@ from src.auth.authentication_service import Authenticator, ERROR_UNAUTHORISED_RE
 test_db_config = {"user": "postgres",
                   "password": "postgres",
                   "host": "127.0.0.1",
-                  "port": "5432",
+                  "port": "5433",
                   "db_name": "user_auth_test"}
 
 

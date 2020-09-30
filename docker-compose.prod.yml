@@ -20,17 +20,7 @@ services:
       POSTGRES_DB: user_auth
     volumes:
     - ./postgres:/var/lib/postgresql/data
-  postgresdb-test:
-      image: postgres
-      restart: always
-      ports:
-      - 5433:5432
-      environment:
-        POSTGRES_PASSWORD: postgres
-        POSTGRES_USER: postgres
-        POSTGRES_DB: user_auth_test
-      volumes:
-      - ./postgres-test:/var/lib/postgresql/data
+
   adminer:
     image: adminer
     restart: always
@@ -39,7 +29,7 @@ services:
     depends_on:
       - postgresdb
 
-  auth:
+  gateway:
     build: back_end/src
     ports:
       - 4000:4000
@@ -49,7 +39,7 @@ services:
       - postgresdb
     environment:
       DATABASE_HOST: postgresdb
-    command: ["./wait-for-it.sh", "postgresdb:5432/auth_db", "--", "python", "./src/auth/app.py"]
+    command: ["./wait-for-it.sh", "postgresdb:5432/auth_db", "--", "python", "./app.py"]
 
   front-end:
     build: front_end

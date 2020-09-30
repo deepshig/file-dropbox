@@ -1,5 +1,5 @@
 import uuid
-from src.auth  import user_db
+from src.auth import user_db
 # import user_db
 
 ERROR_UNAUTHORISED_REQUEST = "User not authorised to fetch this resource"
@@ -9,8 +9,8 @@ class Authenticator:
     def __init__(self, auth_db: user_db.UserDB):
         self.db = auth_db
 
-    def create_user(self, role, userid):
-        user_details = {"id": userid,
+    def create_user(self, role):
+        user_details = {"id": uuid.uuid4(),
                         "role": role,
                         "access_token": uuid.uuid4(),
                         "logged_in": True}

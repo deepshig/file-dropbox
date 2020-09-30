@@ -3,8 +3,10 @@ from flask import Flask, make_response, jsonify, request
 from flask_restful import Resource, Api, output_json
 from uuid import UUID
 # from . import authentication_service, user_db
-from back_end.src.auth import authentication_service
-from back_end.src.auth import user_db
+from src.auth import authentication_service
+from src.auth import user_db
+# import authentication_service
+# import user_db
 from flask_cors import CORS
 import uuid
 
@@ -30,7 +32,7 @@ jwtMng = JWTManager(app)
 
 db_config = {"user": "postgres",
              "password": "postgres",
-             "host": "postgresdb",
+             "host": "127.0.0.1",
              "port": "5432",
              "db_name": "user_auth"}
 
@@ -100,7 +102,6 @@ class CreateUser(Resource):
     def __init__(self, svc):
         self.svc = svc
 
-    # def post(self, userid=uuid.uuid4()):
     def post(self):
         role = request.args.get('role', None)
         userid = request.args.get('userid', uuid.uuid4())
@@ -108,7 +109,8 @@ class CreateUser(Resource):
         if role not in accepted_roles:
             return output_json({"msg": ERROR_ROLE_NOT_FOUND}, 400)
 
-        user_details = svc.create_user(role, userid)
+        # user_details = svc.create_user(role, userid)
+        user_details = svc.create_user(role)
         if user_details["user_created"]:
             user_details["id"] = str(user_details["id"])
             user_details["access_token"] = str(user_details["access_token"])
@@ -125,10 +127,8 @@ class LoginUser(Resource):
     def put(self):
 
         user_id = request.args.get('userid', None)
-        if user_id is None:
+        if not is_valid_uuid(user_id):
             return output_json({"msg": ERROR_INVALID_USER_ID}, 400)
-        # if not is_valid_uuid(user_id):
-        #     return output_json({"msg": ERROR_INVALID_USER_ID}, 400)
 
         response = svc.login(user_id)
         if response["user_logged_in"]:
