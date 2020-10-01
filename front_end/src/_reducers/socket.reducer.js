@@ -10,8 +10,12 @@ export function socketReducer(state = initialState, action) {
     switch (action.type) {
         case socketConstants.SOCKET_REQUEST:
             return {
-                status: 'connected',
+                status: 'connecting',
                 payload: action.payload,
+            };
+        case socketConstants.SOCKET_SUCCESS:
+            return {
+                status: 'connected',
             };
         case socketConstants.SOCKET_FAILURE:
             return {

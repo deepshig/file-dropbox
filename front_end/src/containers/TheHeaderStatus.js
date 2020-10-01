@@ -36,6 +36,9 @@ class TheHeaderStatus extends Component {
         if(props.status === 'connected'){
             return <CButton color="success" size="md" block>Connected</CButton>
         }
+        if(props.status === 'connecting'){
+            return <CButton color="warning" size="md" block>Connecting</CButton>
+        }
         return <CButton variant="outline" color="danger" size="md" block>Disconnected</CButton>
 
 

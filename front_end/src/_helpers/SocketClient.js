@@ -10,10 +10,29 @@ export default class socketAPI {
     socket;
 
     connect() {
+        // this.socket = io(host);
+        // this.socket.on('connect',{
+        //         query: {token: store.getState().authentication.token, uid: store.getState().authentication.user}
+        //     }, function () {
+        //         console.log("heloo");
+        //     // socket connected
+        // });
+
         this.socket = io.connect(host, {
             query: {token: store.getState().authentication.token, uid: store.getState().authentication.user}
+        }, function(){
+            console.log("heloo");
         });
+    }
 
+    connected() {
+        return new Promise((resolve, reject) => {
+            if (!this.socket) return reject('No socket connection.');
+            console.log(this.socket.connected);
+
+            return resolve();
+
+        });
     }
 
     disconnect() {
@@ -34,8 +53,8 @@ export default class socketAPI {
                     Authorization: "Bearer " + store.getState().authentication.token
                 }
             }, response => {
-                this.socket.on('responseMessage', response => store.dispatch(storeSocketMessage(response['data'])));
-                // console.log(store.getState().socketReducer.payload);
+                this.socket.on('message', response => store.dispatch(storeSocketMessage(response['data'])));
+                console.log(store.getState().socketReducer.payload);
 
                 return resolve();
             });

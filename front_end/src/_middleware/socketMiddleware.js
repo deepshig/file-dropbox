@@ -9,7 +9,7 @@ export default function socketMiddleware(newSock) {
         switch(action.type) {
             case socketConstants.SOCKET_REQUEST : {
                 socket.connect();
-                // socket.send("message", action.payload);
+                socket.connected();
                 break;
             }
             case socketConstants.SEND_WEBSOCKET_MESSAGE: {

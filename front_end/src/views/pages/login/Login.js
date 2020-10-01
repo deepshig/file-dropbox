@@ -54,6 +54,7 @@ class Login extends Component {
         }
         else {
             response.json().then((response) => {store.dispatch(setLogin(this.state.UID, jwt(response['jwt'])['access_token'])); store.dispatch(createSocket())})
+            // response.json().then((response) => {store.dispatch(console.log(jwt(response['jwt'])))})
         }
         })
         // .then((response) => console.log(jwt(response['jwt'])['access_token'])) // TODO: pass token
