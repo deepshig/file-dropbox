@@ -16,7 +16,7 @@ def teardown_redis(redis_conn):
 def test_connect():
     r = RedisDriver(test_redis_config)
     r.connection.set("hello", "world")
-    assert r.connection.get("hello") == b'world'
+    assert r.connection.get("hello") == "world"
     teardown_redis(r.connection)
 
 
@@ -28,7 +28,7 @@ def test_set():
     result = r.set("test_key", "test_value")
     assert result["success"] == True
 
-    assert r.connection.get("test_key") == b'test_value'
+    assert r.connection.get("test_key") == "test_value"
 
     """
     success : set non-string value

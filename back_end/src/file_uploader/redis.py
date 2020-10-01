@@ -11,8 +11,10 @@ class RedisDriver:
 
     def __connect(self, redis_config):
         try:
-            self.connection = redis.Redis(host=redis_config["host"],
-                                          port=redis_config["port"])
+            self.connection = redis.StrictRedis(host=redis_config["host"],
+                                                port=redis_config["port"],
+                                                charset="utf-8",
+                                                decode_responses=True)
         except RedisError as err:
             error_str = "Error while connecting to redis : " + str(err)
             sys.exit(error_str)
@@ -38,9 +40,8 @@ class RedisDriver:
                     "error": error_str}
 
         if value is not None:
-            value_str = value.decode("utf-8")
             return {"success": True,
-                    "value": value_str}
+                    "value": value}
         else:
             return {"success": False,
                     "error": ERROR_KEY_NOT_FOUND}
