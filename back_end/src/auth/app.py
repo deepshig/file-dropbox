@@ -14,8 +14,11 @@ CORS(app, supports_credentials=True)
 
 api = Api(app)
 
+ERROR_ROLE_NOT_PROVIDED = "Role not provided"
+ERROR_NAME_NOT_PROVIDED = "Name not provided"
 ERROR_ROLE_NOT_FOUND = "Invalid role"
 ERROR_INVALID_USER_ID = "Inavlid User ID"
+ERROR_INVALID_USER_NAME = "Inavlid User Name"
 ERROR_INTERNAL_SERVER = "Internal Server Error"
 
 SECRET_KEY = "i5uitypjchnar0rlz31yh0u5sgs8rui2baxxgw8e"
