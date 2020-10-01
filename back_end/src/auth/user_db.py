@@ -58,13 +58,13 @@ class UserDB:
         finally:
             cursor.close()
 
-    def login(self, user_id, access_token):
+    def login(self, user_name, access_token):
         psycopg2.extras.register_uuid()
-        login_query = '''UPDATE users SET access_token = (%s), logged_in = (%s), updated_at = now() WHERE id = (%s)'''
+        login_query = '''UPDATE users SET access_token = (%s), logged_in = (%s), updated_at = now() WHERE name = (%s)'''
 
         cursor = self.db_driver.connection.cursor()
         try:
-            cursor.execute(login_query, [access_token, True, user_id])
+            cursor.execute(login_query, [access_token, True, user_name])
             self.db_driver.connection.commit()
         except psycopg2.Error as err:
             return {"user_logged_in": False,

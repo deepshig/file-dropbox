@@ -109,10 +109,10 @@ def test_login():
     """
     failure : user doesn't exist
     """
-    user_id = uuid.uuid4()
+    user_name = "user-1"
     access_token = uuid.uuid4()
 
-    result = db.login(user_id, access_token)
+    result = db.login(user_name, access_token)
     assert result["user_logged_in"] == False
     assert result["error"] == ERROR_USER_NOT_FOUND
 
@@ -120,34 +120,22 @@ def test_login():
     success
     """
     user_id = uuid.uuid4()
+    user_name = "user-1"
     access_token = uuid.uuid4()
-    create_user_query = '''INSERT INTO users(id, name, role, access_token, logged_in, created_at, updated_at) VALUES ((%s), (%s), (%s), (%s), (%s), now(), now())'''
-    cursor = db.db_driver.connection.cursor()
-    psycopg2.extras.register_uuid()
-    try:
-        cursor.execute(create_user_query, [
-            user_id, "dummy", "user-1", access_token, False])
-        db.db_driver.connection.commit()
-    except psycopg2.Error as err:
-        print("Error in creating test user : ", err)
 
-    result = db.login(user_id, access_token)
+    cursor = db.db_driver.connection.cursor()
+    create_test_user(db, cursor, user_id, user_name, access_token)
+
+    result = db.login(user_name, access_token)
     assert result["user_logged_in"] == True
 
-    fetch_user_query = '''SELECT * FROM users WHERE id = %s'''
-    try:
+    fetched_user = get_test_user(db, cursor, user_id)
 
-        cursor.execute(fetch_user_query, [user_id])
-        db.db_driver.connection.commit()
+    assert fetched_user["user_fetched"] == True
+    assert fetched_user["access_token"] == access_token
+    assert fetched_user["logged_in"] == True
 
-        fetched_user = cursor.fetchone()
-
-        assert fetched_user[3] == access_token
-        assert fetched_user[4] == True
-    except psycopg2.Error as err:
-        print("Error while checking if user logged in : ", err)
-    finally:
-        tear_down(cursor, db.db_driver)
+    tear_down(cursor, db.db_driver)
 
 
 def test_logout():
@@ -166,29 +154,51 @@ def test_logout():
     """
     user_id = uuid.uuid4()
     access_token = uuid.uuid4()
-    create_user_query = '''INSERT INTO users(id, name, role, access_token, logged_in, created_at, updated_at) VALUES ((%s), (%s), (%s), (%s), (%s), now(), now())'''
+    user_name = "user-2"
+
     cursor = db.db_driver.connection.cursor()
-    psycopg2.extras.register_uuid()
-    try:
-        cursor.execute(create_user_query, [
-            user_id, "dummy", "user-1", access_token, False])
-        db.db_driver.connection.commit()
-    except psycopg2.Error as err:
-        print("Error in creating test user : ", err)
+    create_test_user(db, cursor, user_id, user_name, access_token)
 
     result = db.logout(user_id)
     assert result["user_logged_out"] == True
 
-    fetch_user_query = '''SELECT * FROM users WHERE id = %s'''
+    fetched_user = get_test_user(db, cursor, user_id)
+    assert fetched_user["user_fetched"] == True
+    assert fetched_user["logged_in"] == False
+
+    tear_down(cursor, db.db_driver)
+
+
+def create_test_user(db, cursor, user_id, user_name, access_token):
+    create_user_query = '''INSERT INTO users(id, name, role, access_token, logged_in, created_at, updated_at) VALUES ((%s), (%s), (%s), (%s), (%s), now(), now())'''
+    psycopg2.extras.register_uuid()
+
     try:
-
-        cursor.execute(fetch_user_query, [user_id])
+        cursor.execute(create_user_query, [
+            user_id, user_name, "admin", access_token, False])
         db.db_driver.connection.commit()
-
-        fetched_user = cursor.fetchone()
-
-        assert fetched_user[4] == False
     except psycopg2.Error as err:
-        print("Error while checking if user logged in : ", err)
-    finally:
-        tear_down(cursor, db.db_driver)
+        print("Error in creating test user : ", err)
+
+
+def get_test_user(db, cursor, user_id):
+    get_user_query = '''SELECT id, name, role, access_token, logged_in, created_at, updated_at FROM users WHERE id = (%s)'''
+    try:
+        cursor.execute(get_user_query, [user_id])
+        db.db_driver.connection.commit()
+    except psycopg2.Error as err:
+        print("Error while fetching the test user : ", err)
+        return {"user_fetched": False,
+                "error": err}
+    else:
+        user = cursor.fetchone()
+        if user is not None:
+            return {"user_fetched": True,
+                    "id": user[0],
+                    "name": user[1],
+                    "role": user[2],
+                    "access_token": user[3],
+                    "logged_in": user[4]}
+        else:
+            return {"user_fetched": False,
+                    "error": ERROR_USER_NOT_FOUND}

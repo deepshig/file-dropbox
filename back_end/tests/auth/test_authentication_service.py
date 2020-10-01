@@ -50,6 +50,7 @@ def test_get_user():
     auth = Authenticator(db)
 
     user_id = uuid.uuid4()
+    user_name = "user-3"
     access_token = uuid.uuid4()
 
     fetched_user = auth.get_user(user_id, access_token)
@@ -57,11 +58,11 @@ def test_get_user():
     assert fetched_user["error"] == ERROR_USER_NOT_FOUND
 
     """
-    failure : user not authorrised to view this user
+    failure : user not authorised to view this user
     """
     correct_access_token = uuid.uuid4()
     cursor = auth.db.db_driver.connection.cursor()
-    create_test_user(auth.db, cursor, user_id, correct_access_token)
+    create_test_user(auth.db, cursor, user_id, user_name, correct_access_token)
 
     fetched_user = auth.get_user(user_id, access_token)
     assert fetched_user["user_fetched"] == False
@@ -85,10 +86,11 @@ def test_login():
     auth = Authenticator(db)
 
     user_id = uuid.uuid4()
+    user_name = "user-1"
     """
     failure : user does not exit
     """
-    result = auth.login(user_id)
+    result = auth.login(user_name)
     assert result["user_logged_in"] == False
     assert result["error"] == ERROR_USER_NOT_FOUND
 
@@ -96,13 +98,14 @@ def test_login():
     success
     """
     cursor = auth.db.db_driver.connection.cursor()
-    create_test_user(auth.db, cursor, user_id, uuid.uuid4())
-    result = auth.login(user_id)
+    create_test_user(auth.db, cursor, user_id, user_name, uuid.uuid4())
+    result = auth.login(user_name)
     assert result["user_logged_in"] == True
 
     fetched_user = get_test_user(auth.db, cursor, user_id)
     assert fetched_user["user_fetched"] == True
     assert fetched_user["id"] == user_id
+    assert fetched_user["name"] == user_name
     assert fetched_user["logged_in"] == True
 
 
@@ -111,6 +114,7 @@ def test_logout():
     auth = Authenticator(db)
 
     user_id = uuid.uuid4()
+    user_name = "user-2"
     """
     failure : user does not exit
     """
@@ -122,7 +126,7 @@ def test_logout():
     success
     """
     cursor = auth.db.db_driver.connection.cursor()
-    create_test_user(auth.db, cursor, user_id, uuid.uuid4())
+    create_test_user(auth.db, cursor, user_id, user_name, uuid.uuid4())
     result = auth.logout(user_id)
     assert result["user_logged_out"] == True
 
@@ -132,13 +136,13 @@ def test_logout():
     assert fetched_user["logged_in"] == False
 
 
-def create_test_user(db, cursor, user_id, access_token):
-    create_user_query = '''INSERT INTO users(id, role, access_token, logged_in, created_at, updated_at) VALUES ((%s), (%s), (%s), (%s), now(), now())'''
+def create_test_user(db, cursor, user_id, user_name, access_token):
+    create_user_query = '''INSERT INTO users(id, name, role, access_token, logged_in, created_at, updated_at) VALUES ((%s), (%s), (%s), (%s), (%s), now(), now())'''
     psycopg2.extras.register_uuid()
 
     try:
         cursor.execute(create_user_query, [
-            user_id, "admin", access_token, False])
+            user_id, user_name, "admin", access_token, False])
         db.db_driver.connection.commit()
     except psycopg2.Error as err:
         print("Error in creating test user : ", err)

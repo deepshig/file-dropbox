@@ -22,7 +22,9 @@ ERROR_ROLE_NOT_PROVIDED = "Role not provided"
 ERROR_NAME_NOT_PROVIDED = "Name not provided"
 ERROR_ROLE_NOT_FOUND = "Invalid role"
 ERROR_INVALID_USER_ID = "Inavlid User ID"
+ERROR_INVALID_USER_NAME = "Inavlid User Name"
 ERROR_INTERNAL_SERVER = "Internal Server Error"
+
 SECRET_KEY = "i5uitypjchnar0rlz31yh0u5sgs8rui2baxxgw8e"
 
 app.config['SECRET_KEY'] = SECRET_KEY
@@ -87,6 +89,11 @@ def is_valid_uuid(uuid_str):
     return str(uuid_obj) == uuid_str
 
 
+def is_valid_user_name(user_name):
+    cleaned_user_name = user_name.strip()
+    return not (cleaned_user_name == "")
+
+
 def create_jwt(payload):
     return jwt.encode(payload, SECRET_KEY, algorithm='HS256')
 
@@ -127,13 +134,11 @@ class LoginUser(Resource):
     def __init__(self, svc):
         self.svc = svc
 
-    def put(self):
+    def put(self, user_name):
+        if not is_valid_user_name(user_name):
+            return output_json({"msg": ERROR_INVALID_USER_NAME}, 400)
 
-        user_id = request.args.get('userid', None)
-        if not is_valid_uuid(user_id):
-            return output_json({"msg": ERROR_INVALID_USER_ID}, 400)
-
-        response = svc.login(user_id)
+        response = svc.login(user_name)
         if response["user_logged_in"]:
             response["access_token"] = str(response["access_token"])
             jwt = create_jwt(response)
@@ -168,7 +173,7 @@ api.add_resource(CreateUser, '/auth/signup',
                  resource_class_kwargs={"svc": svc})
 api.add_resource(LoginUser, '/auth/login',
                  resource_class_kwargs={"svc": svc})
-api.add_resource(LogoutUser, '/auth/logout/<string:user_id>',
+api.add_resource(LogoutUser, '/auth/logout/<string:user_name>',
                  resource_class_kwargs={"svc": svc})
 
 if __name__ == '__main__':
