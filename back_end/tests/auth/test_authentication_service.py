@@ -118,7 +118,7 @@ def test_logout():
     """
     failure : user does not exit
     """
-    result = auth.logout(user_id)
+    result = auth.logout(user_name)
     assert result["user_logged_out"] == False
     assert result["error"] == ERROR_USER_NOT_FOUND
 
@@ -127,12 +127,13 @@ def test_logout():
     """
     cursor = auth.db.db_driver.connection.cursor()
     create_test_user(auth.db, cursor, user_id, user_name, uuid.uuid4())
-    result = auth.logout(user_id)
+    result = auth.logout(user_name)
     assert result["user_logged_out"] == True
 
     fetched_user = get_test_user(auth.db, cursor, user_id)
     assert fetched_user["user_fetched"] == True
     assert fetched_user["id"] == user_id
+    assert fetched_user["name"] == user_name
     assert fetched_user["logged_in"] == False
 
 

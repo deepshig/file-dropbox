@@ -42,5 +42,5 @@ class Authenticator:
         else:
             return result
 
-    def logout(self, user_id):
-        return self.db.logout(user_id)
+    def logout(self, user_name):
+        return self.db.logout(user_name)

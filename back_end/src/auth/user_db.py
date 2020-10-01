@@ -78,13 +78,12 @@ class UserDB:
         finally:
             cursor.close()
 
-    def logout(self, user_id):
-        psycopg2.extras.register_uuid()
-        logout_query = '''UPDATE users SET logged_in = (%s) WHERE id = (%s)'''
+    def logout(self, user_name):
+        logout_query = '''UPDATE users SET logged_in = (%s) WHERE name = (%s)'''
 
         cursor = self.db_driver.connection.cursor()
         try:
-            cursor.execute(logout_query, [False, user_id])
+            cursor.execute(logout_query, [False, user_name])
             self.db_driver.connection.commit()
         except psycopg2.Error as err:
             return {"user_logged_out": False,

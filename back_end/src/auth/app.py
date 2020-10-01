@@ -153,11 +153,11 @@ class LogoutUser(Resource):
     def __init__(self, svc):
         self.svc = svc
 
-    def put(self, user_id):
-        if not is_valid_uuid(user_id):
-            return output_json({"msg": ERROR_INVALID_USER_ID}, 400)
+    def put(self, user_name):
+        if not is_valid_user_name(user_name):
+            return output_json({"msg": ERROR_INVALID_USER_NAME}, 400)
 
-        response = svc.logout(user_id)
+        response = svc.logout(user_name)
         if response["user_logged_out"]:
             return output_json(response, 200)
         elif response["error"] == user_db.ERROR_USER_NOT_FOUND:
@@ -171,7 +171,7 @@ svc = init(db_config)
 api.add_resource(Ping, '/ping')
 api.add_resource(CreateUser, '/auth/signup',
                  resource_class_kwargs={"svc": svc})
-api.add_resource(LoginUser, '/auth/login',
+api.add_resource(LoginUser, '/auth/login/<string:user_name>',
                  resource_class_kwargs={"svc": svc})
 api.add_resource(LogoutUser, '/auth/logout/<string:user_name>',
                  resource_class_kwargs={"svc": svc})
