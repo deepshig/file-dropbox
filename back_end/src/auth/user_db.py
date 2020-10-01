@@ -1,4 +1,4 @@
-from src.auth import db_driver
+from back_end.src.auth import db_driver
 import psycopg2
 import uuid
 from psycopg2 import Error, extras

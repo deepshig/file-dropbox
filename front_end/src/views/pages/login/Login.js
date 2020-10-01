@@ -27,7 +27,7 @@ class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      UID: '213cec08-a51b-4203-8f7c-b013d9a41a0d',
+      UID: 'hello',
     }
 
   }
@@ -36,7 +36,7 @@ class Login extends Component {
   }
   handleClick(){
     store.dispatch(callLogin(this.state.UID));
-    fetch("http://127.0.0.1:4000/auth/login?userid=" + this.state.UID, {
+    fetch("http://127.0.0.1:4000/auth/login/" + this.state.UID, {
       method: "PUT",
       crossDomain: true,
       // credentials: 'include',

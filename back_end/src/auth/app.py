@@ -2,8 +2,8 @@ import jwt
 from flask import Flask, make_response, jsonify, request
 from flask_restful import Resource, Api, output_json, reqparse
 from uuid import UUID
-from src.auth import authentication_service
-from src.auth import user_db
+from back_end.src.auth import authentication_service
+from back_end.src.auth import user_db
 from flask_cors import CORS
 import uuid
 
@@ -13,6 +13,8 @@ app = Flask(__name__)
 CORS(app, supports_credentials=True)
 
 api = Api(app)
+CORS(app, supports_credentials=True)
+
 
 ERROR_ROLE_NOT_PROVIDED = "Role not provided"
 ERROR_NAME_NOT_PROVIDED = "Name not provided"
@@ -25,13 +27,18 @@ SECRET_KEY = "i5uitypjchnar0rlz31yh0u5sgs8rui2baxxgw8e"
 
 app.config['SECRET_KEY'] = SECRET_KEY
 jwtMng = JWTManager(app)
+#
+# db_config = {"user": "postgres",
+#              "password": "postgres",
+#              "host": "postgresdb",
+#              "port": "5432",
+#              "db_name": "user_auth"}
 
 db_config = {"user": "postgres",
              "password": "postgres",
-             "host": "postgresdb",
+             "host": "127.0.0.1",
              "port": "5432",
              "db_name": "user_auth"}
-
 accepted_roles = ["admin", "user", "developer"]
 
 
@@ -129,6 +136,21 @@ class LogoutUser(Resource):
             return output_json({"msg": ERROR_INTERNAL_SERVER}, 500)
 
 
+class testVerify(Resource):
+    def __init__(self, svc):
+        self.svc = svc
+
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('name', required=True, type=str)
+        parser.add_argument('token', required=True, type=str)
+        args = parser.parse_args()
+
+        token, name = args["token"], args["name"]
+
+        return output_json({"name": name, "token": token, 'verified': True}, 201)
+
+
 svc = init(db_config)
 
 api.add_resource(Ping, '/ping')
@@ -139,6 +161,9 @@ api.add_resource(LoginUser, '/auth/login/<string:user_name>',
 api.add_resource(LogoutUser, '/auth/logout/<string:user_name>',
                  resource_class_kwargs={"svc": svc})
 
+api.add_resource(testVerify, '/auth/testverify',
+                 resource_class_kwargs={"svc": svc})
+
 if __name__ == '__main__':
     app.run(debug=True, use_debugger=False, use_reloader=False,
-            passthrough_errors=True, host='0.0.0.0', port=3000)
+            passthrough_errors=True, host='0.0.0.0', port=4000)

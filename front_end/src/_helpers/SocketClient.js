@@ -3,7 +3,7 @@ import store from '../_helpers/store'
 import {storeSocketMessage} from "../_actions";
 
 // Example conf. You can move this to your config file.
-const host = 'http://localhost:4000/';
+const host = 'http://localhost:50000/';
 const socketPath = '/socket-io/';
 
 export default class socketAPI {
@@ -11,9 +11,7 @@ export default class socketAPI {
 
     connect() {
         this.socket = io.connect(host, {
-            extraHeaders: {
-                Authorization: "Bearer " + store.getState().authentication.token
-            }
+            query: {token: store.getState().authentication.token, uid: store.getState().authentication.user}
         });
 
     }
@@ -36,7 +34,7 @@ export default class socketAPI {
                     Authorization: "Bearer " + store.getState().authentication.token
                 }
             }, response => {
-                this.socket.on('responseMessage', response => store.dispatch(storeSocketMessage(response['temperature'])));
+                this.socket.on('responseMessage', response => store.dispatch(storeSocketMessage(response['data'])));
                 // console.log(store.getState().socketReducer.payload);
 
                 return resolve();
