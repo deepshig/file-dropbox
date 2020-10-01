@@ -49,7 +49,7 @@ services:
       - postgresdb
     environment:
       DATABASE_HOST: postgresdb
-    command: ["./wait-for-it.sh", "postgresdb:5432/auth_db", "--", "python", "./src/auth/app.py"]
+    command: ["./wait-for-it.sh", "postgresdb:5432/auth_db", "--", "python", "./app.py"]
 
   front-end:
     build: front_end
