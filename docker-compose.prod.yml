@@ -29,8 +29,8 @@ services:
     depends_on:
       - postgresdb
 
-  gateway:
-    build: back_end/src
+  auth:
+    build: back_end/src/auth
     ports:
       - 4000:4000
     depends_on:
@@ -40,6 +40,11 @@ services:
     environment:
       DATABASE_HOST: postgresdb
     command: ["./wait-for-it.sh", "postgresdb:5432/auth_db", "--", "python", "./app.py"]
+
+  socket-gateway:
+    build: back_end/src/gateway
+    ports:
+    - 50000:50000
 
   front-end:
     build: front_end

@@ -1,6 +1,6 @@
 import io from 'socket.io-client';
 import store from '../_helpers/store'
-import {storeSocketMessage} from "../_actions";
+import {storeSocketMessage, successSocket, failedSocket} from "../_actions";
 
 // Example conf. You can move this to your config file.
 const host = 'http://localhost:50000/';
@@ -11,26 +11,43 @@ export default class socketAPI {
 
     connect() {
         // this.socket = io(host);
-        // this.socket.on('connect',{
-        //         query: {token: store.getState().authentication.token, uid: store.getState().authentication.user}
-        //     }, function () {
-        //         console.log("heloo");
-        //     // socket connected
-        // });
+        // // this.data = {query: {token: store.getState().authentication.token, uid: store.getState().authentication.user};
+        // this.socket.on('connect', function(data){
+        //     // {query: {token: store.getState().authentication.token, uid: store.getState().authentication.user}}
+        //
+        //         console.log("heloo")
+        //     }
+        // );
+
+        let reattempts = 2;
 
         this.socket = io.connect(host, {
-            query: {token: store.getState().authentication.token, uid: store.getState().authentication.user}
-        }, function(){
-            console.log("heloo");
+            query: {token: store.getState().authentication.token, uid: store.getState().authentication.user},
+            reconnection: true,
+            reconnectionDelay: 1000,
+            reconnectionDelayMax : 5000,
+            reconnectionAttempts: reattempts
+
+        });
+        this.socket.on('connect_error', function() {
+            reattempts = reattempts - 1;
+            if (reattempts === 0){
+                store.dispatch(failedSocket());
+            }
         });
     }
 
     connected() {
         return new Promise((resolve, reject) => {
             if (!this.socket) return reject('No socket connection.');
-            console.log(this.socket.connected);
 
-            return resolve();
+            this.socket.on('alive', (response) => {if(response['alive']) {store.dispatch(successSocket(host))}});
+
+            return this.socket.emit("alive", {
+                User: store.getState().authentication.user
+            }, response => {
+                return resolve();
+            });
 
         });
     }
@@ -66,9 +83,9 @@ export default class socketAPI {
         return new Promise((resolve, reject) => {
             if (!this.socket) return reject('No socket connection.');
 
-            this.socket.on(event, (response) =>
-            console.log(response));
-            resolve();
+            this.socket.on(event, (response) =>{
+                store.dispatch(storeSocketMessage(response['data'])); console.log(response['data'])});
+            return resolve();
         });
     }
 }

@@ -4,8 +4,4 @@ pytest
 psycopg2
 flask-restful
 pyjwt
-redis
 flask-jwt-extended
-flask-socketio
-pika
-requests

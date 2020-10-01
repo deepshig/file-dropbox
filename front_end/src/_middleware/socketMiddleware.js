@@ -14,7 +14,11 @@ export default function socketMiddleware(newSock) {
             }
             case socketConstants.SEND_WEBSOCKET_MESSAGE: {
                 socket.send(action.event, action.payload);
-                return;
+                break;
+            }
+            case socketConstants.SOCKET_MESSAGE_RECEIVE: {
+                socket.on(action.event, action.payload);
+                break;
             }
         }
 

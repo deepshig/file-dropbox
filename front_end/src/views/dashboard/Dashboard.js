@@ -12,7 +12,7 @@ import {
 
 } from '@coreui/react';
 import CIcon from '@coreui/icons-react'
-import {sendSocketMessage} from "../../_actions";
+import {sendSocketMessage, receiveSocketMessage} from "../../_actions";
 
 
 class Dashboard extends Component {
@@ -41,6 +41,9 @@ class Dashboard extends Component {
         this.unsubscribe();
         this._isMounted = false;
     }
+    handleListen = () => {
+        store.dispatch(receiveSocketMessage("test", {'data':'none'}));
+    };
     handleEmit=()=>{
         if(this.state.socketStatus==="On"){
             store.dispatch(sendSocketMessage("message", {'data':'Stop Sending', 'status':'Off'}));
@@ -61,6 +64,8 @@ class Dashboard extends Component {
                     <div>
                         Socket Testing: {this.state.payload}
                         <div onClick={this.handleEmit}> Start/Stop</div>
+                        <div onClick={this.handleListen}> Listen</div>
+
                     </div>
                 </React.Fragment>
 

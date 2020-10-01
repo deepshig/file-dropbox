@@ -26,6 +26,17 @@ export const createSocket = () => {
         type: socketConstants.SOCKET_REQUEST,
     }
 };
+export const successSocket = (host) => {
+    return{
+        type: socketConstants.SOCKET_SUCCESS,
+        payload: host,
+    }
+};
+export const failedSocket = (host) => {
+    return{
+        type: socketConstants.SOCKET_FAILURE,
+    }
+};
 export const sendSocketMessage = (ev, message) => {
     return{
         type: socketConstants.SEND_WEBSOCKET_MESSAGE,
@@ -34,6 +45,7 @@ export const sendSocketMessage = (ev, message) => {
     }
 };
 export const receiveSocketMessage = (ev, message) => {
+    console.log("Rec");
     return{
         type: socketConstants.SOCKET_MESSAGE_RECEIVE,
         event: ev,

@@ -16,6 +16,7 @@ export function socketReducer(state = initialState, action) {
         case socketConstants.SOCKET_SUCCESS:
             return {
                 status: 'connected',
+                host: action.payload,
             };
         case socketConstants.SOCKET_FAILURE:
             return {
@@ -26,6 +27,7 @@ export function socketReducer(state = initialState, action) {
                 status: 'disconnected',
             };
         case socketConstants.SOCKET_MESSAGE_STORE:
+            console.log(action.payload);
             return{
                 ...state,
                 payload: action.payload

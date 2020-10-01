@@ -6,6 +6,7 @@ import {
     CCol,
     CRow
 } from '@coreui/react'
+import {createSocket} from "../_actions";
 
 class TheHeaderStatus extends Component {
     constructor(props){
@@ -13,6 +14,7 @@ class TheHeaderStatus extends Component {
         this._isMounted = false;
         this.state = {
             status: store.getState().socketReducer.status };
+        TheHeaderStatus.handleClick = TheHeaderStatus.handleClick.bind(this);
     }
     startSubscribe(){
         this.unsubscribe = store.subscribe(()=>{
@@ -32,6 +34,12 @@ class TheHeaderStatus extends Component {
         this._isMounted = false;
     }
 
+    static handleClick(){
+        if (store.getState().authentication.loggedIn){
+            store.dispatch(createSocket())
+        }
+    }
+
     ButtonRender(props){
         if(props.status === 'connected'){
             return <CButton color="success" size="md" block>Connected</CButton>
@@ -39,7 +47,10 @@ class TheHeaderStatus extends Component {
         if(props.status === 'connecting'){
             return <CButton color="warning" size="md" block>Connecting</CButton>
         }
-        return <CButton variant="outline" color="danger" size="md" block>Disconnected</CButton>
+        if(props.status === 'failed'){
+            return <CButton onClick={() => TheHeaderStatus.handleClick()} color="danger" size="md" block>Failed</CButton>
+        }
+        return <CButton onClick={() => TheHeaderStatus.handleClick()} variant="outline" color="danger" size="md" block>Disconnected</CButton>
 
 
     }
