@@ -53,3 +53,6 @@ class RabbitMQManager:
                     "error": err_str}
         else:
             return {"message_published": True}
+        finally:
+            if chan is not None:
+                chan.close()
