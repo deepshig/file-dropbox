@@ -5,6 +5,7 @@ psycopg2
 flask-restful
 pyjwt
 redis
-
+uuid
+sys
 flask-jwt-extended
 flask-socketio

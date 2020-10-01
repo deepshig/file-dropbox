@@ -5,7 +5,6 @@ from uuid import UUID
 from src.auth import authentication_service
 from src.auth import user_db
 from flask_cors import CORS
-import uuid
 
 from flask_jwt_extended import JWTManager, get_jwt_identity, decode_token
 from flask_socketio import SocketIO, send, emit
