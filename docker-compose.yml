@@ -59,7 +59,7 @@ services:
   front-end:
     build: front_end
     ports:
-      - 3001:3000
+      - 3000:3000
     stdin_open: true
 
 
