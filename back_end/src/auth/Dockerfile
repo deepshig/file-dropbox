@@ -13,6 +13,7 @@ RUN pip install -r requirements.txt
 # copy the content of the local gateway directory to the working directory
 #COPY ../src/auth/ .
 COPY wait-for-it.sh .
+RUN chmod +x wait-for-it.sh
 COPY app.py .
 COPY . ./src/auth
 
