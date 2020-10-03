@@ -3,7 +3,7 @@ import store from '../_helpers/store'
 import {storeSocketMessage, successSocket, failedSocket} from "../_actions";
 
 // Example conf. You can move this to your config file.
-const host = 'http://socket-gateway:50000/';
+const host = 'http://localhost:5000/';
 const socketPath = '/socket-io/';
 
 export default class socketAPI {
