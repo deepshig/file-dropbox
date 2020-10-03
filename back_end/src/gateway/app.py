@@ -56,4 +56,5 @@ class threads(threading.Thread):
 if __name__ == '__main__':
     thread = threads()
     thread.start()
-    socket.run(app, host="0.0.0.0", port=50000)
+    socket.run(app, debug=True, use_debugger=False, use_reloader=False,
+            passthrough_errors=True, host="0.0.0.0", port=50000)
