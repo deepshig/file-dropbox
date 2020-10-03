@@ -2,13 +2,6 @@ version: '3.1'
 
 services:
 
-  rabbitmq:
-    image: rabbitmq:3-management-alpine
-    container_name: rabbitmq
-    ports:
-    - 5672:5672
-    - 15672:15672
-
   postgresdb:
     image: postgres
     restart: always
@@ -47,9 +40,9 @@ services:
     - 50000:50000
 
   front-end:
-    build: front_end
+    build: front_end/Dockerfile.prod
     ports:
-      - 3000:3000
+      - 80:80
     stdin_open: true
 
 
