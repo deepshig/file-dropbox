@@ -20,7 +20,9 @@ def test_store():
     failure : file does not exist
     """
     file_name = "random_file.txt"
-    result = cache.store(file_name)
+    file_path = "some/path/"+file_name
+
+    result = cache.store(file_path, file_name)
     assert result["success"] == False
     assert result["error"] == ERROR_FILE_NOT_FOUND
 
@@ -33,10 +35,11 @@ def test_store():
     failure : file is empty
     """
     file_name = "test_file.txt"
-    file = open(file_name, "w")
+    file_path = "./"+file_name
+    file = open(file_path, "w")
     file.close()
 
-    result = cache.store(file_name)
+    result = cache.store(file_path, file_name)
     assert result["success"] == False
     assert result["error"] == ERROR_EMPTY_FILE
 
@@ -49,12 +52,14 @@ def test_store():
     success
     """
     file_name = "test_file.txt"
-    file = open(file_name, "w+")
+    file_path = "./"+file_name
+
+    file = open(file_path, "w+")
     file_content = "Hello World"
     file.write(file_content)
     file.close()
 
-    result = cache.store(file_name)
+    result = cache.store(file_path, file_name)
     assert result["success"] == True
 
     key = "file:test_file.txt"

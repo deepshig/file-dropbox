@@ -10,10 +10,10 @@ class FileCache:
     def __key(self, file_name):
         return "file:"+ file_name
 
-    def store(self, file_name):
+    def store(self, file_path, file_name):
         file = None
         try:
-            file = open(file_name, 'rb')
+            file = open(file_path, 'rb')
             file_contents = file.read()
         except FileNotFoundError:
             return {"success": False,
