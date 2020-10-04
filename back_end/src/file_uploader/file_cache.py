@@ -24,7 +24,7 @@ class FileCache:
 
         if file_contents is None or len(file_contents) == 0:
             return {"success": False,
-                    "error":ERROR_EMPTY_FILE}
+                    "error": ERROR_EMPTY_FILE}
 
         file_key = self.__key(file_name)
         result = self.redis.set(file_key, file_contents)
