@@ -23,7 +23,6 @@ class FileUploader:
             result["error_msg"] = "Error while creating file index on the cache : " + result["error"]
             return result
 
-
         result = self.__publish_queue_event(file_name, result["index_key"])
         if not result["message_published"]:
             result["success"] = False
