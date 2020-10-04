@@ -3,11 +3,14 @@ import store from '../_helpers/store'
 import {storeSocketMessage, successSocket, failedSocket} from "../_actions";
 
 // Example conf. You can move this to your config file.
-const host = 'http://54.154.129.30:5000/';
+// const host = 'http://54.154.129.30:5000/';
+const host = 'http://localhost:5000/';
 const socketPath = '/socket-io/';
+const chunk_size = 64 * 1024;
 
 export default class socketAPI {
     socket;
+
 
     connect() {
         // this.socket = io(host);
@@ -71,7 +74,7 @@ export default class socketAPI {
                     Authorization: "Bearer " + store.getState().authentication.token
                 }
             }, response => {
-                this.socket.on('message', response => store.dispatch(storeSocketMessage(response['data'])));
+                this.socket.on(event, response => store.dispatch(storeSocketMessage(response['data'])));
                 console.log(store.getState().socketReducer.payload);
 
                 return resolve();
@@ -89,4 +92,50 @@ export default class socketAPI {
             return resolve();
         });
     }
+
+    onReadSuccess(file, offset, length, data) {
+        if (this.done)
+            return;
+        this.socket.emit('write-chunk', file.name, offset, data, function(offset, ack) {
+            if (!ack)
+                this.onReadError(file, offset, 0, 'Transfer aborted by server')
+        }.bind(this, offset));
+        let end_offset = offset + length;
+        if (end_offset < file.size)
+            this.readFileChunk(file, end_offset, chunk_size,
+                this.onReadSuccess.bind(this),
+                this.onReadError.bind(this));
+        else {
+
+            this.done = true;
+        }
+    }
+
+    onReadError(file, offset, length, error) {
+        console.log('Upload error for ' + file.name + ': ' + error);
+        this.done = true;
+    }
+
+    readFileChunk(file, offset, length) {
+        return new Promise((resolve, reject) => {
+            if (!this.socket) return reject('No socket connection.');
+
+            let success = this.onReadSuccess.bind(this);
+            let error = this.onReadError.bind(this);
+            console.log(file);
+
+            let end_offset = offset + length;
+            if (end_offset > file.size)
+                end_offset = file.size;
+            var r = new FileReader();
+            r.onload = function (file, offset, length, e) {
+                if (e.target.error != null)
+                    error(file, offset, length, e.target.error);
+                else
+                    success(file, offset, length, e.target.result);
+            }.bind(r, file, offset, length);
+            r.readAsArrayBuffer(file.slice(offset, end_offset));
+        });
+    }
+
 }

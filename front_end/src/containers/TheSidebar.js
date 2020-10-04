@@ -1,58 +1,73 @@
-import React from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import React, {Component} from 'react'
+
 import {
-  CCreateElement,
-  CSidebar,
-  CSidebarBrand,
-  CSidebarNav,
-  CSidebarNavDivider,
-  CSidebarNavTitle,
-  CSidebarMinimizer,
-  CSidebarNavDropdown,
-  CSidebarNavItem,
+    CCreateElement,
+    CSidebar,
+    CSidebarBrand,
+    CSidebarNav,
+    CSidebarNavDivider,
+    CSidebarNavTitle,
+    CSidebarMinimizer,
+    CSidebarNavDropdown,
+    CSidebarNavItem, CImg,
 } from '@coreui/react'
 
-import CIcon from '@coreui/icons-react'
+import store from '../_helpers/store'
 
 // sidebar nav config
 import navigation from './_nav'
 
-const TheSidebar = () => {
-  const dispatch = useDispatch()
-  const show = useSelector(state => state.sidebarShow)
+class TheSidebar extends Component {
+    constructor(props){
+        super(props);
+        this._isMounted = false;
+        this.state = {
+          show: store.getState().sidebarReducer.status
+        };
+    }
+    startSubscribe(){
+        this.unsubscribe = store.subscribe(()=>{
+            const show = store.getState().sidebarReducer.status;
+            if (show !== this.state.show){
+                this._isMounted && this.setState({show});
+            }
+        });
+    }
+    componentDidMount(){
+        this._isMounted = true;
+        this._isMounted && this.startSubscribe();
 
-  return (
-    <CSidebar
-      show={show}
-      onShowChange={(val) => dispatch({type: 'set', sidebarShow: val })}
-    >
-      <CSidebarBrand className="d-md-down-none" to="/">
-        <CIcon
-          className="c-sidebar-brand-full"
-          name="logo-negative"
-          height={35}
-        />
-        <CIcon
-          className="c-sidebar-brand-minimized"
-          name="sygnet"
-          height={35}
-        />
-      </CSidebarBrand>
-      <CSidebarNav>
+    } // TODO: Not remounting and subscribing on refresh...
+    componentWillUnmount(){
+        this.unsubscribe();
+        this._isMounted = false;
+    }
 
-        <CCreateElement
-          items={navigation}
-          components={{
-            CSidebarNavDivider,
-            CSidebarNavDropdown,
-            CSidebarNavItem,
-            CSidebarNavTitle
-          }}
-        />
-      </CSidebarNav>
-      <CSidebarMinimizer className="c-d-md-down-none"/>
-    </CSidebar>
-  )
+    render() {
+        return (
+            <CSidebar
+                show={this.state.show}
+            >
+                <CSidebarBrand className="d-md-down-none" to="/">
+                    <CImg name="logo" height={35} alt="Logo"/>
+                    {/*<CImg name="logo" height={35} alt="Logo" src={logo}/>*/}
+                </CSidebarBrand>
+                <CSidebarNav>
+
+                    <CCreateElement
+                        items={navigation}
+                        components={{
+                            CSidebarNavDivider,
+                            CSidebarNavDropdown,
+                            CSidebarNavItem,
+                            CSidebarNavTitle
+                        }}
+                    />
+                </CSidebarNav>
+                <CSidebarMinimizer className="c-d-md-down-none"/>
+            </CSidebar>
+        )
+    }
 }
 
 export default React.memo(TheSidebar)

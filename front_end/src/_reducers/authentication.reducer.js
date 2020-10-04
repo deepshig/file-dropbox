@@ -23,6 +23,11 @@ export function authentication(state = initialState, action) {
             return {
                 loggedIn: false,
             };
+        case userConstants.REGISTER_REQUEST:
+            return {
+                ...state,
+                user: action.UID,
+            };
         case userConstants.LOGOUT:
             return {};
         default:

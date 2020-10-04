@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { HashRouter, Route, Switch } from 'react-router-dom';
 import './scss/style.scss';
 import {Login} from "./views/pages/login/Login";
+import {Register} from "./views/pages/register/Register";
 import history from "./_helpers/history"
 import store from "./_helpers/store"
 
@@ -16,7 +17,7 @@ const TheLayout = React.lazy(() => import('./containers/TheLayout'));
 
 // Pages
 const Test = React.lazy(() => import('./views/pages/test/Test'));
-const Register = React.lazy(() => import('./views/pages/register/Register'));
+// const Register = React.lazy(() => import('./views/pages/register/Register'));
 const Page404 = React.lazy(() => import('./views/pages/page404/Page404'));
 const Page500 = React.lazy(() => import('./views/pages/page500/Page500'));
 

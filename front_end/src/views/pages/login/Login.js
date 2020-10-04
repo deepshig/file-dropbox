@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import { Link, Redirect } from 'react-router-dom'
+import { Link, Redirect, withRouter } from 'react-router-dom'
 import { connect } from 'react-redux';
 import {callLogin, createSocket, setLogin, setLoginfail} from "../../../_actions";
 import store from "../../../_helpers/store";
@@ -58,7 +58,7 @@ class Login extends Component {
         }
         })
         // .then((response) => console.log(jwt(response['jwt'])['access_token'])) // TODO: pass token
-        .then(<Redirect to="/dashboard" />)
+        .then(this.props.history.push('/login'))
   }
   render()
   {
@@ -81,7 +81,7 @@ class Login extends Component {
                               <CIcon name="cil-user"/>
                             </CInputGroupText>
                           </CInputGroupPrepend>
-                          <CInput value={this.state.UID} onChange={evt => this.updateInputValue(evt)} type="text" placeholder="Username" autoComplete="username"/>
+                          <CInput value={this.state.UID} onChange={evt => this.updateInputValue(evt)} type="text"/>
                         </CInputGroup>
                         <CRow>
                           <CCol xs="6">

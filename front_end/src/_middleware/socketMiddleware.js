@@ -20,6 +20,14 @@ export default function socketMiddleware(newSock) {
                 socket.on(action.event, action.payload);
                 break;
             }
+            case socketConstants.SOCKET_DISCONNECT: {
+                socket.disconnect();
+                break;
+            }
+            case socketConstants.SOCKET_UPLOAD:{
+                const chunk_size = 64 * 1024;
+                socket.readFileChunk(action.file, 0, chunk_size);
+            }
         }
 
         return next(action);

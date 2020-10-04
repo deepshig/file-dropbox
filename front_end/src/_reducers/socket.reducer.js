@@ -22,7 +22,7 @@ export function socketReducer(state = initialState, action) {
             return {
                 status: 'failed',
             };
-        case socketConstants.SOCKET_REMOVE:
+        case socketConstants.SOCKET_DISCONNECT:
             return {
                 status: 'disconnected',
             };

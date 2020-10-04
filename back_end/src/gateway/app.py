@@ -4,6 +4,12 @@ from flask_cors import CORS
 import requests
 import threading
 import time
+import json
+import uuid
+from datetime import datetime
+import os
+import shutil
+import pathlib
 
 app = Flask(__name__)
 SECRET_KEY = "i5uitypjchnar0rlz31yh0u5sgs8rui2baxxgw8e"
@@ -13,13 +19,19 @@ app.config['SECRET_KEY'] = 'secret!'
 
 CORS(app, supports_credentials=True)
 socket = SocketIO(app, cors_allowed_origins="*")
+file_path = os.path.abspath(pathlib.Path().absolute())
 
+def save_file(file):
+    location = os.path.abspath(pathlib.Path().absolute())
+    with open("file.gz", 'wb') as location:
+        shutil.copyfileobj(file, location)
+    del file
 
 @socket.on('connect')
 def test_connect():
     token = request.args.get('token')
     uid = request.args.get('uid')
-    resp = requests.post("http://auth:4000/auth/testverify", data={'name': uid, 'token': token})
+    resp = requests.post("http://127.0.0.1:4000/auth/testverify", data={'name': uid, 'token': token})
     print(resp.json()['verified'])
 
     if not resp.json()['verified']:
@@ -42,6 +54,52 @@ def handleMessage(msg, headers):
 def handleAlive(headers):
     emit('alive', {'alive': True}, room=headers['User'])
 
+@socket.on('upload')    # send(message=msg, broadcast=True)
+def handleAlive(msg, headers):
+    print(msg['data'])
+    save_file(msg['data'])
+    emit('upload', {'upload': True})
+
+
+@socket.on('start-transfer')
+def start_transfer(filename, size):
+    """Process an upload request from the client."""
+    _, ext = os.path.splitext(filename)
+    if ext in ['.exe', '.bin', '.js', '.sh', '.py', '.php']:
+        return False  # reject the upload
+
+    id = uuid.uuid4().hex  # server-side filename
+    with open(file_path + id + '.json', 'wt') as f:
+        json.dump({'filename': filename, 'size': size}, f)
+    with open(file_path + id + ext, 'wb') as f:
+        pass
+    return id + ext  # allow the upload
+
+
+@socket.on('write-chunk')
+def write_chunk(filename, offset, data):
+    """Write a chunk of data sent by the client."""
+
+    _, ext = os.path.splitext(filename)
+    if ext in ['.exe', '.bin', '.js', '.sh', '.py', '.php']:
+        return False  # reject the upload
+
+    id = uuid.uuid4().hex  # server-side filename
+    with open(file_path + filename + '.json', 'wt') as f:
+        json.dump({'filename': filename}, f)
+    with open(file_path + filename, 'wb') as f:
+        pass
+    try:
+        print("trying")
+
+        with open(file_path + filename, 'r+b') as f:
+            f.seek(offset)
+            f.write(data)
+    except IOError:
+        print(IOError)
+        return False
+    return True
+
 
 class threads(threading.Thread):
     def __init__(self):
@@ -49,7 +107,7 @@ class threads(threading.Thread):
 
     def run(self):
         while True:
-            socket.emit('test', {'data': 'test'})
+            socket.emit('test', {'data': 'test' + datetime.now().strftime("%H:%M:%S")})
             time.sleep(5)
 
 

@@ -12,7 +12,7 @@
     {
     _tag: 'CSidebarNavItem',
     name: 'Active',
-    to: '/theme/colors',
+    to: '/base/tables',
     icon: 'cil-drop',
     },
     {
@@ -69,11 +69,15 @@
         _tag: 'CSidebarNavItem',
         name: 'Error 404',
         to: '/404',
+          addLinkClass: 'c-disabled',
+          'disabled': true
       },
       {
         _tag: 'CSidebarNavItem',
         name: 'Error 500',
         to: '/500',
+          addLinkClass: 'c-disabled',
+          'disabled': true
       },
     ],
     },

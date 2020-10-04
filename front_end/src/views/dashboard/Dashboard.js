@@ -12,7 +12,7 @@ import {
 
 } from '@coreui/react';
 import CIcon from '@coreui/icons-react'
-import {sendSocketMessage, receiveSocketMessage} from "../../_actions";
+import {sendSocketMessage, receiveSocketMessage, uploadSocketFile} from "../../_actions";
 
 
 class Dashboard extends Component {
@@ -21,8 +21,9 @@ class Dashboard extends Component {
         this._isMounted = false;
         this.state = {
             payload: store.getState().socketReducer.payload,
-            socketStatus: "On"
-        }
+            socketStatus: "On",
+        };
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
     startSubscribe(){
         this.unsubscribe = store.subscribe(()=>{
@@ -32,6 +33,7 @@ class Dashboard extends Component {
             }
         });
     }
+
     componentDidMount(){
         this._isMounted = true;
         this._isMounted && this.startSubscribe();
@@ -55,6 +57,13 @@ class Dashboard extends Component {
         }
         console.log("Emit Clicked")
     };
+
+    handleSubmit(e){
+        console.log(e['0']);
+        store.dispatch(uploadSocketFile(e['0']));
+        // store.dispatch(sendSocketMessage("upload", {'data': this.state.file}));
+    }
+
     render () {
         const user = store.getState().authentication.user;
         return (
@@ -100,15 +109,15 @@ class Dashboard extends Component {
                                                     <CFormText>This is a help text</CFormText>
                                                 </CCol>
                                             </CFormGroup>
-                                            <CFormGroup row>
-                                                <CCol md="3">
-                                                    <CLabel htmlFor="date-input">Date Input</CLabel>
-                                                </CCol>
-                                                <CCol xs="12" md="9">
-                                                    <CInput type="date" id="date-input" name="date-input"
-                                                            placeholder="date"/>
-                                                </CCol>
-                                            </CFormGroup>
+                                            {/*<CFormGroup row>*/}
+                                                {/*<CCol md="3">*/}
+                                                    {/*<CLabel htmlFor="date-input">Date Input</CLabel>*/}
+                                                {/*</CCol>*/}
+                                                {/*<CCol xs="12" md="9">*/}
+                                                    {/*<CInput type="date" id="date-input" name="date-input"*/}
+                                                            {/*placeholder="date"/>*/}
+                                                {/*</CCol>*/}
+                                            {/*</CFormGroup>*/}
                                             <CFormGroup row>
                                                 <CCol md="3">
                                                     <CLabel htmlFor="select">Select</CLabel>
@@ -122,20 +131,33 @@ class Dashboard extends Component {
                                                     </CSelect>
                                                 </CCol>
                                             </CFormGroup>
+                                            {/*<CFormGroup row>*/}
+                                                {/*<CCol md="3">*/}
+                                                    {/*<CLabel>Multiple File input</CLabel>*/}
+                                                {/*</CCol>*/}
+                                                {/*<CCol xs="12" md="9">*/}
+                                                    {/*<CInputFile*/}
+                                                        {/*id="file-multiple-input"*/}
+                                                        {/*name="file-multiple-input"*/}
+                                                        {/*multiple*/}
+                                                        {/*custom*/}
+                                                    {/*/>*/}
+                                                    {/*<CLabel htmlFor="file-multiple-input" variant="custom-file">*/}
+                                                        {/*Choose Files...*/}
+                                                    {/*</CLabel>*/}
+                                                {/*</CCol>*/}
+                                            {/*</CFormGroup>*/}
                                             <CFormGroup row>
-                                                <CCol md="3">
-                                                    <CLabel>Multiple File input</CLabel>
-                                                </CCol>
+                                                <CLabel col md={3}>Custom file input</CLabel>
                                                 <CCol xs="12" md="9">
-                                                    <CInputFile
-                                                        id="file-multiple-input"
-                                                        name="file-multiple-input"
-                                                        multiple
-                                                        custom
-                                                    />
-                                                    <CLabel htmlFor="file-multiple-input" variant="custom-file">
-                                                        Choose Files...
+                                                    <CInputFile value={this.state.file} onChange={evt => this.setState({file: evt.target.value})} type="file" custom id="custom-file-input"/>
+                                                    <CLabel htmlFor="custom-file-input" variant="custom-file">
+                                                        {this.state.file
+                                                            ? this.state.file
+                                                            : 'Choose file...'
+                                                        }
                                                     </CLabel>
+                                                    <input type="file" onChange={ (e) => this.handleSubmit(e.target.files) } />
                                                 </CCol>
                                             </CFormGroup>
 
@@ -145,7 +167,7 @@ class Dashboard extends Component {
                                         {user
                                             ?
                                             <div>
-                                                <CButton type="submit" size="sm" color="primary"><CIcon
+                                                <CButton type="submit" onClick={() => this.handleSubmit()} size="sm" color="primary"><CIcon
                                                 name="cil-scrubber"/> Submit</CButton>
                                                 <CButton type="reset" size="sm" color="danger"><CIcon
                                                 name="cil-ban"/> Reset</CButton>
