@@ -13,7 +13,7 @@ class RedisDriver:
         try:
             self.connection = redis.StrictRedis(host=redis_config["host"],
                                                 port=redis_config["port"],
-                                                charset="utf-8",
+                                                encoding="utf-8",
                                                 decode_responses=True)
         except RedisError as err:
             error_str = "Error while connecting to redis : " + str(err)
