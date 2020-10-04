@@ -15,18 +15,19 @@ class FileUploader:
 
         result = self.file_cache.store(file_path, file_name)
         if not result["success"]:
-            result["error"] = "Error while storing the file contents in cache : " + result["error"]
+            result["error_msg"] = "Error while storing the file contents in cache : " + result["error"]
             return result
 
         result = self.__create_file_index_cache(file_name)
         if not result["success"]:
-            result["error"] = "Error while creating file index on the cache : " + result["error"]
+            result["error_msg"] = "Error while creating file index on the cache : " + result["error"]
             return result
 
 
         result = self.__publish_queue_event(file_name, result["index_key"])
         if not result["message_published"]:
             result["success"] = False
+            result["error_msg"] = result["error"]
             return result
 
         return {"success": True,

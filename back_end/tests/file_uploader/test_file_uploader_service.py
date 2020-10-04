@@ -32,7 +32,7 @@ def test_send_file_for_upload(mocker):
 
     result = svc.send_file_for_upload("/random/file/path")
     assert result["success"] == False
-    assert result["error"] == "Error while storing the file contents in cache : some_error"
+    assert result["error_msg"] == "Error while storing the file contents in cache : some_error"
 
     """
     failure : error while creating file index cache entry
@@ -53,7 +53,7 @@ def test_send_file_for_upload(mocker):
 
     result = svc.send_file_for_upload("/random/file/path")
     assert result["success"] == False
-    assert result["error"] == "Error while creating file index on the cache : some_error_in_indexing"
+    assert result["error_msg"] == "Error while creating file index on the cache : some_error_in_indexing"
 
     """
     failure : error while publishing event to rabbitmq
@@ -79,7 +79,7 @@ def test_send_file_for_upload(mocker):
 
     result = svc.send_file_for_upload("/random/file/path")
     assert result["success"] == False
-    assert result["error"] == "something failing"
+    assert result["error_msg"] == "something failing"
 
     """
     success
