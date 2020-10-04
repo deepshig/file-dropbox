@@ -22,6 +22,7 @@ export default class socketAPI {
         let reattempts = 2;
 
         this.socket = io.connect(host, {
+            secure: true,
             query: {token: store.getState().authentication.token, uid: store.getState().authentication.user},
             reconnection: true,
             reconnectionDelay: 1000,
