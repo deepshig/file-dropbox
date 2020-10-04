@@ -33,7 +33,7 @@ def save_file(file):
 def connect():
     token = request.args.get('token')
     uid = request.args.get('uid')
-    resp = requests.post("http://127.0.0.1:4000/auth/testverify", data={'name': uid, 'token': token})
+    resp = requests.post("http://auth:4000/auth/testverify", data={'name': uid, 'token': token})
     print(resp.json()['verified'])
 
     if not resp.json()['verified']:
