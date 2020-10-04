@@ -1,14 +1,14 @@
 version: '3.1'
 
 services:
-#  rabbitmq:
-#    image: rabbitmq:3-management-alpine
-#    container_name: rabbitmq
-#    ports:
-#    - 5672:5672
-#    - 15672:15672
-#    networks:
-#    - docker_network
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq
+    ports:
+    - 5672:5672
+    - 15672:15672
+    networks:
+    - docker_network
 
   postgresdb:
     image: postgres
@@ -69,11 +69,37 @@ services:
     networks:
     - docker_network
 
+  api-uploader:
+    build: back_end/src/file_uploader
+    ports:
+      - 3500:3500
+    links:
+      - redis
+    networks:
+      - docker_network
+
   front-end:
     build: front_end
     ports:
       - 3000:3000
     stdin_open: true
+    networks:
+      - docker_network
+
+  redis:
+    image: "redis:alpine"
+
+    command: redis-server
+
+    ports:
+    - 6379:6379
+
+    volumes:
+    - ./redis-data:/var/lib/redis
+    - ./redis.conf:/usr/local/etc/redis/redis.conf
+
+#    environment:
+#    - REDIS_REPLICATION_MODE=master
     networks:
     - docker_network
 

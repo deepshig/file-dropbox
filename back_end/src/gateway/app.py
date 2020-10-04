@@ -19,7 +19,7 @@ app.config['SECRET_KEY'] = 'secret!'
 
 CORS(app, supports_credentials=True)
 socket = SocketIO(app, cors_allowed_origins="*")
-file_path = os.path.abspath(pathlib.Path().absolute())
+file_path = os.path.abspath(pathlib.Path().absolute()) + '/'
 
 
 def save_file(file):
@@ -33,7 +33,7 @@ def save_file(file):
 def connect():
     token = request.args.get('token')
     uid = request.args.get('uid')
-    resp = requests.post("http://auth:4000/auth/testverify", data={'name': uid, 'token': token})
+    resp = requests.post("http://127.0.0.1:4000/auth/testverify", data={'name': uid, 'token': token})
     print(resp.json()['verified'])
 
     if not resp.json()['verified']:
@@ -91,15 +91,24 @@ def write_chunk(filename, offset, data):
     with open(file_path + filename, 'wb') as f:
         pass
     try:
-        print("trying")
-
         with open(file_path + filename, 'r+b') as f:
             f.seek(offset)
             f.write(data)
     except IOError:
         print(IOError)
         return False
+    print("trying")
     return True
+
+
+@socket.on('complete-upload')
+def complete_upload(filename):
+    print("Complete")
+    with open(file_path + filename, 'rb') as f:
+        resp = requests.post('http://127.0.0.1:3500/file/upload', files={'file': f})
+        print(resp.json())
+        # os.remove(file_path + filename)
+        emit('complete-upload', {'data': True})
 
 
 class threads(threading.Thread):

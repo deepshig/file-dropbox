@@ -4,7 +4,7 @@ import {storeSocketMessage, successSocket, failedSocket} from "../_actions";
 
 // Example conf. You can move this to your config file.
 // const host = 'http://54.154.129.30:5000/';
-const host = 'http://3.250.61.107:5000/';
+const host = 'http://127.0.0.1:5000/';
 const socketPath = '/socket-io/';
 const chunk_size = 64 * 1024;
 
@@ -94,8 +94,12 @@ export default class socketAPI {
     }
 
     onReadSuccess(file, offset, length, data) {
-        if (this.done)
+        if (this.done) {
+            this.socket.emit('complete-upload', file.name, response => {
+                this.socket.on('complete-upload', response => console.log(response['data']));
+            });
             return;
+        }
         this.socket.emit('write-chunk', file.name, offset, data, function(offset, ack) {
             if (!ack)
                 this.onReadError(file, offset, 0, 'Transfer aborted by server')
@@ -106,7 +110,6 @@ export default class socketAPI {
                 this.onReadSuccess.bind(this),
                 this.onReadError.bind(this));
         else {
-
             this.done = true;
         }
     }
@@ -122,7 +125,6 @@ export default class socketAPI {
 
             let success = this.onReadSuccess.bind(this);
             let error = this.onReadError.bind(this);
-            console.log(file);
 
             let end_offset = offset + chunk_size;
             if (end_offset > file.size)
