@@ -80,7 +80,7 @@ def start_transfer(filename, size):
 @socket.on('write-chunk')
 def write_chunk(filename, offset, data):
     """Write a chunk of data sent by the client."""
-
+    # TODO: implement start transfer and file naming. Maybe paths aren't needed if forwarding to redis?
     _, ext = os.path.splitext(filename)
     if ext in ['.exe', '.bin', '.js', '.sh', '.py', '.php']:
         return False  # reject the upload

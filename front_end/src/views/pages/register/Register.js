@@ -26,7 +26,7 @@ class Register extends Component {
         super(props);
         this.state = {
             UID: 'username',
-            role: 'user',
+            role: 'admin',
             redirect : false
         };
 

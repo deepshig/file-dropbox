@@ -62,9 +62,11 @@ class Dashboard extends Component {
     handleSubmit(e){
         // TODO: add multli file support:
         // https://github.com/miguelgrinberg/socketio-examples/blob/master/uploads/static/uploads/main.js
-        
+
         console.log(this.state.file['0']);
-        store.dispatch(uploadSocketFile(this.state.file['0']));
+        if(this.state.file['0'] !== undefined) {
+            store.dispatch(uploadSocketFile(this.state.file['0']));
+        }
         // store.dispatch(sendSocketMessage("upload", {'data': this.state.file}));
     }
 
