@@ -1,5 +1,9 @@
 import React from 'react';
 
+const Active = React.lazy(() => import('./views/Active'));
+const History = React.lazy(() => import('./views/History'));
+
+
 const Toaster = React.lazy(() => import('./views/notifications/toaster/Toaster'));
 const Tables = React.lazy(() => import('./views/base/tables/Tables'));
 
@@ -41,6 +45,8 @@ const User = React.lazy(() => import('./views/users/User'));
 const routes = [
   { path: '/', exact: true, name: 'Home' },
   { path: '/dashboard', name: 'Dashboard', component: Dashboard },
+  { path: '/active', name: 'Active', component: Active },
+  { path: '/history', name: 'History', component: History },
   { path: '/theme', name: 'Theme', component: Colors, exact: true },
   { path: '/theme/colors', name: 'Colors', component: Colors },
   { path: '/theme/typography', name: 'Typography', component: Typography },

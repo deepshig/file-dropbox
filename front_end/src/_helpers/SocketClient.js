@@ -116,7 +116,7 @@ export default class socketAPI {
         this.done = true;
     }
 
-    readFileChunk(file, offset, length) {
+    readFileChunk(file, offset) {
         return new Promise((resolve, reject) => {
             if (!this.socket) return reject('No socket connection.');
 
@@ -124,16 +124,16 @@ export default class socketAPI {
             let error = this.onReadError.bind(this);
             console.log(file);
 
-            let end_offset = offset + length;
+            let end_offset = offset + chunk_size;
             if (end_offset > file.size)
                 end_offset = file.size;
             var r = new FileReader();
-            r.onload = function (file, offset, length, e) {
+            r.onload = function (file, offset, chunk_size, e) {
                 if (e.target.error != null)
-                    error(file, offset, length, e.target.error);
+                    error(file, offset, chunk_size, e.target.error);
                 else
-                    success(file, offset, length, e.target.result);
-            }.bind(r, file, offset, length);
+                    success(file, offset, chunk_size, e.target.result);
+            }.bind(r, file, offset, chunk_size);
             r.readAsArrayBuffer(file.slice(offset, end_offset));
         });
     }

@@ -25,8 +25,7 @@ export default function socketMiddleware(newSock) {
                 break;
             }
             case socketConstants.SOCKET_UPLOAD:{
-                const chunk_size = 64 * 1024;
-                socket.readFileChunk(action.file, 0, chunk_size);
+                socket.readFileChunk(action.file, 0);
             }
         }
 

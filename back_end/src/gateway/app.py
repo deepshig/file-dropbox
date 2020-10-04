@@ -21,14 +21,16 @@ CORS(app, supports_credentials=True)
 socket = SocketIO(app, cors_allowed_origins="*")
 file_path = os.path.abspath(pathlib.Path().absolute())
 
+
 def save_file(file):
     location = os.path.abspath(pathlib.Path().absolute())
     with open("file.gz", 'wb') as location:
         shutil.copyfileobj(file, location)
     del file
 
+
 @socket.on('connect')
-def test_connect():
+def connect():
     token = request.args.get('token')
     uid = request.args.get('uid')
     resp = requests.post("http://127.0.0.1:4000/auth/testverify", data={'name': uid, 'token': token})
@@ -41,7 +43,6 @@ def test_connect():
         print('someone connected to websocket')
         join_room(uid)
         emit('connected', {'data': 'connected'}, room=uid)
-        # emit('connected', {'data': 'connected'}, room=uid)
 
 
 @socket.on('message')    # send(message=msg, broadcast=True)
@@ -107,7 +108,7 @@ class threads(threading.Thread):
 
     def run(self):
         while True:
-            socket.emit('test', {'data': 'test' + datetime.now().strftime("%H:%M:%S")})
+            socket.emit('test', {'data': 'test time: ' + datetime.now().strftime("%H:%M:%S")})
             time.sleep(5)
 
 
@@ -115,4 +116,4 @@ if __name__ == '__main__':
     thread = threads()
     thread.start()
     socket.run(app, debug=True, use_debugger=False, use_reloader=False,
-            passthrough_errors=True, host="0.0.0.0", port=5000)
+               passthrough_errors=True, host="0.0.0.0", port=5000)

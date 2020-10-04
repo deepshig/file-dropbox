@@ -12,13 +12,13 @@
     {
     _tag: 'CSidebarNavItem',
     name: 'Active',
-    to: '/base/tables',
+    to: '/active',
     icon: 'cil-drop',
     },
     {
     _tag: 'CSidebarNavItem',
     name: 'History',
-    to: '/theme/typography',
+    to: '/history',
     icon: 'cil-pencil',
     },
     {

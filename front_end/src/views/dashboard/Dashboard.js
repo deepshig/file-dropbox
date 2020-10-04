@@ -22,6 +22,7 @@ class Dashboard extends Component {
         this.state = {
             payload: store.getState().socketReducer.payload,
             socketStatus: "On",
+            file: '',
         };
         this.handleSubmit = this.handleSubmit.bind(this);
     }
@@ -59,8 +60,11 @@ class Dashboard extends Component {
     };
 
     handleSubmit(e){
-        console.log(e['0']);
-        store.dispatch(uploadSocketFile(e['0']));
+        // TODO: add multli file support:
+        // https://github.com/miguelgrinberg/socketio-examples/blob/master/uploads/static/uploads/main.js
+        
+        console.log(this.state.file['0']);
+        store.dispatch(uploadSocketFile(this.state.file['0']));
         // store.dispatch(sendSocketMessage("upload", {'data': this.state.file}));
     }
 
@@ -70,12 +74,24 @@ class Dashboard extends Component {
 
             <>
                 <React.Fragment>
-                    <div>
-                        Socket Testing: {this.state.payload}
-                        <div onClick={this.handleEmit}> Start/Stop</div>
-                        <div onClick={this.handleListen}> Listen</div>
+                    <CCol xs="12" sm="6" style={{padding: "5px"}}>
+                    <CRow className="align-items-center" style={{padding: "5px"}}>
+                        {/*<CCol col="6" sm="4" md="2" xl className="mb-3 mb-xl-0">Connection: </CCol>*/}
+                        <CCol>
+                            <h1>Socket Testing: {this.state.payload}</h1>
+                        </CCol>
+                    </CRow>
+                    <CRow>
+                        <CCol>
+                        {/*<div onClick={this.handleEmit}> Start/Stop</div>*/}
+                        <CButton onClick={this.handleListen} color="info" size="md" block>Listen</CButton>
+                        </CCol>
+                        {/*<div onClick={this.handleListen}> Listen</div>*/}
+                    </CRow>
+                    </CCol>
+                    <CCol xs="12" sm="6">
+                    </CCol>
 
-                    </div>
                 </React.Fragment>
 
                 <CCard>
@@ -150,14 +166,14 @@ class Dashboard extends Component {
                                             <CFormGroup row>
                                                 <CLabel col md={3}>Custom file input</CLabel>
                                                 <CCol xs="12" md="9">
-                                                    <CInputFile value={this.state.file} onChange={evt => this.setState({file: evt.target.value})} type="file" custom id="custom-file-input"/>
-                                                    <CLabel htmlFor="custom-file-input" variant="custom-file">
-                                                        {this.state.file
-                                                            ? this.state.file
-                                                            : 'Choose file...'
-                                                        }
-                                                    </CLabel>
-                                                    <input type="file" onChange={ (e) => this.handleSubmit(e.target.files) } />
+                                                    {/*<CInputFile value={this.state.file} onChange={evt => this.setState({file: evt.target.value})} type="file" custom id="custom-file-input"/>*/}
+                                                    {/*<CLabel htmlFor="custom-file-input" variant="custom-file">*/}
+                                                        {/*{this.state.file*/}
+                                                            {/*? this.state.file*/}
+                                                            {/*: 'Choose file...'*/}
+                                                        {/*}*/}
+                                                    {/*</CLabel>*/}
+                                                    <input type="file" onChange={(e) => this.setState(this.state.file = e.target.files)} />
                                                 </CCol>
                                             </CFormGroup>
 

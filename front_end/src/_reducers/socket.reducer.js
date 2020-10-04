@@ -3,7 +3,7 @@ import React from "react";
 
 
 let status = 'disconnected';
-let payload = 'nothing';
+let payload = 'Not Connected';
 const initialState = {status, payload};
 
 export function socketReducer(state = initialState, action) {
@@ -16,18 +16,20 @@ export function socketReducer(state = initialState, action) {
         case socketConstants.SOCKET_SUCCESS:
             return {
                 status: 'connected',
+                payload: 'Connected',
                 host: action.payload,
             };
         case socketConstants.SOCKET_FAILURE:
             return {
                 status: 'failed',
+                payload: 'Failed',
+
             };
         case socketConstants.SOCKET_DISCONNECT:
             return {
                 status: 'disconnected',
             };
         case socketConstants.SOCKET_MESSAGE_STORE:
-            console.log(action.payload);
             return{
                 ...state,
                 payload: action.payload
