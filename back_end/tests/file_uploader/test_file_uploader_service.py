@@ -21,7 +21,7 @@ def test_send_file_for_upload(mocker):
     """
     failure : error while storing file in cache
     """
-    def mock_file_cache_store(obj, file_name):
+    def mock_file_cache_store(obj, file_path, file_name):
         return {"success": False,
                 "error": "some_error"}
 
@@ -37,7 +37,7 @@ def test_send_file_for_upload(mocker):
     """
     failure : error while creating file index cache entry
     """
-    def mock_file_cache_store(obj, file_name):
+    def mock_file_cache_store(obj, file_path, file_name):
         return {"success": True}
 
     def mock_redis_set(obj, key, val):
@@ -58,7 +58,7 @@ def test_send_file_for_upload(mocker):
     """
     failure : error while publishing event to rabbitmq
     """
-    def mock_file_cache_store(obj, file_name):
+    def mock_file_cache_store(obj, file_path, file_name):
         return {"success": True}
 
     def mock_redis_set(obj, key, val):
@@ -84,7 +84,7 @@ def test_send_file_for_upload(mocker):
     """
     success
     """
-    def mock_file_cache_store(obj, file_name):
+    def mock_file_cache_store(obj, file_path, file_name):
         return {"success": True}
 
     def mock_redis_set(obj, key, val):

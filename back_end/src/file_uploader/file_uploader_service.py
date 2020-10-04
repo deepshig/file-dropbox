@@ -13,7 +13,7 @@ class FileUploader:
     def send_file_for_upload(self, file_path):
         file_name = str(uuid.uuid4())
 
-        result = self.file_cache.store(file_name)
+        result = self.file_cache.store(file_path, file_name)
         if not result["success"]:
             result["error"] = "Error while storing the file contents in cache : " + result["error"]
             return result
