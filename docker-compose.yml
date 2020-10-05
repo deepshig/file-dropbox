@@ -106,6 +106,29 @@ services:
     networks:
     - docker_network
 
+#  fsm:
+#    build: ./back_end/fileServiceMngr/app
+#    links:
+#    - index-db
+#    ports:
+#    - 4500:4500
+#
+#  index-db:
+#    image: mysql:5.7
+#    #    environment:
+#    #        MYSQL_DATABASE: "fileServiceMgr"
+#    #        MYSQL_ROOT_PASSWORD: "root"
+#    #        MYSQL_USER: "group12"
+#    #        MYSQL_PASSWORD: "group12"
+#    ports:
+#    - 32000:3306
+#    environment:
+#      MYSQL_ROOT_PASSWORD: root
+#    #      MYSQL_DATABASE: fileServiceMgr
+#    #      MYSQL_USER: root
+#    volumes:
+#    - ./index-db:/docker-entrypoint-initdb.d/:ro
+
 networks:
   docker_network:
     driver: bridge

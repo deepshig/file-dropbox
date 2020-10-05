@@ -2,9 +2,9 @@ from flask import Flask, request, jsonify, make_response
 
 import json
 
-from fileServiceMngr.app.sql_db.sql_db import clients_history, update_client_history
+from sql_db import clients_history, update_client_history
 
-from fileServiceMngr.app.mongo_db.mongo_db import upload_file, list_files
+from mongo_db import upload_file, list_files
 
 
 app = Flask(__name__)
@@ -52,4 +52,4 @@ def lstfiles():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0', port=4500)

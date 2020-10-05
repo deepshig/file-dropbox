@@ -1,5 +1,5 @@
 from bson import objectid
-from fileServiceMngr.app.mongo_db.mongo_dbconf import dbConf
+from mongo_dbconf import dbConf
 
 def upload_file(file):
      fs,_ = dbConf()

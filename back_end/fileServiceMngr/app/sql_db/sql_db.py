@@ -1,5 +1,5 @@
 from typing import List, Dict
-from fileServiceMngr.app.sql_db.sql_dbconf import dbCon
+from sql_dbconf import dbCon
 
 
 def clients_history(clientId)-> List[Dict]:

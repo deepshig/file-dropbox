@@ -1,12 +1,12 @@
 version: "2"
 services:
-  app:
+  FSM:
     build: ./app
     links:
-      - db
+      - index-db
     ports:
-      - "5000:5000"
-  db:
+      - 4500:4500
+  index-db:
     image: mysql:5.7
 #    environment:
 #        MYSQL_DATABASE: "fileServiceMgr"
@@ -20,4 +20,4 @@ services:
 #      MYSQL_DATABASE: fileServiceMgr
 #      MYSQL_USER: root
     volumes:
-      - ./db:/docker-entrypoint-initdb.d/:ro
+      - ./index-db:/docker-entrypoint-initdb.d/:ro
