@@ -2,7 +2,7 @@ import pytest
 import sys
 sys.path.append('../')
 
-from src.file_uploader.redis import RedisDriver, ERROR_KEY_NOT_FOUND  # NOQA
+from src.file_uploader.redis_driver import RedisDriver, ERROR_KEY_NOT_FOUND  # NOQA
 
 test_redis_config = {"host": "127.0.0.1",
                      "port": 6379}
@@ -57,3 +57,17 @@ def test_get():
     assert result["success"] == True
     assert result["value"] == "world"
     teardown_redis(r.connection)
+
+
+def test_delete():
+    r = RedisDriver(test_redis_config)
+    """
+    success
+    """
+    r.connection.set("hello", "world")
+
+    result = r.delete("hello")
+    assert result["success"] == True
+
+    fetched_value = r.connection.get("hello")
+    assert fetched_value == None

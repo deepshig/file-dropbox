@@ -45,3 +45,14 @@ class RedisDriver:
         else:
             return {"success": False,
                     "error": ERROR_KEY_NOT_FOUND}
+
+    def delete(self, key):
+        key_str = str(key)
+        try:
+            value = self.connection.delete(key_str)
+        except RedisError as err:
+            error_str = "Error while deleting key from redis : " + str(err)
+            return {"success": False,
+                    "error": error_str}
+
+        return {"success": True}
