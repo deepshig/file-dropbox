@@ -51,7 +51,7 @@ class RedisDriver:
         try:
             value = self.connection.delete(key_str)
         except RedisError as err:
-            error_str = "Error while retrieving value from redis : " + str(err)
+            error_str = "Error while deleting key from redis : " + str(err)
             return {"success": False,
                     "error": error_str}
 

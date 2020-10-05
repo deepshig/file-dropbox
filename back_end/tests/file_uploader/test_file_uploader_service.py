@@ -108,3 +108,63 @@ def test_send_file_for_upload(mocker):
 
     result = svc.send_file_for_upload("/random/file/path")
     assert result["success"] == True
+
+
+def test_delete_uploaded_file(mocker):
+    """
+    failure : error in deleting file from cache
+    """
+    def mock_file_cache_delete(obj, file_name):
+        return {"success": False,
+                "error": "some_error"}
+
+    mocker.patch.object(FileCache, 'delete', new=mock_file_cache_delete)
+
+    file_cache = FileCache(test_redis_config)
+    svc = FileUploader(file_cache, None, None)
+
+    result = svc.delete_uploaded_file("file1")
+    assert result["success"] == False
+    assert result["error_msg"] == "Error while deleting the file from cache : some_error"
+
+    """
+    failure : error in updating file index cache
+    """
+    def mock_file_cache_delete(obj, file_name):
+        return {"success": True,
+                "file_key": "file:file_name"}
+
+    def mock_redis_set(obj, key, value):
+        return {"success": False,
+                "error": "some_error_in_redis"}
+
+    mocker.patch.object(FileCache, 'delete', new=mock_file_cache_delete)
+    mocker.patch.object(RedisDriver, 'set', new=mock_redis_set)
+
+    file_cache = FileCache(test_redis_config)
+    index_cache = RedisDriver(test_redis_config)
+    svc = FileUploader(file_cache, None, index_cache)
+
+    result = svc.delete_uploaded_file("file1")
+    assert result["success"] == False
+    assert result["error_msg"] == "Error while updating file status in index cache  : some_error_in_redis"
+
+    """
+    success
+    """
+    def mock_file_cache_store(obj, file_path, file_name):
+        return {"success": True,
+                "file_key": "file:file_name"}
+
+    def mock_redis_set(obj, key, val):
+        return {"success": True}
+
+    mocker.patch.object(FileCache, 'store', new=mock_file_cache_store)
+    mocker.patch.object(RedisDriver, 'set', new=mock_redis_set)
+
+    file_cache = FileCache(test_redis_config)
+    index_cache = RedisDriver(test_redis_config)
+    svc = FileUploader(file_cache, None, index_cache)
+
+    result = svc.delete_uploaded_file("file1")
+    assert result["success"] == True

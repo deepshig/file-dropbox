@@ -3,6 +3,7 @@ import time
 import json
 
 STATUS_FILE_CACHED = "File stored in cache"
+STATUS_FILE_UPLOADED = "File uplaoded successfully"
 
 
 class FileUploader:
@@ -35,9 +36,30 @@ class FileUploader:
         return {"success": True,
                 "file_name": file_name}
 
+    def delete_uploaded_file(self, file_name):
+        result = self.file_cache.delete(file_name)
+        if not result["success"]:
+            result["error_msg"] = "Error while deleting the file from cache : " + \
+                result["error"]
+            return result
+
+        result = self.__update_file_index_cache(
+            file_name, STATUS_FILE_UPLOADED)
+        if not result["success"]:
+            result["error_msg"] = "Error while updating file status in index cache  : " + \
+                result["error"]
+            return result
+
+        return {"success": True}
+
     def __create_file_index_cache(self, file_name):
         index_key = self.__get_index_key(file_name)
         result = self.index_cache.set(index_key, STATUS_FILE_CACHED)
+        return result
+
+    def __update_file_index_cache(self, file_name, updated_status):
+        index_key = self.__get_index_key(file_name)
+        result = self.index_cache.set(index_key, updated_status)
         return result
 
     def __get_index_key(self, file_name):
