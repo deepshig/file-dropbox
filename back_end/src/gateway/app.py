@@ -33,7 +33,7 @@ def save_file(file):
 def connect():
     token = request.args.get('token')
     uid = request.args.get('uid')
-    resp = requests.post("http://127.0.0.1:4000/auth/testverify", data={'name': uid, 'token': token})
+    resp = requests.post("http://auth:4000/auth/testverify", data={'name': uid, 'token': token})
     print(resp.json()['verified'])
 
     if not resp.json()['verified']:
@@ -54,6 +54,7 @@ def handleMessage(msg, headers):
 @socket.on('alive')    # send(message=msg, broadcast=True)
 def handleAlive(headers):
     emit('alive', {'alive': True}, room=headers['User'])
+
 
 @socket.on('upload')    # send(message=msg, broadcast=True)
 def handleAlive(msg, headers):
@@ -105,7 +106,7 @@ def write_chunk(filename, offset, data):
 def complete_upload(filename):
     print("Complete")
     with open(file_path + filename, 'rb') as f:
-        resp = requests.post('http://127.0.0.1:3500/file/upload', files={'file': f})
+        resp = requests.post('http://api-uploader:3500/file/upload', files={'file': f})
         print(resp.json())
         # os.remove(file_path + filename)
         emit('complete-upload', {'data': True})

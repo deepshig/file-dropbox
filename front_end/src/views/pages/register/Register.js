@@ -39,7 +39,7 @@ class Register extends Component {
 
     handleSubmit(event){
         store.dispatch(callRegister(this.state.UID));
-        fetch("http://127.0.0.1:4000/auth/signup", {
+        fetch("http://54.170.85.210:4000/auth/signup", {
             method: "POST",
             crossDomain: true,
             // credentials: 'include',
