@@ -14,6 +14,11 @@ from src.file_uploader import rabbitmq
 import pathlib
 
 ERROR_FILE_NOT_PROVIDED = "File not provided"
+ERROR_FILE_STATUS_NOT_PROVIDED = "File status not provided"
+ERROR_FILE_NAME_NOT_PROVIDED = "File name not provided"
+ERROR_INVALID_FILE_STATUS = "File status is invalid"
+
+accepted_file_status = ["uploaded_successfully", "upload_failed"]
 FILE_TEMP_UPLOAD_PATH = "tmp/"
 FILE_TEMP_UPLOAD_PATH = os.path.abspath(pathlib.Path().absolute()) + '/'
 
@@ -102,10 +107,42 @@ class UploadFile(Resource):
         return resp
 
 
+class UpdateFileStatus(Resource):
+    def __init__(self, svc):
+        self.svc = svc
+
+    def put(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('file_status', required=True, type=str,
+                            help=ERROR_FILE_STATUS_NOT_PROVIDED)
+        parser.add_argument('file_name', required=True, type=str,
+                            help=ERROR_FILE_NAME_NOT_PROVIDED)
+        parser.add_argument('error_msg', type=str)
+
+        args = parser.parse_args()
+        file_status, file_name = args["file_status"], args["file_name"]
+        print("file_status = ", file_status, ", file_name = ", file_name)
+
+        if file_status not in accepted_file_status:
+            return output_json({"msg": ERROR_INVALID_FILE_STATUS}, 400)
+
+        if file_status == accepted_file_status[0]:
+            result = svc.delete_uploaded_file(file_name)
+
+            if not result["success"]:
+                response = output_json({"msg": result["error_msg"]}, 500)
+            else:
+                response = output_json({"msg": "success"}, 200)
+
+        return response
+
+
 svc = init(index_cache_config, file_cache_config, rabbitmq_config)
 
 api.add_resource(Ping, '/ping')
 api.add_resource(UploadFile, '/file/upload',
+                 resource_class_kwargs={"svc": svc})
+api.add_resource(UpdateFileStatus, '/file/update/status',
                  resource_class_kwargs={"svc": svc})
 
 if __name__ == '__main__':
