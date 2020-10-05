@@ -13,9 +13,14 @@ from src.file_uploader import rabbitmq
 # import rabbitmq
 import pathlib
 
+INSIDE_CONTAINER = os.environ.get('IN_CONTAINER_FLAG', False)
+
 ERROR_FILE_NOT_PROVIDED = "File not provided"
-FILE_TEMP_UPLOAD_PATH = "tmp/"
-FILE_TEMP_UPLOAD_PATH = os.path.abspath(pathlib.Path().absolute()) + '/'
+if INSIDE_CONTAINER:
+    FILE_TEMP_UPLOAD_PATH = "tmp/"
+else:
+    FILE_TEMP_UPLOAD_PATH = os.path.abspath(pathlib.Path().absolute()) + '/'
+
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
@@ -23,35 +28,32 @@ CORS(app, supports_credentials=True)
 api = Api(app)
 CORS(app, supports_credentials=True)
 
-#################################################
-#       Local Testing configs                   #
-#################################################
-# index_cache_config = {"host": "127.0.0.1",
-#                       "port": 6379}
-#
-# file_cache_config = {"host": "127.0.0.1",
-#                      "port": 6379}
-#
-# rabbitmq_config = {"user": "guest",
-#                    "password": "guest",
-#                    "host": "127.0.0.1",
-#                    "port": "5672",
-#                    "queue_name": "file_uploads_queue"}
 
-#################################################
-#       Docker Testing configs                  #
-#################################################
-index_cache_config = {"host": "redis",
-                      "port": 6379}
+if INSIDE_CONTAINER:
+    index_cache_config = {"host": "redis",
+                          "port": 6379}
 
-file_cache_config = {"host": "redis",
-                     "port": 6379}
+    file_cache_config = {"host": "redis",
+                         "port": 6379}
 
-rabbitmq_config = {"user": "guest",
-                   "password": "guest",
-                   "host": "rabbitmq",
-                   "port": "5672",
-                   "queue_name": "file_uploads_queue"}
+    rabbitmq_config = {"user": "guest",
+                       "password": "guest",
+                       "host": "rabbitmq",
+                       "port": "5672",
+                       "queue_name": "file_uploads_queue"}
+else:
+    index_cache_config = {"host": "127.0.0.1",
+                          "port": 6379}
+
+    file_cache_config = {"host": "127.0.0.1",
+                         "port": 6379}
+
+    rabbitmq_config = {"user": "guest",
+                       "password": "guest",
+                       "host": "127.0.0.1",
+                       "port": "5672",
+                       "queue_name": "file_uploads_queue"}
+
 
 def init(index_cache_config, file_cache_config, rabbitmq_config):
     index_cacher = redis_driver.RedisDriver(index_cache_config)

@@ -23,6 +23,8 @@ const Page500 = React.lazy(() => import('./views/pages/page500/Page500'));
 
 class App extends Component {
   componentDidMount() {
+      console.log(process.env);
+
       if (store.getState().authentication.token) {
             console.log(store.getState().authentication.token)
       }
@@ -30,6 +32,7 @@ class App extends Component {
         console.log("Not Token yet")
       }
     }
+
 
   render() {
     return (

@@ -36,7 +36,7 @@ class Login extends Component {
   }
   handleClick(){
     store.dispatch(callLogin(this.state.UID));
-    fetch("http://54.170.85.210:4000/auth/login/" + this.state.UID, {
+    fetch("http://" + process.env.REACT_APP_HOST_IP + ":" + process.env.REACT_APP_AUTHENTICATION_PORT + "/auth/login/" + this.state.UID, {
       method: "PUT",
       crossDomain: true,
       // credentials: 'include',
@@ -62,7 +62,6 @@ class Login extends Component {
   }
   render()
   {
-
     return (
         <div className="c-app c-default-layout flex-row align-items-center">
           <CContainer>

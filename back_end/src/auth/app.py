@@ -1,12 +1,16 @@
+import os
 import jwt
 from flask import Flask
 from flask_restful import Resource, Api, output_json, reqparse
 from uuid import UUID
-from src.auth import authentication_service
-from src.auth import user_db
 from flask_cors import CORS
 
+from src.auth import authentication_service
+from src.auth import user_db
+
 from flask_jwt_extended import JWTManager
+
+INSIDE_CONTAINER = os.environ.get('IN_CONTAINER_FLAG', False)
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
@@ -27,17 +31,19 @@ SECRET_KEY = "i5uitypjchnar0rlz31yh0u5sgs8rui2baxxgw8e"
 app.config['SECRET_KEY'] = SECRET_KEY
 jwtMng = JWTManager(app)
 
-db_config = {"user": "postgres",
-             "password": "postgres",
-             "host": "postgresdb",
-             "port": "5432",
-             "db_name": "user_auth"}
+if INSIDE_CONTAINER:
+    db_config = {"user": "postgres",
+                 "password": "postgres",
+                 "host": "postgresdb",
+                 "port": "5432",
+                 "db_name": "user_auth"}
+else:
+    db_config = {"user": "postgres",
+                 "password": "postgres",
+                 "host": "127.0.0.1",
+                 "port": "5432",
+                 "db_name": "user_auth"}
 
-# db_config = {"user": "postgres",
-#              "password": "postgres",
-#              "host": "127.0.0.1",
-#              "port": "5432",
-#              "db_name": "user_auth"}
 accepted_roles = ["admin", "user", "developer"]
 
 

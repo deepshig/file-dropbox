@@ -15,7 +15,9 @@ app = Flask(__name__)
 SECRET_KEY = "i5uitypjchnar0rlz31yh0u5sgs8rui2baxxgw8e"
 
 app.config['SECRET_KEY'] = SECRET_KEY
-app.config['SECRET_KEY'] = 'secret!'
+
+INSIDE_CONTAINER = os.environ.get('IN_CONTAINER_FLAG', False)
+
 
 CORS(app, supports_credentials=True)
 socket = SocketIO(app, cors_allowed_origins="*")
@@ -33,7 +35,11 @@ def save_file(file):
 def connect():
     token = request.args.get('token')
     uid = request.args.get('uid')
-    resp = requests.post("http://auth:4000/auth/testverify", data={'name': uid, 'token': token})
+    if INSIDE_CONTAINER:
+        resp = requests.post("http://auth:4000/auth/testverify", data={'name': uid, 'token': token})
+    else:
+        resp = requests.post("http://127.0.0.1:4000/auth/testverify", data={'name': uid, 'token': token})
+
     print(resp.json()['verified'])
 
     if not resp.json()['verified']:
@@ -106,7 +112,10 @@ def write_chunk(filename, offset, data):
 def complete_upload(filename):
     print("Complete")
     with open(file_path + filename, 'rb') as f:
-        resp = requests.post('http://api-uploader:3500/file/upload', files={'file': f})
+        if INSIDE_CONTAINER:
+            resp = requests.post('http://api-uploader:3500/file/upload', files={'file': f})
+        else:
+            resp = requests.post('http://127.0.0.1:3500/file/upload', files={'file': f})
         print(resp.json())
         # os.remove(file_path + filename)
         emit('complete-upload', {'data': True})

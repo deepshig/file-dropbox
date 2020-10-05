@@ -4,8 +4,7 @@ import {storeSocketMessage, successSocket, failedSocket} from "../_actions";
 
 // Example conf. You can move this to your config file.
 // const host = 'http://54.154.129.30:5000/';
-const host = 'http://54.170.85.210:5000/';
-const socketPath = '/socket-io/';
+const host = ("http://" + process.env.REACT_APP_HOST_IP + ":" + process.env.REACT_APP_SOCKET_PORT + "/");
 const chunk_size = 64 * 1024;
 
 export default class socketAPI {
