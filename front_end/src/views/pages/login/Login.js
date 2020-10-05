@@ -36,7 +36,7 @@ class Login extends Component {
   }
   handleClick(){
     store.dispatch(callLogin(this.state.UID));
-    fetch("http://auth:4000/auth/login/" + this.state.UID, {
+    fetch("http://http://54.170.85.210/:4000/auth/login/" + this.state.UID, {
       method: "PUT",
       crossDomain: true,
       // credentials: 'include',
