@@ -3,20 +3,21 @@ from flask_restful import Resource, Api, output_json, reqparse
 from flask_cors import CORS
 from werkzeug import datastructures, utils
 import os
-from src.file_uploader import file_uploader_service
-from src.file_uploader import file_cache
-from src.file_uploader import redis_driver
-from src.file_uploader import rabbitmq
-# import file_uploader_service
-# import file_cache
-# import redis_driver
-# import rabbitmq
+# from src.file_uploader import file_uploader_service
+# from src.file_uploader import file_cache
+# from src.file_uploader import redis_driver
+# from src.file_uploader import rabbitmq
+import file_uploader_service
+import file_cache
+import redis_driver
+import rabbitmq
 import pathlib
 
 ERROR_FILE_NOT_PROVIDED = "File not provided"
 ERROR_FILE_STATUS_NOT_PROVIDED = "File status not provided"
 ERROR_FILE_NAME_NOT_PROVIDED = "File name not provided"
 ERROR_INVALID_FILE_STATUS = "File status is invalid"
+ERROR_INVALID_FILE_NAME = " File name is invalid"
 
 accepted_file_status = ["uploaded_successfully", "upload_failed"]
 FILE_TEMP_UPLOAD_PATH = "tmp/"
@@ -126,15 +127,17 @@ class UpdateFileStatus(Resource):
         if file_status not in accepted_file_status:
             return output_json({"msg": ERROR_INVALID_FILE_STATUS}, 400)
 
+        response = output_json({"msg": "success"}, 200)
+
         if file_status == accepted_file_status[0]:
             result = svc.delete_uploaded_file(file_name)
-
             if not result["success"]:
-                response = output_json({"msg": result["error_msg"]}, 500)
-            else:
-                response = output_json({"msg": "success"}, 200)
-        else:
-            response = output_json({"msg": "success"}, 200)
+                if result["error"] == redis_driver.ERROR_KEY_NOT_FOUND:
+                    result["error_msg"] = "Failed to update file status : " + \
+                        ERROR_INVALID_FILE_NAME
+                    response = output_json({"msg": result["error_msg"]}, 400)
+                else:
+                    response = output_json({"msg": result["error_msg"]}, 500)
 
         return response
 
