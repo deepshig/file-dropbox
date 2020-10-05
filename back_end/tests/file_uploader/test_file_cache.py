@@ -70,3 +70,27 @@ def test_store():
 
     teardown_redis(cache.redis.connection)
     os.remove(file_name)
+
+
+def test_delete():
+    cache = FileCache(test_redis_config)
+    file_name = "test_file.txt"
+    """
+    success : file does not exist
+    """
+
+    result = cache.delete(file_name)
+    assert result["success"] == True
+
+    """
+    success : files exists
+    """
+    key = "file:" + file_name
+    file_content = "Hello World".encode('utf-8')
+    cache.redis.connection.set(key, file_content)
+
+    result = cache.delete(file_name)
+    assert result["success"] == True
+
+    value = cache.redis.connection.get(key)
+    assert value == None
