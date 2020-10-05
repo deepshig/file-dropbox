@@ -2,7 +2,7 @@ import pytest
 import sys
 sys.path.append('../')
 
-from src.file_uploader.redis import RedisDriver, ERROR_KEY_NOT_FOUND  # NOQA
+from src.file_uploader.redis_driver import RedisDriver, ERROR_KEY_NOT_FOUND  # NOQA
 
 test_redis_config = {"host": "127.0.0.1",
                      "port": 6379}

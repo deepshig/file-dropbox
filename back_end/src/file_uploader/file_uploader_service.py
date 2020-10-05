@@ -4,6 +4,7 @@ import json
 
 STATUS_FILE_CACHED = "File stored in cache"
 
+
 class FileUploader:
     def __init__(self, file_cache, queue_manager, index_cache):
         self.file_cache = file_cache
@@ -18,12 +19,14 @@ class FileUploader:
             result["error_msg"] = "Error while storing the file contents in cache : " + result["error"]
             return result
 
+        file_cache_key = result["file_key"]
+
         result = self.__create_file_index_cache(file_name)
         if not result["success"]:
             result["error_msg"] = "Error while creating file index on the cache : " + result["error"]
             return result
 
-        result = self.__publish_queue_event(file_name, result["index_key"])
+        result = self.__publish_queue_event(file_name, file_cache_key)
         if not result["message_published"]:
             result["success"] = False
             result["error_msg"] = result["error"]
@@ -33,17 +36,18 @@ class FileUploader:
                 "file_name": file_name}
 
     def __create_file_index_cache(self, file_name):
-        index_key = "file_index:" + file_name
+        index_key = self.__get_index_key(file_name)
         result = self.index_cache.set(index_key, STATUS_FILE_CACHED)
-        result["index_key"] = index_key
         return result
 
-    def __publish_queue_event(self, file_name, index_key):
+    def __get_index_key(self, file_name):
+        return "file_index:" + file_name
+
+    def __publish_queue_event(self, file_name, file_key):
         msg = {"id": str(uuid.uuid4()),
                "file_name": file_name,
-               "index_cache_key": index_key,
+               "file_cache_key": file_key,
                "event_timestamp": time.time()}
 
         msg_json = json.dumps(msg)
         return self.queue_manager.publish(msg_json)
-

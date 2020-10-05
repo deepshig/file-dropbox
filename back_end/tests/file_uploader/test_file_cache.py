@@ -4,7 +4,7 @@ import os
 sys.path.append('../')
 
 from src.file_uploader.file_cache import FileCache, ERROR_FILE_NOT_FOUND, ERROR_EMPTY_FILE  # NOQA
-from src.file_uploader.redis import ERROR_KEY_NOT_FOUND # NOQA
+from src.file_uploader.redis_driver import ERROR_KEY_NOT_FOUND  # NOQA
 
 test_redis_config = {"host": "127.0.0.1",
                      "port": 6379}
@@ -13,6 +13,7 @@ test_redis_config = {"host": "127.0.0.1",
 def teardown_redis(redis_conn):
     if redis_conn is not None:
         redis_conn.flushall()
+
 
 def test_store():
     cache = FileCache(test_redis_config)
@@ -69,5 +70,3 @@ def test_store():
 
     teardown_redis(cache.redis.connection)
     os.remove(file_name)
-
-

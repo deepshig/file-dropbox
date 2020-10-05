@@ -3,10 +3,10 @@ from pytest_mock import mocker
 import sys
 sys.path.append('../')
 
-from src.file_uploader.file_uploader_service import FileUploader # NOQA
-from src.file_uploader.file_cache import FileCache # NOQA
-from src.file_uploader.redis import RedisDriver # NOQA
-from src.file_uploader.rabbitmq import RabbitMQManager # NOQA
+from src.file_uploader.file_uploader_service import FileUploader  # NOQA
+from src.file_uploader.file_cache import FileCache  # NOQA
+from src.file_uploader.redis_driver import RedisDriver  # NOQA
+from src.file_uploader.rabbitmq import RabbitMQManager  # NOQA
 
 test_redis_config = {"host": "127.0.0.1",
                      "port": 6379}
@@ -16,6 +16,7 @@ test_rabbitmq_config = {"user": "guest",
                         "host": "127.0.0.1",
                         "port": "5672",
                         "queue_name": "test"}
+
 
 def test_send_file_for_upload(mocker):
     """
@@ -38,7 +39,8 @@ def test_send_file_for_upload(mocker):
     failure : error while creating file index cache entry
     """
     def mock_file_cache_store(obj, file_path, file_name):
-        return {"success": True}
+        return {"success": True,
+                "file_key": "file:file_name"}
 
     def mock_redis_set(obj, key, val):
         return {"success": False,
@@ -59,7 +61,8 @@ def test_send_file_for_upload(mocker):
     failure : error while publishing event to rabbitmq
     """
     def mock_file_cache_store(obj, file_path, file_name):
-        return {"success": True}
+        return {"success": True,
+                "file_key": "file:file_name"}
 
     def mock_redis_set(obj, key, val):
         return {"success": True}
@@ -85,7 +88,8 @@ def test_send_file_for_upload(mocker):
     success
     """
     def mock_file_cache_store(obj, file_path, file_name):
-        return {"success": True}
+        return {"success": True,
+                "file_key": "file:file_name"}
 
     def mock_redis_set(obj, key, val):
         return {"success": True}
@@ -104,4 +108,3 @@ def test_send_file_for_upload(mocker):
 
     result = svc.send_file_for_upload("/random/file/path")
     assert result["success"] == True
-
