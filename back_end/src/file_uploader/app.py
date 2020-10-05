@@ -17,7 +17,8 @@ ERROR_FILE_NOT_PROVIDED = "File not provided"
 ERROR_FILE_STATUS_NOT_PROVIDED = "File status not provided"
 ERROR_FILE_NAME_NOT_PROVIDED = "File name not provided"
 ERROR_INVALID_FILE_STATUS = "File status is invalid"
-ERROR_INVALID_FILE_NAME = " File name is invalid"
+ERROR_INVALID_FILE_NAME = "File name is invalid"
+ERROR_INTERNAL_SERVER = "Internal Server Error"
 
 accepted_file_status = ["uploaded_successfully", "upload_failed"]
 FILE_TEMP_UPLOAD_PATH = "tmp/"
@@ -102,7 +103,7 @@ class UploadFile(Resource):
             resp = output_json({"msg": result["error_msg"]}, 400)
 
         else:
-            resp = output_json({"msg": result["error_msg"]}, 500)
+            resp = output_json({"msg": ERROR_INTERNAL_SERVER}, 500)
 
         os.remove(file_path)
         return resp
@@ -122,7 +123,6 @@ class UpdateFileStatus(Resource):
 
         args = parser.parse_args()
         file_status, file_name = args["file_status"], args["file_name"]
-        print("file_status = ", file_status, ", file_name = ", file_name)
 
         if file_status not in accepted_file_status:
             return output_json({"msg": ERROR_INVALID_FILE_STATUS}, 400)
@@ -137,7 +137,7 @@ class UpdateFileStatus(Resource):
                         ERROR_INVALID_FILE_NAME
                     response = output_json({"msg": result["error_msg"]}, 400)
                 else:
-                    response = output_json({"msg": result["error_msg"]}, 500)
+                    response = output_json({"msg": ERROR_INTERNAL_SERVER}, 500)
 
         return response
 
