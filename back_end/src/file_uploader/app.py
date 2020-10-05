@@ -3,14 +3,14 @@ from flask_restful import Resource, Api, output_json, reqparse
 from flask_cors import CORS
 from werkzeug import datastructures, utils
 import os
-# from src.file_uploader import file_uploader_service
-# from src.file_uploader import file_cache
-# from src.file_uploader import redis_driver
-# from src.file_uploader import rabbitmq
-import file_uploader_service
-import file_cache
-import redis_driver
-import rabbitmq
+from src.file_uploader import file_uploader_service
+from src.file_uploader import file_cache
+from src.file_uploader import redis_driver
+from src.file_uploader import rabbitmq
+# import file_uploader_service
+# import file_cache
+# import redis_driver
+# import rabbitmq
 import pathlib
 
 ERROR_FILE_NOT_PROVIDED = "File not provided"

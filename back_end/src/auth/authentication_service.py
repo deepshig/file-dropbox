@@ -1,5 +1,6 @@
 import uuid
 from src.auth import user_db
+# import user_db
 
 ERROR_UNAUTHORISED_REQUEST = "User not authorised to fetch this resource"
 
@@ -25,7 +26,7 @@ class Authenticator:
     def get_user(self, user_id, access_token):
         fetched_user = self.db.get_user(user_id)
         if fetched_user["user_fetched"]:
-            if fetched_user["access_token"] == access_token:
+            if str(fetched_user["access_token"]) == str(access_token):
                 return fetched_user
             else:
                 return {"user_fetched": False,
