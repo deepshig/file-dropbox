@@ -133,6 +133,8 @@ class UpdateFileStatus(Resource):
                 response = output_json({"msg": result["error_msg"]}, 500)
             else:
                 response = output_json({"msg": "success"}, 200)
+        else:
+            response = output_json({"msg": "success"}, 200)
 
         return response
 
