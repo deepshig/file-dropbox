@@ -1,10 +1,11 @@
 import pytest
+from pytest_mock import mocker
 import sys
 import os
 sys.path.append('../')
 
 from src.file_uploader.file_cache import FileCache, ERROR_FILE_NOT_FOUND, ERROR_EMPTY_FILE  # NOQA
-from src.file_uploader.redis_driver import ERROR_KEY_NOT_FOUND  # NOQA
+from src.file_uploader.redis_driver import RedisDriver, ERROR_KEY_NOT_FOUND  # NOQA
 
 test_redis_config = {"host": "127.0.0.1",
                      "port": 6379}
@@ -15,7 +16,7 @@ def teardown_redis(redis_conn):
         redis_conn.flushall()
 
 
-def test_store():
+def test_store(mocker):
     cache = FileCache(test_redis_config)
     """
     failure : file does not exist
@@ -69,10 +70,25 @@ def test_store():
     assert fetched_file["value"] == str(file_content.encode('utf-8'))
 
     teardown_redis(cache.redis.connection)
+
+    """
+    failure : redis not available
+    """
+    def mock_redis_set(obj, key, value):
+        return {"success": False,
+                "error": "some error from redis"}
+
+    mocker.patch.object(RedisDriver, 'set', new=mock_redis_set)
+    cache = FileCache(test_redis_config)
+
+    result = cache.store(file_path, file_name)
+    assert result["success"] == False
+    assert result["error"] == "some error from redis"
+
     os.remove(file_name)
 
 
-def test_delete():
+def test_delete(mocker):
     cache = FileCache(test_redis_config)
     file_name = "test_file.txt"
     """
@@ -94,3 +110,19 @@ def test_delete():
 
     value = cache.redis.connection.get(key)
     assert value == None
+
+    teardown_redis(cache.redis.connection)
+
+    """
+    failure : redis not available
+    """
+    def mock_redis_delete(obj, key):
+        return {"success": False,
+                "error": "some error from redis"}
+
+    mocker.patch.object(RedisDriver, 'delete', new=mock_redis_delete)
+    cache = FileCache(test_redis_config)
+
+    result = cache.delete(file_name)
+    assert result["success"] == False
+    assert result["error"] == "some error from redis"
