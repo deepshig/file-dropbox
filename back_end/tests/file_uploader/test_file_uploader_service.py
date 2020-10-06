@@ -5,6 +5,7 @@ sys.path.append('../')
 
 from src.file_uploader.file_uploader_service import FileUploader  # NOQA
 from src.file_uploader.file_cache import FileCache  # NOQA
+from src.file_uploader.index_cache import IndexCache  # NOQA
 from src.file_uploader.redis_driver import RedisDriver  # NOQA
 from src.file_uploader.rabbitmq import RabbitMQManager  # NOQA
 
@@ -44,15 +45,15 @@ def test_send_file_for_upload(mocker):
         return {"success": True,
                 "file_key": "file:file_name"}
 
-    def mock_redis_set(obj, key, val):
+    def mock_index_cache_create(obj, file_name):
         return {"success": False,
                 "error": "some_error_in_indexing"}
 
     mocker.patch.object(FileCache, 'store', new=mock_file_cache_store)
-    mocker.patch.object(RedisDriver, 'set', new=mock_redis_set)
+    mocker.patch.object(IndexCache, 'create', new=mock_index_cache_create)
 
     file_cache = FileCache(test_redis_config)
-    index_cache = RedisDriver(test_redis_config)
+    index_cache = IndexCache(test_redis_config)
     svc = FileUploader(file_cache, None, index_cache)
 
     result = svc.send_file_for_upload("/random/file/path", user_id, user_name)
@@ -66,7 +67,7 @@ def test_send_file_for_upload(mocker):
         return {"success": True,
                 "file_key": "file:file_name"}
 
-    def mock_redis_set(obj, key, val):
+    def mock_index_cache_create(obj, file_name):
         return {"success": True}
 
     def mock_publish(obj, msg_body):
@@ -74,11 +75,11 @@ def test_send_file_for_upload(mocker):
                 "error": "something failing"}
 
     mocker.patch.object(FileCache, 'store', new=mock_file_cache_store)
-    mocker.patch.object(RedisDriver, 'set', new=mock_redis_set)
+    mocker.patch.object(IndexCache, 'create', new=mock_index_cache_create)
     mocker.patch.object(RabbitMQManager, 'publish', new=mock_publish)
 
     file_cache = FileCache(test_redis_config)
-    index_cache = RedisDriver(test_redis_config)
+    index_cache = IndexCache(test_redis_config)
     queue_manager = RabbitMQManager(test_rabbitmq_config)
     svc = FileUploader(file_cache, queue_manager, index_cache)
 
@@ -93,18 +94,18 @@ def test_send_file_for_upload(mocker):
         return {"success": True,
                 "file_key": "file:file_name"}
 
-    def mock_redis_set(obj, key, val):
+    def mock_index_cache_create(obj, file_name):
         return {"success": True}
 
     def mock_publish(obj, msg_body):
         return {"message_published": True}
 
     mocker.patch.object(FileCache, 'store', new=mock_file_cache_store)
-    mocker.patch.object(RedisDriver, 'set', new=mock_redis_set)
+    mocker.patch.object(IndexCache, 'create', new=mock_index_cache_create)
     mocker.patch.object(RabbitMQManager, 'publish', new=mock_publish)
 
     file_cache = FileCache(test_redis_config)
-    index_cache = RedisDriver(test_redis_config)
+    index_cache = IndexCache(test_redis_config)
     queue_manager = RabbitMQManager(test_rabbitmq_config)
     svc = FileUploader(file_cache, queue_manager, index_cache)
 
@@ -144,7 +145,7 @@ def test_delete_uploaded_file(mocker):
     mocker.patch.object(RedisDriver, 'get', new=mock_redis_get)
 
     file_cache = FileCache(test_redis_config)
-    index_cache = RedisDriver(test_redis_config)
+    index_cache = IndexCache(test_redis_config)
     svc = FileUploader(file_cache, None, index_cache)
 
     result = svc.delete_uploaded_file("file1")
@@ -158,19 +159,15 @@ def test_delete_uploaded_file(mocker):
         return {"success": True,
                 "file_key": "file:file_name"}
 
-    def mock_redis_get(obj, key):
-        return {"success": True}
-
-    def mock_redis_set(obj, key, value):
+    def mock_index_cache_update(obj, file_name, status):
         return {"success": False,
                 "error": "some_error_in_redis"}
 
     mocker.patch.object(FileCache, 'delete', new=mock_file_cache_delete)
-    mocker.patch.object(RedisDriver, 'get', new=mock_redis_get)
-    mocker.patch.object(RedisDriver, 'set', new=mock_redis_set)
+    mocker.patch.object(IndexCache, 'update', new=mock_index_cache_update)
 
     file_cache = FileCache(test_redis_config)
-    index_cache = RedisDriver(test_redis_config)
+    index_cache = IndexCache(test_redis_config)
     svc = FileUploader(file_cache, None, index_cache)
 
     result = svc.delete_uploaded_file("file1")
@@ -184,18 +181,14 @@ def test_delete_uploaded_file(mocker):
         return {"success": True,
                 "file_key": "file:file_name"}
 
-    def mock_redis_get(obj, key):
-        return {"success": True}
-
-    def mock_redis_set(obj, key, val):
+    def mock_index_cache_update(obj, file_name, status):
         return {"success": True}
 
     mocker.patch.object(FileCache, 'store', new=mock_file_cache_store)
-    mocker.patch.object(RedisDriver, 'get', new=mock_redis_get)
-    mocker.patch.object(RedisDriver, 'set', new=mock_redis_set)
+    mocker.patch.object(IndexCache, 'update', new=mock_index_cache_update)
 
     file_cache = FileCache(test_redis_config)
-    index_cache = RedisDriver(test_redis_config)
+    index_cache = IndexCache(test_redis_config)
     svc = FileUploader(file_cache, None, index_cache)
 
     result = svc.delete_uploaded_file("file1")

@@ -6,12 +6,14 @@ import os
 import pathlib
 from src.file_uploader import file_uploader_service
 from src.file_uploader import file_cache
-from src.file_uploader import redis_driver
+from src.file_uploader import index_cache
 from src.file_uploader import rabbitmq
+from src.file_uploader import redis_driver
 # import file_uploader_service
 # import file_cache
-# import redis_driver
+# import index_cache
 # import rabbitmq
+# import redis_driver
 
 INSIDE_CONTAINER = os.environ.get('IN_CONTAINER_FLAG', False)
 
@@ -65,7 +67,7 @@ else:
 
 
 def init(index_cache_config, file_cache_config, rabbitmq_config):
-    index_cacher = redis_driver.RedisDriver(index_cache_config)
+    index_cacher = index_cache.IndexCache(index_cache_config)
     file_cacher = file_cache.FileCache(file_cache_config)
     queue_manager = rabbitmq.RabbitMQManager(rabbitmq_config)
 
@@ -84,15 +86,15 @@ class UploadFile(Resource):
         self.svc = svc
 
     def post(self):
-        parse = reqparse.RequestParser()
-        parse.add_argument(
+        parser = reqparse.RequestParser()
+        parser.add_argument(
             'file', type=datastructures.FileStorage, location='files')
         parser.add_argument('user_id', required=True, type=str,
                             help=ERROR_USER_ID_NOT_PROVIDED)
         parser.add_argument('user_name', required=True, type=str,
                             help=ERROR_USER_NAME_NOT_PROVIDED)
 
-        args = parse.parse_args()
+        args = parser.parse_args()
         data_file, user_id, user_name = args['file'], args['user_id'], args['user_name']
 
         if data_file is None or data_file.filename == '':
@@ -105,7 +107,7 @@ class UploadFile(Resource):
         result = self.svc.send_file_for_upload(file_path, user_id, user_name)
         if result["success"]:
             resp = output_json(
-                {"msg": file_uploader_service.STATUS_FILE_CACHED}, 201)
+                {"msg": index_cache.STATUS_FILE_CACHED}, 201)
 
         elif result["error"] == file_cache.ERROR_EMPTY_FILE or result["error"] == file_cache.ERROR_FILE_NOT_FOUND:
             resp = output_json({"msg": result["error_msg"]}, 400)

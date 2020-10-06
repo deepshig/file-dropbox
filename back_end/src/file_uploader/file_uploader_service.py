@@ -1,9 +1,8 @@
 import uuid
 import time
 import json
-
-STATUS_FILE_CACHED = "File stored in cache"
-STATUS_FILE_UPLOADED = "File uplaoded successfully"
+from src.file_uploader import index_cache
+# import index_cache
 
 
 class FileUploader:
@@ -22,7 +21,7 @@ class FileUploader:
 
         file_cache_key = result["file_key"]
 
-        result = self.__create_file_index_cache(file_name)
+        result = self.index_cache.create(file_name)
         if not result["success"]:
             result["error_msg"] = "Error while creating file index on the cache : " + result["error"]
             return result
@@ -44,35 +43,14 @@ class FileUploader:
                 result["error"]
             return result
 
-        result = self.__update_file_index_cache(
-            file_name, STATUS_FILE_UPLOADED)
+        result = self.index_cache.update(
+            file_name, index_cache.STATUS_FILE_UPLOADED)
         if not result["success"]:
             result["error_msg"] = "Error while updating file status in index cache  : " + \
                 result["error"]
             return result
 
         return {"success": True}
-
-    def __create_file_index_cache(self, file_name):
-        index_key = self.__get_index_key(file_name)
-        result = self.index_cache.set(index_key, STATUS_FILE_CACHED)
-        return result
-
-    def __update_file_index_cache(self, file_name, updated_status):
-        index_key = self.__get_index_key(file_name)
-
-        result = self.__check_if_index_key_exists(index_key)
-        if not result["success"]:
-            return result
-
-        result = self.index_cache.set(index_key, updated_status)
-        return result
-
-    def __check_if_index_key_exists(self, file_name):
-        return self.index_cache.get(file_name)
-
-    def __get_index_key(self, file_name):
-        return "file_index:" + file_name
 
     def __publish_queue_event(self, file_name, file_key, user_id, user_name):
         msg = {"id": str(uuid.uuid4()),
