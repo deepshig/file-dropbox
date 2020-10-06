@@ -2,10 +2,10 @@ import pytest
 import uuid
 import sys
 import psycopg2
-from psycopg2 import Error
+from psycopg2 import Error, errorcodes
 sys.path.append('../')
 
-from src.auth.user_db import UserDB, ERROR_USER_NOT_FOUND  # NOQA
+from src.auth.user_db import UserDB, ERROR_USER_NOT_FOUND, ERROR_USER_NAME_ALREADY_EXISTS  # NOQA
 
 
 def test_db():
@@ -23,7 +23,7 @@ def tear_down(cursor, db_driver):
     cursor.execute("TRUNCATE users;")
     db_driver.connection.commit()
     cursor.close()
-    db_driver.connection.close()
+    # db_driver.connection.close()
 
 
 def test_create_user():
@@ -39,20 +39,14 @@ def test_create_user():
     result = db.create_user(user_details)
     assert result["user_created"] == True
 
-    fetch_user_query = '''SELECT * FROM users WHERE id = %s'''
-    try:
-        cursor = db.db_driver.connection.cursor()
-        cursor.execute(fetch_user_query, [user_details["id"]])
-        db.db_driver.connection.commit()
-
-        fetched_user = cursor.fetchone()
-
-        assert fetched_user[1] == user_details["name"]
-        assert fetched_user[2] == user_details["role"]
-        assert fetched_user[3] == user_details["access_token"]
-        assert fetched_user[4] == user_details["logged_in"]
-    except psycopg2.Error as err:
-        print("Error while checking if user created : ", err)
+    cursor = db.db_driver.connection.cursor()
+    fetched_user = get_test_user(db, cursor, user_details["id"])
+    assert fetched_user["user_fetched"] == True
+    assert fetched_user["id"] == user_details["id"]
+    assert fetched_user["name"] == user_details["name"]
+    assert fetched_user["role"] == user_details["role"]
+    assert fetched_user["access_token"] == user_details["access_token"]
+    assert fetched_user["logged_in"] == user_details["logged_in"]
 
     """
     failure : when user_id is not uuid
@@ -65,8 +59,25 @@ def test_create_user():
     result = db.create_user(user_details)
     assert result["user_created"] == False
     assert result["error"].pgcode == '22P02'
+    assert result["error"].pgcode == psycopg2.errorcodes.INVALID_TEXT_REPRESENTATION
 
-    # tear_down(cursor, db.db_driver)
+    """
+    failure : when user_name violates uniqueness constraint
+    """
+    user_details = {"id": uuid.uuid4(),
+                    "name": "user-2",
+                    "role": "dummy",
+                    "access_token": uuid.uuid4(),
+                    "logged_in": True}
+    create_test_user(
+        db, cursor, user_details["id"], user_details["name"], user_details["access_token"])
+
+    user_details["id"] = uuid.uuid4()
+    result = db.create_user(user_details)
+    assert result["user_created"] == False
+    assert result["error"] == ERROR_USER_NAME_ALREADY_EXISTS
+
+    tear_down(cursor, db.db_driver)
 
 
 def test_get_user():

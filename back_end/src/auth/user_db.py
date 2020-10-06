@@ -1,10 +1,11 @@
 import psycopg2
 import uuid
-from psycopg2 import Error, extras
+from psycopg2 import Error, extras, errorcodes
 from src.auth import db_driver
 # import db_driver
 
 ERROR_USER_NOT_FOUND = "User not found"
+ERROR_USER_NAME_ALREADY_EXISTS = "User name already exists"
 
 
 class UserDB:
@@ -27,6 +28,10 @@ class UserDB:
             self.db_driver.connection.commit()
         except psycopg2.Error as err:
             self.db_driver.connection.rollback()
+
+            if err.pgcode == psycopg2.errorcodes.UNIQUE_VIOLATION:
+                err = ERROR_USER_NAME_ALREADY_EXISTS
+
             return {"user_created": False,
                     "error": err}
         else:

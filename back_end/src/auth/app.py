@@ -105,6 +105,8 @@ class CreateUser(Resource):
             user_details["access_token"] = str(user_details["access_token"])
             jwt = create_jwt(user_details)
             return output_json({"jwt": jwt.decode()}, 201)
+        elif user_details["error"] == user_db.ERROR_USER_NAME_ALREADY_EXISTS:
+            return output_json({"msg": user_db.ERROR_USER_NAME_ALREADY_EXISTS}, 400)
         else:
             return output_json({"msg": ERROR_INTERNAL_SERVER}, 500)
 

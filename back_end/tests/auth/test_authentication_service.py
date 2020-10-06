@@ -4,7 +4,7 @@ import psycopg2
 from psycopg2 import Error
 sys.path.append('../')
 
-from src.auth.user_db import UserDB, ERROR_USER_NOT_FOUND  # NOQA
+from src.auth.user_db import UserDB, ERROR_USER_NOT_FOUND, ERROR_USER_NAME_ALREADY_EXISTS  # NOQA
 from src.auth.authentication_service import Authenticator, ERROR_UNAUTHORISED_REQUEST  # NOQA
 
 test_db_config = {"user": "postgres",
@@ -38,6 +38,13 @@ def test_create_user():
     assert fetched_user["user_fetched"] == True
     assert fetched_user["role"] == "admin"
     assert fetched_user["name"] == "user-1"
+
+    """
+    failure : failed to create user in DB
+    """
+    result = auth.create_user("admin", "user-1")
+    assert result["user_created"] == False
+    assert result["error"] == ERROR_USER_NAME_ALREADY_EXISTS
 
     tear_down(cursor, auth.db.db_driver)
 
