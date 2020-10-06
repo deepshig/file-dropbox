@@ -68,7 +68,7 @@ class UserDB:
 
     def login(self, user_name, access_token):
         psycopg2.extras.register_uuid()
-        login_query = '''UPDATE users SET access_token = (%s), logged_in = (%s), updated_at = now() WHERE name = (%s)'''
+        login_query = '''UPDATE users SET access_token = (%s), logged_in = (%s), updated_at = now() WHERE name = (%s) RETURNING id'''
 
         cursor = self.db_driver.connection.cursor()
         try:
@@ -80,7 +80,8 @@ class UserDB:
                     "error": err}
         else:
             if cursor.rowcount == 1:
-                return {"user_logged_in": True}
+                return {"user_logged_in": True,
+                        "user_id": cursor.fetchone()[0]}
             else:
                 return {"user_logged_in": False,
                         "error": ERROR_USER_NOT_FOUND}
