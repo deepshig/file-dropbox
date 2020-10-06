@@ -122,6 +122,7 @@ class LoginUser(Resource):
         response = svc.login(user_name)
         if response["user_logged_in"]:
             response["access_token"] = str(response["access_token"])
+            response["user_id"] = str(response["user_id"])
             jwt = create_jwt(response)
             return output_json({"jwt": jwt.decode()}, 201)
         elif response["error"] == user_db.ERROR_USER_NOT_FOUND:

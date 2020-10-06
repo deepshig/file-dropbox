@@ -139,10 +139,12 @@ def test_login():
 
     result = db.login(user_name, access_token)
     assert result["user_logged_in"] == True
+    assert result["user_id"] == user_id
 
     fetched_user = get_test_user(db, cursor, user_id)
 
     assert fetched_user["user_fetched"] == True
+    assert fetched_user["id"] == user_id
     assert fetched_user["access_token"] == access_token
     assert fetched_user["logged_in"] == True
 

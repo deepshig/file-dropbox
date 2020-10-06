@@ -108,6 +108,7 @@ def test_login():
     create_test_user(auth.db, cursor, user_id, user_name, uuid.uuid4())
     result = auth.login(user_name)
     assert result["user_logged_in"] == True
+    assert result["user_id"] == user_id
 
     fetched_user = get_test_user(auth.db, cursor, user_id)
     assert fetched_user["user_fetched"] == True
