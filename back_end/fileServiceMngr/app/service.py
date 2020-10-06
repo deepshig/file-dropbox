@@ -1,14 +1,11 @@
-from models import models, redis_model
+from models import models
+from models import redis_model
 from config import config
-# import consumer
 import boto3
-
 
 class service:
     def __init__(self):
         self.mongo_client = self.getMongoDbModel()
-        # self.rabbitmq_client = getRabbitMqModel()
-
         self.redis_client = self.getRedisModel()
         self.aws_client = self.getAwsModel()
         return
@@ -16,8 +13,6 @@ class service:
     def getMongoDbModel(self):
         return models.model()
 
-    # def getRabbitMqModel(self):
-    #     return consumer.RabbitMQManager(config["rabbitmq_config"]["queue_name"])
 
     def getRedisModel(self):
         return redis_model.RedisDriver(config["index_cache_config"])

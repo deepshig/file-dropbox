@@ -1,12 +1,4 @@
 from factory.mongo_db import MongoDatabase
-import sys
-import logging
-
-from config import config
-
-logging.basicConfig(filename=config["logging"]["file_path"],filemode="a+",format='%(asctime)s %(levelname)s-%(message)s',
-                     datefmt='%Y-%m-%d %H:%M:%S')
-
 class model(object):
     def __init__(self):
 
@@ -23,10 +15,6 @@ class model(object):
 
 
     def create(self, req,filename,url):
-        # Validator will throw error if invalid
-
-        # print("here1", file=sys.stderr)
-
         res = self.db.insert(req,filename,url)
         return  res
 

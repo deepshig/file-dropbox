@@ -2,19 +2,19 @@ from flask import Flask, request, jsonify, make_response
 import json
 import service
 import os
-import sys
 from config import config
 import logging
 import consumer
 import threading
-from threading import Thread
-import time
-# from tasks import threaded_task
 
-logging.basicConfig(filename=config["logging"]["file_path"], filemode="a+", format='%(asctime)s %(levelname)s-%(message)s',
-                    datefmt='%Y-%m-%d %H:%M:%S')
+
+
+#
+# logging.basicConfig(filename=config["logging"]["file_paths"], filemode="a+", format='%(asctime)s %(levelname)s-%(message)s',
+#                      datefmt='%Y-%m-%d %H:%M:%S')
 app = Flask(__name__)
-
+#
+# logging.info("Check")
 serv = service.service()
 
 
@@ -35,7 +35,7 @@ def getClientHistory(client_id) -> str:
 def fileUpload():
     if request.method == 'POST':
         if request.files:
-            logging.info('fileUpload API')
+            #logging.info('fileUpload API')
             file = request.files["file"]
             req = request.form.to_dict(flat=False)
             # upload_file_bucket = 'weightsbucket'
@@ -80,8 +80,12 @@ class ThreadedTask(threading.Thread):
 
 if __name__ == '__main__':
     ENVIRONMENT_DEBUG = os.environ.get("APP_DEBUG", False)
+
     ENVIRONMENT_PORT = os.environ.get("APP_PORT", 5000)
+
     task = ThreadedTask()
+
     task.start()
+
     app.run(host='0.0.0.0', port=ENVIRONMENT_PORT,
             debug=ENVIRONMENT_DEBUG, use_reloader=False)

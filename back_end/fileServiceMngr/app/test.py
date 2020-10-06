@@ -31,29 +31,29 @@
 from flask import Flask
 import logging
 
-logging.basicConfig(filename="/logs/logFile.txt",filemode="a+",format='%(asctime)s %(levelname)s-%(message)s',
-                     datefmt='%Y-%m-%d %H:%M:%S')
-
-
-app = Flask(__name__)
+# logging.basicConfig(filename="/logs/logFile.txt",filemode="a+",format='%(asctime)s %(levelname)s-%(message)s',
+#                      datefmt='%Y-%m-%d %H:%M:%S')
+#
+#
+# app = Flask(__name__)
 #redis = redis.Redis(host='redis', port=6379, db=0)
-@app.route('/')
-def hello_world():
-    return 'Hello, World!'
-@app.route('/visitor')
-def visitor():
-    #redis.incr('visitor')
-    #visitor_num = redis.get('visitor').decode("utf-8")
-    logging.warning('visitor API')
-    return "Visitor: %s" % (1)
-@app.route('/visitor/reset')
-def reset_visitor():
-    #redis.set('visitor', 0)
-    #visitor_num = redis.get('visitor').decode("utf-8")
-    logging.warning('Reset API')
-    return "Visitor is reset to %s" % (2)
-if __name__ == '__main__':
-    app.run(host='0.0.0.0')
+# @app.route('/')
+# def hello_world():
+#     return 'Hello, World!'
+# @app.route('/visitor')
+# def visitor():
+#     #redis.incr('visitor')
+#     #visitor_num = redis.get('visitor').decode("utf-8")
+#     logging.warning('visitor API')
+#     return "Visitor: %s" % (1)
+# @app.route('/visitor/reset')
+# def reset_visitor():
+#     #redis.set('visitor', 0)
+#     #visitor_num = redis.get('visitor').decode("utf-8")
+#     logging.warning('Reset API')
+#     return "Visitor is reset to %s" % (2)
+# if __name__ == '__main__':
+#     app.run(host='0.0.0.0')
 
 
 # @app.route('/client/history/<client_id>', methods=['GET'])
@@ -90,15 +90,17 @@ if __name__ == '__main__':
 
 
 
+from pymongo import MongoClient
 
+from gridfs import GridFS
 
+db = MongoClient().mygrid
 
+fs = GridFS(db)
 
+ob = fs.put("hello world")
 
-
-
-
-
+print("Able to put")
 
 
 

@@ -1,6 +1,6 @@
 {
     "db": {
-            "url" : "mongodb://127.0.0.1:27017/",
+            "url" : "mongodb://mongodb:27017/",
             "name" :"fileServiceMngr",
             "user" :"",
             "password" :""
@@ -12,8 +12,7 @@
        "upload_file_key":"weights"
     },
     "logging":{
-      "file_path":"/Users/jindeshubham/PycharmProjects/logs/logFile.txt",
-      "file_paths":"logs/logFile.txt"
+      "file_path":"logs/logFile.txt"
     },
     "rabbitmq_config":{
       "user": "guest",
