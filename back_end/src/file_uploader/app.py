@@ -23,7 +23,7 @@ ERROR_FILE_NAME_NOT_PROVIDED = "File name not provided"
 ERROR_USER_ID_NOT_PROVIDED = "User ID not provided"
 ERROR_USER_NAME_NOT_PROVIDED = "User name not provided"
 ERROR_INVALID_FILE_STATUS = "File status is invalid"
-ERROR_INVALID_FILE_NAME = "File name is invalid"
+ERROR_FILE_DOES_NOT_EXIST = "File does not exist"
 ERROR_INTERNAL_SERVER = "Internal Server Error"
 
 accepted_file_status = ["uploaded_successfully", "upload_failed"]
@@ -144,13 +144,11 @@ class UpdateFileStatus(Resource):
             result = svc.delete_uploaded_file(file_name)
             if not result["success"]:
                 if result["error"] == redis_driver.ERROR_KEY_NOT_FOUND:
-                    result["error_msg"] = "Failed to update file status : " + \
-                        ERROR_INVALID_FILE_NAME
-                    response = output_json({"msg": result["error_msg"]}, 400)
+                    response = output_json(
+                        {"msg": ERROR_FILE_DOES_NOT_EXIST}, 400)
                 else:
                     response = output_json({"msg": ERROR_INTERNAL_SERVER}, 500)
 
-        print(response.data)
         return response
 
 
