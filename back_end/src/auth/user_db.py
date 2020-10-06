@@ -26,6 +26,7 @@ class UserDB:
                                                user_details["logged_in"]])
             self.db_driver.connection.commit()
         except psycopg2.Error as err:
+            self.db_driver.connection.rollback()
             return {"user_created": False,
                     "error": err}
         else:
@@ -42,6 +43,7 @@ class UserDB:
             cursor.execute(get_user_query, [user_id])
             self.db_driver.connection.commit()
         except psycopg2.Error as err:
+            self.db_driver.connection.rollback()
             return {"user_fetched": False,
                     "error": err}
         else:
@@ -68,6 +70,7 @@ class UserDB:
             cursor.execute(login_query, [access_token, True, user_name])
             self.db_driver.connection.commit()
         except psycopg2.Error as err:
+            self.db_driver.connection.rollback()
             return {"user_logged_in": False,
                     "error": err}
         else:
@@ -87,6 +90,7 @@ class UserDB:
             cursor.execute(logout_query, [False, user_name])
             self.db_driver.connection.commit()
         except psycopg2.Error as err:
+            self.db_driver.connection.rollback()
             return {"user_logged_out": False,
                     "error": err}
         else:
