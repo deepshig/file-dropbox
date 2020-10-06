@@ -76,7 +76,11 @@ export const uploadSocketFile = (file) => {
         file: file,
     }
 };
-
+export const successSocketFile = () => {
+    return{
+        type: socketConstants.SOCKET_UPLOAD_SUCCESS,
+    }
+};
 export const toggleSidebarAction = (status) => {
     return{
         type: sidebarConstants.SIDEBAR_TOGGLE,

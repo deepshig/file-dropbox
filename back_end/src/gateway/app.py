@@ -33,23 +33,25 @@ def save_file(file):
 
 @socket.on('connect')
 def connect():
-    token = request.args.get('token')
-    uid = request.args.get('uid')
+    token = request.args.get('access_token')
+    user_id = request.args.get('user_id')
+    print(request.args)
     if INSIDE_CONTAINER:
-        resp = requests.post("http://auth:4000/auth/testverify", data={'name': uid, 'token': token})
+        resp = requests.get("http://auth:4000/auth/validate", data={'user_id': user_id, 'access_token': str(token)})
     else:
-        resp = requests.post("http://127.0.0.1:4000/auth/testverify", data={'name': uid, 'token': token})
+        resp = requests.get("http://127.0.0.1:4000/auth/validate", data={'user_id': user_id, 'access_token': str(token)})
 
-    print(resp.json()['verified'])
+    print(resp.json())
 
-    if not resp.json()['verified']:
+    print(resp.status_code)
+
+    if not resp.status_code == 200:
         raise ConnectionRefusedError('unauthorized!')
     else:
-
         print('someone connected to websocket')
-        join_room(uid)
-        emit('connect', {'data': 'connected'}, room=uid)
-        emit('connected', {'data': 'connected'}, room=uid)
+        join_room(user_id)
+        emit('connect', {'data': 'connected'}, room=user_id)
+        emit('connected', {'data': 'connected'}, room=user_id)
 
 
 @socket.on('message')    # send(message=msg, broadcast=True)
@@ -60,14 +62,7 @@ def handleMessage(msg, headers):
 
 @socket.on('alive')    # send(message=msg, broadcast=True)
 def handleAlive(headers):
-    emit('alive', {'alive': True}, room=headers['User'])
-
-
-@socket.on('upload')    # send(message=msg, broadcast=True)
-def handleAlive(msg, headers):
-    print(msg['data'])
-    save_file(msg['data'])
-    emit('upload', {'upload': True})
+    emit('alive', {'alive': True}, room=headers['user_id'])
 
 
 @socket.on('start-transfer')
@@ -90,6 +85,7 @@ def write_chunk(filename, offset, data):
     """Write a chunk of data sent by the client."""
     # TODO: implement start transfer and file naming. Maybe paths aren't needed if forwarding to redis?
     _, ext = os.path.splitext(filename)
+    print("transfer starting")
     if ext in ['.exe', '.bin', '.js', '.sh', '.py', '.php']:
         return False  # reject the upload
 
@@ -105,21 +101,23 @@ def write_chunk(filename, offset, data):
     except IOError:
         print(IOError)
         return False
-    print("trying")
     return True
 
 
 @socket.on('complete-upload')
 def complete_upload(filename, username, user_id):
     print("Complete")
+    print(user_id)
     with open(file_path + filename, 'rb') as f:
         if INSIDE_CONTAINER:
-            resp = requests.post('http://api-uploader:3500/file/upload', files={'file': f, 'user_id': user_id, 'username': username})
+            resp = requests.post('http://api-uploader:3500/file/upload', files={'file': f, 'user_id': user_id, 'user_name': username})
         else:
-            resp = requests.post('http://127.0.0.1:3500/file/upload', files={'file': f, 'user_id': user_id, 'username': username})
-        print(resp.json())
-        # os.remove(file_path + filename)
-        emit('complete-upload', {'data': True})
+            resp = requests.post('http://127.0.0.1:3500/file/upload', files={'file': f, 'user_id': user_id, 'user_name': username})
+        print(resp.status_code)
+        if resp.status_code == 201:
+            emit('complete-upload', {'data': True})
+        else:
+            emit('complete-upload', {'data': False})
 
 
 class threads(threading.Thread):

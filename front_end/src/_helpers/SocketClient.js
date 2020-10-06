@@ -1,6 +1,6 @@
 import io from 'socket.io-client';
 import store from '../_helpers/store'
-import {storeSocketMessage, successSocket, failedSocket} from "../_actions";
+import {storeSocketMessage, successSocket, failedSocket, successSocketFile} from "../_actions";
 
 // Example conf. You can move this to your config file.
 // const host = 'http://54.154.129.30:5000/';
@@ -9,6 +9,7 @@ const chunk_size = 64 * 1024;
 
 export default class socketAPI {
     socket;
+
 
 
     connect() {
@@ -25,7 +26,7 @@ export default class socketAPI {
 
         this.socket = io.connect(host, {
             secure: true,
-            query: {token: store.getState().authentication.token, uid: store.getState().authentication.user},
+            query: {access_token: store.getState().authentication.token, user_id: store.getState().authentication.user_id},
             reconnection: true,
             reconnectionDelay: 1000,
             reconnectionDelayMax : 5000,
@@ -47,7 +48,7 @@ export default class socketAPI {
             this.socket.on('alive', (response) => {if(response['alive']) {store.dispatch(successSocket(host))}});
 
             return this.socket.emit("alive", {
-                User: store.getState().authentication.user
+                user_id: store.getState().authentication.user_id
             }, response => {
                 return resolve();
             });
@@ -93,12 +94,6 @@ export default class socketAPI {
     }
 
     onReadSuccess(file, offset, length, data) {
-        if (this.done) {
-            this.socket.emit('complete-upload', file.name, store.getState().authentication.user, store.getState().authentication.user_id, response => {
-                this.socket.on('complete-upload', response => console.log(response['data']));
-            });
-            return;
-        }
         this.socket.emit('write-chunk', file.name, offset, data, function(offset, ack) {
             if (!ack)
                 this.onReadError(file, offset, 0, 'Transfer aborted by server')
@@ -110,6 +105,17 @@ export default class socketAPI {
                 this.onReadError.bind(this));
         else {
             this.done = true;
+        }
+        if (this.done) {
+            this.socket.on('complete-upload', response => {
+                console.log(response['data']);
+                if (response['data'] === true){
+                    store.dispatch(successSocketFile());
+                }
+            });
+            this.socket.emit('complete-upload', file.name, store.getState().authentication.user, store.getState().authentication.user_id, response => {
+                console.log("hi");
+            });
         }
     }
 
@@ -136,6 +142,13 @@ export default class socketAPI {
                     success(file, offset, chunk_size, e.target.result);
             }.bind(r, file, offset, chunk_size);
             r.readAsArrayBuffer(file.slice(offset, end_offset));
+        });
+    }
+    fileUpload(file, offset){
+        return new Promise((resolve, reject) => {
+            if (!this.socket) return reject('No socket connection.');
+            this.done = false;
+            this.readFileChunk(file, offset)
         });
     }
 
