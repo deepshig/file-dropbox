@@ -48,6 +48,7 @@ def connect():
 
         print('someone connected to websocket')
         join_room(uid)
+        emit('connect', {'data': 'connected'}, room=uid)
         emit('connected', {'data': 'connected'}, room=uid)
 
 
@@ -109,13 +110,13 @@ def write_chunk(filename, offset, data):
 
 
 @socket.on('complete-upload')
-def complete_upload(filename):
+def complete_upload(filename, username, user_id):
     print("Complete")
     with open(file_path + filename, 'rb') as f:
         if INSIDE_CONTAINER:
-            resp = requests.post('http://api-uploader:3500/file/upload', files={'file': f})
+            resp = requests.post('http://api-uploader:3500/file/upload', files={'file': f, 'user_id': user_id, 'username': username})
         else:
-            resp = requests.post('http://127.0.0.1:3500/file/upload', files={'file': f})
+            resp = requests.post('http://127.0.0.1:3500/file/upload', files={'file': f, 'user_id': user_id, 'username': username})
         print(resp.json())
         # os.remove(file_path + filename)
         emit('complete-upload', {'data': True})

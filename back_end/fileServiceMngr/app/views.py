@@ -79,13 +79,10 @@ class ThreadedTask(threading.Thread):
 
 
 if __name__ == '__main__':
+    print("FSM")
     ENVIRONMENT_DEBUG = os.environ.get("APP_DEBUG", False)
-
-    ENVIRONMENT_PORT = os.environ.get("APP_PORT", 5000)
-
+    ENVIRONMENT_PORT = os.environ.get("APP_PORT", 4500)
     task = ThreadedTask()
-
     task.start()
-
     app.run(host='0.0.0.0', port=ENVIRONMENT_PORT,
-            debug=ENVIRONMENT_DEBUG, use_reloader=False)
+            debug=ENVIRONMENT_DEBUG, use_reloader=False, passthrough_errors=True)

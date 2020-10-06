@@ -53,7 +53,8 @@ class Login extends Component {
             return "";
         }
         else {
-            response.json().then((response) => {store.dispatch(setLogin(this.state.UID, jwt(response['jwt'])['access_token'])); store.dispatch(createSocket())})
+
+            response.json().then((response) => {console.log(jwt(response['jwt'])['user_id']); store.dispatch(setLogin(this.state.UID, jwt(response['jwt'])['access_token'], jwt(response['jwt'])['user_id'])); store.dispatch(createSocket())})
             // response.json().then((response) => {store.dispatch(console.log(jwt(response['jwt'])))})
         }
         })

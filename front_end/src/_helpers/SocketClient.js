@@ -94,7 +94,7 @@ export default class socketAPI {
 
     onReadSuccess(file, offset, length, data) {
         if (this.done) {
-            this.socket.emit('complete-upload', file.name, response => {
+            this.socket.emit('complete-upload', file.name, store.getState().authentication.user, store.getState().authentication.user_id, response => {
                 this.socket.on('complete-upload', response => console.log(response['data']));
             });
             return;

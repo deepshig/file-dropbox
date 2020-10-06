@@ -8,10 +8,11 @@ export const callLogin = (UID) => {
         UID: UID,
     }
 };
-export const setLogin = (UID, token) => {
+export const setLogin = (UID, token, user_id) => {
     return{
         type: userConstants.LOGIN_SUCCESS,
         UID: UID,
+        user_id: user_id,
         token: token
     }
 };
