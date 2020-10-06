@@ -147,7 +147,7 @@ services:
   mongodb:
     image: mongo:4.0.8
     container_name: mongodb
-    restart: unless-stopped
+    restart: always
 #    command: mongod --auth
 #    environment:
 #      MONGO_INITDB_ROOT_USERNAME: root
