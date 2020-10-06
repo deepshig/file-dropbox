@@ -1,17 +1,28 @@
 import pika
 import sys
+import json
+import service
+import utils
+import logging
+import requests
+import io
 from config import config
 
-class RabbitMQManager:
-    def __init__(self, rabbitmq_config):
-        self.connection_url = self.__get_connection_url(rabbitmq_config)
-        self.connection = self.__get_connection(self.connection_url)
-        self.chan      = self.connection.channel()
-        # self.chan.queue_declare(queue='hello', durable=True)
-        self.queue_name = rabbitmq_config["queue_name"]
-        self.__init_queue()
+logging.basicConfig(filename=config["logging"]["file_path"], filemode="a+", format='%(asctime)s %(levelname)s-%(message)s',
+                    datefmt='%Y-%m-%d %H:%M:%S')
 
-    def __get_connection_url(self, rabbitmq_config):
+serv = service.service()
+
+
+class RabbitMQManager:
+    def __init__(self):
+        self.connection_url = self.__get_connection_url()
+        self.connection = self.__get_connection(self.connection_url)
+        self.chan = self.connection.channel()
+        self.queue_name = config["rabbitmq_config"]["queue_name"]
+        self.chan.queue_declare(queue=self.queue_name, durable=True)
+
+    def __get_connection_url(self):
         return "amqp://{}:{}@{}:{}?connection_attempts=10&retry_delay=10".format(config["rabbitmq_config"]["user"],
                                                                                  config["rabbitmq_config"]["password"],
                                                                                  config["rabbitmq_config"]["host"],
@@ -27,12 +38,29 @@ class RabbitMQManager:
         else:
             return connection
 
-
-    def receive_msg(self, aws_client,message_body):
-        msg = body.decode('utf-8')
-
+    def receive_msg(self, ch, method, properties, body):
+        msg_json = body.decode('utf-8')
+        msg = json.loads(msg_json)
+        print(msg)
+        key = msg["file_cache_key"]
+        file_contents = serv.redis_client.get(key)
+        print(file_contents)
+        file = io.BytesIO(bytes(file_contents["value"]))
         try:
-            aws_client.upload_fileobj(file, upload_file_bucket, str(upload_file_key))
+            serv.aws_client.upload_fileobj(file, config["aws"]["upload_file_bucket"], str(
+                config["aws"]["upload_file_key"]+"/"+str(msg["file_name"])))
             logging.info("AWS S3 - Upload successful")
+            print(msg["file_name"])
+            headers, data = utils.create_fileUpload_request(
+                "uploaded_successfully", msg["file_name"])
+            response = requests.put(
+                'http://localhost:3500/file/update/status', headers=headers, data=data)
         except Exception as e:
             logging.error("AWS S3- Upload fail")
+            headers, data = utils.create_fileUpload_request(
+                "upload_failed", msg["file_name"])
+            response = requests.put(
+                'http://localhost:3500/file/update/status', headers=headers, data=data)
+            print(response.body)
+            # sys.exit(error_str)
+        ch.basic_ack(delivery_tag=method.delivery_tag)

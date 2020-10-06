@@ -3,14 +3,14 @@ from flask_restful import Resource, Api, output_json, reqparse
 from flask_cors import CORS
 from werkzeug import datastructures, utils
 import os
-from src.file_uploader import file_uploader_service
-from src.file_uploader import file_cache
-from src.file_uploader import redis_driver
-from src.file_uploader import rabbitmq
-# import file_uploader_service
-# import file_cache
-# import redis_driver
-# import rabbitmq
+# from src.file_uploader import file_uploader_service
+# from src.file_uploader import file_cache
+# from src.file_uploader import redis_driver
+# from src.file_uploader import rabbitmq
+import file_uploader_service
+import file_cache
+import redis_driver
+import rabbitmq
 import pathlib
 
 INSIDE_CONTAINER = os.environ.get('IN_CONTAINER_FLAG', False)
@@ -125,6 +125,7 @@ class UpdateFileStatus(Resource):
 
         args = parser.parse_args()
         file_status, file_name = args["file_status"], args["file_name"]
+        print("file-name = ", file_name)
 
         if file_status not in accepted_file_status:
             return output_json({"msg": ERROR_INVALID_FILE_STATUS}, 400)
@@ -141,6 +142,7 @@ class UpdateFileStatus(Resource):
                 else:
                     response = output_json({"msg": ERROR_INTERNAL_SERVER}, 500)
 
+        print(response.data)
         return response
 
 

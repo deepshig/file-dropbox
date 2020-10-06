@@ -12,9 +12,7 @@ class RedisDriver:
     def __connect(self, redis_config):
         try:
             self.connection = redis.StrictRedis(host=redis_config["host"],
-                                                      port=redis_config["port"],
-                                                      encoding="utf-8",
-                                                      decode_responses=True)
+                                                port=redis_config["port"])
         except RedisError as err:
             error_str = "Error while connecting to redis : " + str(err)
             sys.exit(error_str)

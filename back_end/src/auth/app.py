@@ -53,8 +53,6 @@ else:
 accepted_roles = ["admin", "user", "developer"]
 
 
-
-
 def init(db_config):
     db = user_db.UserDB(db_config)
     svc = authentication_service.Authenticator(db)

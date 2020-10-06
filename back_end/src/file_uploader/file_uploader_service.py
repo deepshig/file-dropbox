@@ -60,7 +60,7 @@ class FileUploader:
     def __update_file_index_cache(self, file_name, updated_status):
         index_key = self.__get_index_key(file_name)
 
-        result = self.__check_if_index_key_exists(file_name)
+        result = self.__check_if_index_key_exists(index_key)
         if not result["success"]:
             return result
 

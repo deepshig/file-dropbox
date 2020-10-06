@@ -42,6 +42,7 @@ class RabbitMQManager:
         return
 
     def publish(self, message_body):
+        chan = None
         try:
             chan = self.connection.channel()
             chan.basic_publish(exchange='', routing_key=self.queue_name,
