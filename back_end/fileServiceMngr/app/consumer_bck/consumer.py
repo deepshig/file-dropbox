@@ -35,7 +35,7 @@ class RabbitMQManager:
 
     def receive_msg(self, ch, method, properties, body):
         msg = body.decode('utf-8')
-        key = msg["index_cache_key"]
+        key = msg["file_cache_key"]
         file_contents = ser.redis_client.get(key)
         file = io.BytesIO(file_contents)
         try:
