@@ -7,11 +7,10 @@ import logging
 import consumer
 import threading
 
+logging.basicConfig(filename=config["logging"]["file_paths"], filemode="a+", format='%(asctime)s %(levelname)s-%(message)s',
+                     datefmt='%Y-%m-%d %H:%M:%S')
+logging.getLogger().addHandler(logging.StreamHandler())
 
-
-#
-# logging.basicConfig(filename=config["logging"]["file_paths"], filemode="a+", format='%(asctime)s %(levelname)s-%(message)s',
-#                      datefmt='%Y-%m-%d %H:%M:%S')
 app = Flask(__name__)
 #
 # logging.info("Check")

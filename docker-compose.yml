@@ -147,6 +147,8 @@ services:
     - ./logs:/logs.
     networks:
     - docker_network
+    environment:
+      IN_CONTAINER_FLAG: 1
 
 
 

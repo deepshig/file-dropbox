@@ -4,11 +4,12 @@ EXPOSE 4500
 
 RUN apt-get update && apt-get install -y vim
 
-WORKDIR /app
+#WORKDIR /app
 
-ADD . /app
+ADD . .
+COPY ./logFile.txt ./logs/
 
-COPY requirements.txt /app
+COPY requirements.txt .
 RUN pip install -r requirements.txt
 
 CMD ["python", "./views.py" ]
