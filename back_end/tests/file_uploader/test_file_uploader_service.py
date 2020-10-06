@@ -19,6 +19,8 @@ test_rabbitmq_config = {"user": "guest",
 
 
 def test_send_file_for_upload(mocker):
+    user_id = "user:1"
+    user_name = "test_user"
     """
     failure : error while storing file in cache
     """
@@ -31,7 +33,7 @@ def test_send_file_for_upload(mocker):
     file_cache = FileCache(test_redis_config)
     svc = FileUploader(file_cache, None, None)
 
-    result = svc.send_file_for_upload("/random/file/path")
+    result = svc.send_file_for_upload("/random/file/path", user_id, user_name)
     assert result["success"] == False
     assert result["error_msg"] == "Error while storing the file contents in cache : some_error"
 
@@ -53,7 +55,7 @@ def test_send_file_for_upload(mocker):
     index_cache = RedisDriver(test_redis_config)
     svc = FileUploader(file_cache, None, index_cache)
 
-    result = svc.send_file_for_upload("/random/file/path")
+    result = svc.send_file_for_upload("/random/file/path", user_id, user_name)
     assert result["success"] == False
     assert result["error_msg"] == "Error while creating file index on the cache : some_error_in_indexing"
 
@@ -80,7 +82,7 @@ def test_send_file_for_upload(mocker):
     queue_manager = RabbitMQManager(test_rabbitmq_config)
     svc = FileUploader(file_cache, queue_manager, index_cache)
 
-    result = svc.send_file_for_upload("/random/file/path")
+    result = svc.send_file_for_upload("/random/file/path", user_id, user_name)
     assert result["success"] == False
     assert result["error_msg"] == "something failing"
 
@@ -106,7 +108,7 @@ def test_send_file_for_upload(mocker):
     queue_manager = RabbitMQManager(test_rabbitmq_config)
     svc = FileUploader(file_cache, queue_manager, index_cache)
 
-    result = svc.send_file_for_upload("/random/file/path")
+    result = svc.send_file_for_upload("/random/file/path", user_id, user_name)
     assert result["success"] == True
 
 
@@ -128,17 +130,43 @@ def test_delete_uploaded_file(mocker):
     assert result["error_msg"] == "Error while deleting the file from cache : some_error"
 
     """
+    failure : key not found in index cache
+    """
+    def mock_file_cache_delete(obj, file_name):
+        return {"success": True,
+                "file_key": "file:file_name"}
+
+    def mock_redis_get(obj, key):
+        return {"success": False,
+                "error": "key not found"}
+
+    mocker.patch.object(FileCache, 'delete', new=mock_file_cache_delete)
+    mocker.patch.object(RedisDriver, 'get', new=mock_redis_get)
+
+    file_cache = FileCache(test_redis_config)
+    index_cache = RedisDriver(test_redis_config)
+    svc = FileUploader(file_cache, None, index_cache)
+
+    result = svc.delete_uploaded_file("file1")
+    assert result["success"] == False
+    assert result["error_msg"] == "Error while updating file status in index cache  : key not found"
+
+    """
     failure : error in updating file index cache
     """
     def mock_file_cache_delete(obj, file_name):
         return {"success": True,
                 "file_key": "file:file_name"}
 
+    def mock_redis_get(obj, key):
+        return {"success": True}
+
     def mock_redis_set(obj, key, value):
         return {"success": False,
                 "error": "some_error_in_redis"}
 
     mocker.patch.object(FileCache, 'delete', new=mock_file_cache_delete)
+    mocker.patch.object(RedisDriver, 'get', new=mock_redis_get)
     mocker.patch.object(RedisDriver, 'set', new=mock_redis_set)
 
     file_cache = FileCache(test_redis_config)
@@ -156,10 +184,14 @@ def test_delete_uploaded_file(mocker):
         return {"success": True,
                 "file_key": "file:file_name"}
 
+    def mock_redis_get(obj, key):
+        return {"success": True}
+
     def mock_redis_set(obj, key, val):
         return {"success": True}
 
     mocker.patch.object(FileCache, 'store', new=mock_file_cache_store)
+    mocker.patch.object(RedisDriver, 'get', new=mock_redis_get)
     mocker.patch.object(RedisDriver, 'set', new=mock_redis_set)
 
     file_cache = FileCache(test_redis_config)

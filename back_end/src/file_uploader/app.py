@@ -3,21 +3,23 @@ from flask_restful import Resource, Api, output_json, reqparse
 from flask_cors import CORS
 from werkzeug import datastructures, utils
 import os
-# from src.file_uploader import file_uploader_service
-# from src.file_uploader import file_cache
-# from src.file_uploader import redis_driver
-# from src.file_uploader import rabbitmq
-import file_uploader_service
-import file_cache
-import redis_driver
-import rabbitmq
 import pathlib
+from src.file_uploader import file_uploader_service
+from src.file_uploader import file_cache
+from src.file_uploader import redis_driver
+from src.file_uploader import rabbitmq
+# import file_uploader_service
+# import file_cache
+# import redis_driver
+# import rabbitmq
 
 INSIDE_CONTAINER = os.environ.get('IN_CONTAINER_FLAG', False)
 
 ERROR_FILE_NOT_PROVIDED = "File not provided"
 ERROR_FILE_STATUS_NOT_PROVIDED = "File status not provided"
 ERROR_FILE_NAME_NOT_PROVIDED = "File name not provided"
+ERROR_USER_ID_NOT_PROVIDED = "User ID not provided"
+ERROR_USER_NAME_NOT_PROVIDED = "User name not provided"
 ERROR_INVALID_FILE_STATUS = "File status is invalid"
 ERROR_INVALID_FILE_NAME = "File name is invalid"
 ERROR_INTERNAL_SERVER = "Internal Server Error"
@@ -85,9 +87,13 @@ class UploadFile(Resource):
         parse = reqparse.RequestParser()
         parse.add_argument(
             'file', type=datastructures.FileStorage, location='files')
+        parser.add_argument('user_id', required=True, type=str,
+                            help=ERROR_USER_ID_NOT_PROVIDED)
+        parser.add_argument('user_name', required=True, type=str,
+                            help=ERROR_USER_NAME_NOT_PROVIDED)
 
         args = parse.parse_args()
-        data_file = args['file']
+        data_file, user_id, user_name = args['file'], args['user_id'], args['user_name']
 
         if data_file is None or data_file.filename == '':
             return output_json({"msg": ERROR_FILE_NOT_PROVIDED}, 400)
@@ -96,7 +102,7 @@ class UploadFile(Resource):
         file_path = FILE_TEMP_UPLOAD_PATH+file_name
         data_file.save(file_path)
 
-        result = self.svc.send_file_for_upload(file_path)
+        result = self.svc.send_file_for_upload(file_path, user_id, user_name)
         if result["success"]:
             resp = output_json(
                 {"msg": file_uploader_service.STATUS_FILE_CACHED}, 201)
