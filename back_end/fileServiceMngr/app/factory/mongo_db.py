@@ -18,14 +18,14 @@ class MongoDatabase(object):
           except Exception as e:
                logging.error("MongoDB - Unable to connect")
 
-     def insert(self, req,filename,url):
-          dict = {}
-          dict["clientName"] = req.get("clientName")[0]
-          dict["clientId"]   =   req.get("clientId")[0]
-          dict["filename"]   = filename
-          dict["activity"]   = req.get("activity")[0]
-          dict["url"]        = url
-          dict["created"]   = datetime.now()
+     def insert(self, dict):
+          # dict = {}
+          # dict["clientName"] = req.get("clientName")[0]
+          # dict["clientId"]   =   req.get("clientId")[0]
+          # dict["filename"]   = filename
+          # dict["activity"]   = req.get("activity")[0]
+          # dict["url"]        = url
+          # dict["created"]   = datetime.now()
           try:
                inserted = self.db["fileInfo"].insert_one(dict) # insert data to db
                logging.info("MongoDB - Inserted to the MongoDB")
