@@ -1,55 +1,85 @@
 from flask import Flask, request, jsonify, make_response
-
 import json
+import service
+import os
+import sys
+from config import config
+import logging
+import consumer
+import threading
+from threading import Thread
+import time
+# from tasks import threaded_task
 
-from sql_db import clients_history, update_client_history
-
-from mongo_db import upload_file, list_files
-
-
+logging.basicConfig(filename=config["logging"]["file_path"],filemode="a+",format='%(asctime)s %(levelname)s-%(message)s',
+                     datefmt='%Y-%m-%d %H:%M:%S')
 app = Flask(__name__)
 
-'''
-Route for getting client history - Uploads, Downloads done by the client
-@returns - dict of jsons with keys uid, fileId, activity        
-'''
-@app.route('/clients/history/<client_id>', methods=['GET'])
+serv = service.service()
+
+@app.route('/client/history/<client_id>', methods=['GET'])
 def getClientHistory(client_id) -> str:
-    clientId = client_id
-    return json.dumps({'client_history': clients_history(clientId)})
+    logging.info('ClientHistory API')
+    try:
+        clientHstry = serv.mongo_client.find(client_id)
+        logging.info("MongoDb - Got client History")
+        return jsonify(clientHstry)
+    except Exception as e:
+        logging.error("MongoDb - Got error on fetching data from MongoDb")
+        return
+    return jsonify(serv.mongoClient.find(client_id))
 
-'''
-Route for updating clients_history table
-@returns json - {"success":true}/{"success":false}
-'''
-@app.route('/clients/update/<client_id>', methods=['GET','POST'])
-def updateClientHistory(client_id) -> str:
-    if request.method == 'POST':
-        clientId = client_id
-        req_data = request.json
-        succ=update_client_history(clientId,req_data)
-        return make_response(jsonify(success=succ))
-    return make_response(jsonify(success=False))
-
-'''
-Route for uploading the file to MongoDb
-@returns json - {"success":False} - Incase of any failure
-                {"fileId":id of the file on mongodb database incase of success} 
-'''
 @app.route('/file/upload', methods=['GET','POST'])
 def fileUpload():
     if request.method == 'POST':
         if request.files:
+           logging.info('fileUpload API')
            file = request.files["file"]
-           fileId = upload_file(file)
-           return json.dumps({"fileId":fileId})
+           req = request.form.to_dict(flat=False)
+           # upload_file_bucket = 'weightsbucket'
+           upload_file_key = 'weights/' + str(file.filename)
+           try:
+                serv.aws_client.upload_fileobj(file, config["aws"]["upload_file_bucket"], str(config["aws"]["upload_file_key"]+"/"+str(file.filename)))
+                logging.info("AWS S3 - Upload successful")
+           except Exception as e:
+               logging.error("AWS S3- Upload fail")
+           url ='%s/%s/%s' % (serv.aws_client.meta.endpoint_url, config["aws"]["upload_file_bucket"], str(upload_file_key))
+           inserted_id=serv.mongo_client.create(req,file.filename,url)
+           # TODO
+           '''
+           Update Mysql Database. 
+           #succ = update_client_history(request.form,id,file.filename)
+           '''
+           return json.dumps({"filename": file.filename, "mongo_db_id":str(inserted_id)})
     return make_response(jsonify(success=False))
 
-@app.route('/file/list',method=['GET'])
-def lstfiles():
-    return json.dumps({'files':list_files()})
+@app.errorhandler(500)
+def internal_error(exception):
+    logging.error(exception)
+    return False, 500
+
+
+class ThreadedTask(threading.Thread):
+    def __init__(self, ):
+        threading.Thread.__init__(self)
+    def run(self):
+        queue_manager = consumer.RabbitMQManager(config["rabbitmq_config"]["queue_name"])
+        queue_manager.queue_declare(queue=config["rabbitmq_config"]["queue_name"], durable=True)
+        queue_manager.basic_qos(prefetch_count=1)
+        # define the queue consumption
+        queue_manager.basic_consume(queue='hello',
+                                    on_message_callback=queue_manager.receive_msg())
+        # start consuming
+        queue_manager.start_consuming()
+
 
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=4500)
+    ENVIRONMENT_DEBUG = os.environ.get("APP_DEBUG", False)
+    ENVIRONMENT_PORT = os.environ.get("APP_PORT", 5000)
+    task = ThreadedTask()
+    task.start()
+    app.run(host='0.0.0.0', port=ENVIRONMENT_PORT, debug=ENVIRONMENT_DEBUG, use_reloader=False)
+
+

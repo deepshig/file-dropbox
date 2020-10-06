@@ -1,18 +1,35 @@
+
+
+
+
 CREATE DATABASE fileServiceMgr;
 use fileServiceMgr;
 
-CREATE TABLE clients_history (
-  uid INT(20),
-  userName VARCHAR(30),
+CREATE TABLE client_history1(
+  id INT NOT NULL AUTO_INCREMENT,
+  clientName VARCHAR(30),
+  clientId  INT(10),
   fileId VARCHAR(10),
+  mongo_fileId VARCHAR(30),
   fileName VARCHAR(30),
-  activity INT(1)
+  activity INT(2),
+  primary key (id)
+
+
 );
 
-INSERT INTO clients_history
-  (uid, userName, fileId, fileName, activity)
+
+
+INSERT INTO client_history1
+  (clientName, clientId , fileId,  mongo_fileId, fileName,activity)
 VALUES
-  (1, 'John Doe', '12345','weights_v10.m',1);
+  ('John Doe', '12345','333333',"hgd345",'weights_v10.m',1);
+
+INSERT INTO client_history
+  (clientName, clientId , fileId,  mongo_fileId, fileName, activity)
+VALUES
+  ('John Doe1', '12345','333333','weights_v10.m',1);
+
 
 
 
