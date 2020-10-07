@@ -16,8 +16,8 @@ class model(object):
 
 
 
-    def create(self, req,filename,url):
-        res = self.db.insert(req,filename,url)
+    def create(self, req):
+        res = self.db.insert(req)
         return  res
 
     def find(self, clientId): # find all
