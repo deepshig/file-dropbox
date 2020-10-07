@@ -85,9 +85,11 @@ services:
       IN_CONTAINER_FLAG: 1
 
   front-end:
-    build: front_end
+    build:
+      context: front_end
+      dockerfile: Dockerfile.prod
     ports:
-      - 3000:3000
+      - 3000:80
     stdin_open: true
     networks:
       - docker_network
@@ -106,28 +108,18 @@ services:
     networks:
     - docker_network
 
-#  fsm:
-#    build: ./back_end/fileServiceMngr/app
-#    links:
-#    - index-db
-#    ports:
-#    - 4500:4500
-#
-#  index-db:
-#    image: mysql:5.7
-#    #    environment:
-#    #        MYSQL_DATABASE: "fileServiceMgr"
-#    #        MYSQL_ROOT_PASSWORD: "root"
-#    #        MYSQL_USER: "group12"
-#    #        MYSQL_PASSWORD: "group12"
-#    ports:
-#    - 32000:3306
-#    environment:
-#      MYSQL_ROOT_PASSWORD: root
-#    #      MYSQL_DATABASE: fileServiceMgr
-#    #      MYSQL_USER: root
-#    volumes:
-#    - ./index-db:/docker-entrypoint-initdb.d/:ro
+  etcd:
+    image: 'bitnami/etcd:latest'
+    environment:
+      - ALLOW_NONE_AUTHENTICATION=yes
+      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd:2379
+    volumes:
+      - ./etcd/etcd.conf.yml:/opt/bitnami/etcd/conf/etcd.conf.yml
+    ports:
+      - 2379:2379
+      - 2380:2380
+    networks:
+      - docker_network
 
 
   fsm:

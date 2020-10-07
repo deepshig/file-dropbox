@@ -1,4 +1,6 @@
 from factory.mongo_db import MongoDatabase
+
+
 class model(object):
     def __init__(self):
 

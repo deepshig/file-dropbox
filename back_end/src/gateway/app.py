@@ -10,6 +10,9 @@ from datetime import datetime
 import os
 import shutil
 import pathlib
+# import etcd
+
+
 
 app = Flask(__name__)
 SECRET_KEY = "i5uitypjchnar0rlz31yh0u5sgs8rui2baxxgw8e"
@@ -33,15 +36,16 @@ def save_file(file):
 
 @socket.on('connect')
 def connect():
-    token = request.args.get('access_token')
-    user_id = request.args.get('user_id')
-    print(request.args)
+    if request.args.get('access_token') is not None:
+        token = request.args.get('access_token')
+        user_id = request.args.get('user_id')
+    elif request.headers['access_token'] is not None:
+        token = request.headers['access_token']
+        user_id = request.headers['user_id']
     if INSIDE_CONTAINER:
         resp = requests.get("http://auth:4000/auth/validate", data={'user_id': user_id, 'access_token': str(token)})
     else:
         resp = requests.get("http://127.0.0.1:4000/auth/validate", data={'user_id': user_id, 'access_token': str(token)})
-
-    print(resp.json())
 
     print(resp.status_code)
 
@@ -55,9 +59,9 @@ def connect():
 
 
 @socket.on('message')    # send(message=msg, broadcast=True)
-def handleMessage(msg, headers):
-    print(msg)
-    emit('message', {'data': 'hello'})
+def handleMessage(msg):
+    # print(msg)
+    emit('message', {'data': 'hello : ' + str(msg['client_id'])})
 
 
 @socket.on('alive')    # send(message=msg, broadcast=True)
@@ -131,7 +135,17 @@ class threads(threading.Thread):
 
 
 if __name__ == '__main__':
+    port = 5000
+    # if INSIDE_CONTAINER:
+    #     client = etcd.Client(host='etcd', port=2379)
+    #
+    # else:
+    #     client = etcd.Client(host='127.0.0.1', port=2379)
+    #
+    # print(client.machines)
+    # client.write('/nodes/n1', 5000)
+    # print(client.read('/nodes/n1').value)
     thread = threads()
     thread.start()
     socket.run(app, debug=True, use_debugger=False, use_reloader=False,
-               passthrough_errors=True, host="0.0.0.0", port=5000)
+               passthrough_errors=True, host="0.0.0.0", port=port)

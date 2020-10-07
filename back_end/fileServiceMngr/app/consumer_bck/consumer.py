@@ -8,6 +8,7 @@ import requests
 
 ser = service.service()
 
+
 class RabbitMQManager:
     def __init__(self, rabbitmq_config):
         self.connection_url = self.__get_connection_url(rabbitmq_config)

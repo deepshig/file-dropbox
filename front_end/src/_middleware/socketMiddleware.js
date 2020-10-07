@@ -25,7 +25,7 @@ export default function socketMiddleware(newSock) {
                 break;
             }
             case socketConstants.SOCKET_UPLOAD:{
-                socket.readFileChunk(action.file, 0);
+                socket.fileUpload(action.file, 0);
             }
         }
 

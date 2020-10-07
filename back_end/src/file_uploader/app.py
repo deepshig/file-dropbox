@@ -90,9 +90,9 @@ class UploadFile(Resource):
         parser.add_argument(
             'file', type=datastructures.FileStorage, location='files')
         parser.add_argument('user_id', required=True, type=str,
-                            help=ERROR_USER_ID_NOT_PROVIDED)
+                            help=ERROR_USER_ID_NOT_PROVIDED, location='files')
         parser.add_argument('user_name', required=True, type=str,
-                            help=ERROR_USER_NAME_NOT_PROVIDED)
+                            help=ERROR_USER_NAME_NOT_PROVIDED, location='files')
 
         args = parser.parse_args()
         data_file, user_id, user_name = args['file'], args['user_id'], args['user_name']
