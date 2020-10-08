@@ -38,7 +38,7 @@ class FileUploader:
         return {"success": True,
                 "file_name": file_name}
 
-    def delete_uploaded_file(self, file_name):
+    def delete_uploaded_file(self, file_name, user_id, user_name):
         result = self.file_cache.delete(file_name)
         if not result["success"]:
             result["error_msg"] = "Error while deleting the file from cache : " + \
@@ -50,6 +50,12 @@ class FileUploader:
         if not result["success"]:
             result["error_msg"] = "Error while updating file status in index cache  : " + \
                 result["error"]
+            return result
+
+        result = self.__publish_client_notification_queue_event(
+            file_name, user_id, user_name)
+        if not result["message_published"]:
+            result["success"] = False
             return result
 
         return {"success": True}
@@ -64,3 +70,23 @@ class FileUploader:
 
         msg_json = json.dumps(msg)
         return self.file_queue_manager.publish(msg_json)
+
+    def __publish_client_notification_queue_event(self, file_name, user_id, user_name):
+        msg = {"id": str(uuid.uuid4()),
+               "file_name": file_name,
+               "user_id": user_id,
+               "user_name": user_name,
+               "event_timestamp": time.time()}
+
+        msg_json = json.dumps(msg)
+        result = self.user_queue_manager.publish(msg_json)
+        if not result["message_published"]:
+            result["error_msg"] = "Error while publishing message to user notification queue : " + result["error"]
+            return result
+
+        result = self.admin_queue_manager.publish(msg_json)
+        if not result["message_published"]:
+            result["error_msg"] = "Error while publishing message to admin notification queue : " + result["error"]
+            return result
+
+        return result
