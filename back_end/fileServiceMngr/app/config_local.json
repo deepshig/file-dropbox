@@ -12,7 +12,7 @@
        "upload_file_key":"weights"
     },
     "logging":{
-      "file_path":"logs/logFile.txt"
+      "file_path":"Users/jindeshubham/PycharmProjects/2020_group_12_s3993914_s4091221_s4199456/logs/logFile.txt"
     },
     "rabbitmq_config":{
       "user": "guest",

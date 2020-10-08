@@ -1,7 +1,7 @@
 import json
 import os
 
-INSIDE_CONTAINER = os.environ.get('IN_CONTAINER_FLAG', False)
+INSIDE_CONTAINER = os.environ.get('IN_CONTAINER_FLAG', True)
 
 
 if INSIDE_CONTAINER:

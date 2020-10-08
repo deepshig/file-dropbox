@@ -6,14 +6,18 @@ from config import config
 import logging
 import consumer
 import threading
+import time
 
-logging.basicConfig(filename=config["logging"]["file_paths"], filemode="a+", format='%(asctime)s %(levelname)s-%(message)s',
-                     datefmt='%Y-%m-%d %H:%M:%S')
+logging.basicConfig(filename=config["logging"]["file_path"], filemode="a+", format='%(asctime)s %(levelname)s-%(message)s',
+                      datefmt='%Y-%m-%d %H:%M:%S')
+
 logging.getLogger().addHandler(logging.StreamHandler())
 
+
+logging.info(config["logging"]["file_path"])
+logging.info("Started")
 app = Flask(__name__)
-#
-# logging.info("Check")
+
 serv = service.service()
 
 
@@ -34,7 +38,7 @@ def getClientHistory(client_id) -> str:
 def fileUpload():
     if request.method == 'POST':
         if request.files:
-            #logging.info('fileUpload API')
+            logging.info('fileUpload API')
             file = request.files["file"]
             req = request.form.to_dict(flat=False)
             # upload_file_bucket = 'weightsbucket'
@@ -47,7 +51,8 @@ def fileUpload():
                 logging.error("AWS S3- Upload fail")
             url = '%s/%s/%s' % (serv.aws_client.meta.endpoint_url,
                                 config["aws"]["upload_file_bucket"], str(upload_file_key))
-            inserted_id = serv.mongo_client.create(req, file.filename, url)
+            req["fileName"] = upload_file_key
+            inserted_id = serv.mongo_client.create(req)
             # TODO
             '''
            Update Mysql Database.
@@ -65,9 +70,11 @@ def internal_error(exception):
 
 class ThreadedTask(threading.Thread):
     def __init__(self, ):
+
         threading.Thread.__init__(self)
 
     def run(self):
+
         queue_manager = consumer.RabbitMQManager()
         queue_manager.chan.basic_qos(prefetch_count=1)
         # define the queue consumption
@@ -83,5 +90,6 @@ if __name__ == '__main__':
     ENVIRONMENT_PORT = os.environ.get("APP_PORT", 4500)
     task = ThreadedTask()
     task.start()
+    logging.info("RabbitMq thread started app starting")
     app.run(host='0.0.0.0', port=ENVIRONMENT_PORT,
             debug=ENVIRONMENT_DEBUG, use_reloader=False, passthrough_errors=True)
