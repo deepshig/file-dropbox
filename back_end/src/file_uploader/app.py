@@ -155,11 +155,15 @@ class UpdateFileStatus(Resource):
                             help=ERROR_FILE_STATUS_NOT_PROVIDED)
         parser.add_argument('file_name', required=True, type=str,
                             help=ERROR_FILE_NAME_NOT_PROVIDED)
+        parser.add_argument('user_id', required=True, type=str,
+                            help=ERROR_USER_ID_NOT_PROVIDED)
+        parser.add_argument('user_name', required=True, type=str,
+                            help=ERROR_USER_NAME_NOT_PROVIDED)
         parser.add_argument('error_msg', type=str)
 
         args = parser.parse_args()
         file_status, file_name = args["file_status"], args["file_name"]
-        print("file-name = ", file_name)
+        user_id, user_name = args["user_id"], args["user_name"]
 
         if file_status not in accepted_file_status:
             return output_json({"msg": ERROR_INVALID_FILE_STATUS}, 400)
@@ -167,7 +171,7 @@ class UpdateFileStatus(Resource):
         response = output_json({"msg": "success"}, 200)
 
         if file_status == accepted_file_status[0]:
-            result = svc.delete_uploaded_file(file_name)
+            result = svc.delete_uploaded_file(file_name, user_id, user_name)
             if not result["success"]:
                 if result["error"] == redis_driver.ERROR_KEY_NOT_FOUND:
                     response = output_json(
