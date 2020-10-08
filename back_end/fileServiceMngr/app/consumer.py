@@ -59,7 +59,7 @@ class RabbitMQManager:
             inserted_id = serv.mongo_client.create(req_obj)
             logging.info("File Uploaded Successfully")
             headers, data = utils.create_fileUpload_request(
-                "uploaded_successfully", msg["file_name"])
+                "uploaded_successfully", msg["file_name"], msg['user_id'],msg['user_name'])
             response = requests.put(
                 'http://localhost:3500/file/update/status', headers=headers, data=data)
             if response:
@@ -69,7 +69,7 @@ class RabbitMQManager:
         except Exception as e:
             logging.error("AWS S3- Upload fail")
             headers, data = utils.create_fileUpload_request(
-                "upload_failed", msg["file_name"])
+                "upload_failed", msg["file_name"], msg['user_id'],msg['user_name'])
             response = requests.put(
                 'http://localhost:3500/file/update/status', headers=headers, data=data)
             # print(response.body)
