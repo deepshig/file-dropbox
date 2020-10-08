@@ -47,11 +47,23 @@ if INSIDE_CONTAINER:
     file_cache_config = {"host": "redis",
                          "port": 6379}
 
-    rabbitmq_config = {"user": "guest",
-                       "password": "guest",
-                       "host": "rabbitmq",
-                       "port": "5672",
-                       "queue_name": "file_uploads_queue"}
+    file_rabbitmq_config = {"user": "guest",
+                            "password": "guest",
+                            "host": "rabbitmq",
+                            "port": "5672",
+                            "queue_name": "file_uploads_queue"}
+
+    user_rabbitmq_config = {"user": "guest",
+                            "password": "guest",
+                            "host": "rabbitmq",
+                            "port": "5672",
+                            "queue_name": "user_notification_queue"}
+
+    admin_rabbitmq_config = {"user": "guest",
+                             "password": "guest",
+                             "host": "rabbitmq",
+                             "port": "5672",
+                             "queue_name": "admin_notification_queue"}
 else:
     index_cache_config = {"host": "127.0.0.1",
                           "port": 6379}
@@ -59,20 +71,34 @@ else:
     file_cache_config = {"host": "127.0.0.1",
                          "port": 6379}
 
-    rabbitmq_config = {"user": "guest",
-                       "password": "guest",
-                       "host": "127.0.0.1",
-                       "port": "5672",
-                       "queue_name": "file_uploads_queue"}
+    file_rabbitmq_config = {"user": "guest",
+                            "password": "guest",
+                            "host": "127.0.0.1",
+                            "port": "5672",
+                            "queue_name": "file_uploads_queue"}
+
+    user_rabbitmq_config = {"user": "guest",
+                            "password": "guest",
+                            "host": "127.0.0.1",
+                            "port": "5672",
+                            "queue_name": "user_notification_queue"}
+
+    admin_rabbitmq_config = {"user": "guest",
+                             "password": "guest",
+                             "host": "127.0.0.1",
+                             "port": "5672",
+                             "queue_name": "admin_notification_queue"}
 
 
-def init(index_cache_config, file_cache_config, rabbitmq_config):
+def init(index_cache_config, file_cache_config, file_rabbitmq_config, user_rabbitmq_config, admin_rabbitmq_config):
     index_cacher = index_cache.IndexCache(index_cache_config)
     file_cacher = file_cache.FileCache(file_cache_config)
-    queue_manager = rabbitmq.RabbitMQManager(rabbitmq_config)
+    file_queue_manager = rabbitmq.RabbitMQManager(file_rabbitmq_config)
+    user_queue_manager = rabbitmq.RabbitMQManager(user_rabbitmq_config)
+    admin_queue_manager = rabbitmq.RabbitMQManager(admin_rabbitmq_config)
 
     svc = file_uploader_service.FileUploader(
-        file_cacher, queue_manager, index_cacher)
+        file_cacher, file_queue_manager, user_queue_manager, admin_queue_manager, index_cacher)
     return svc
 
 
@@ -129,11 +155,15 @@ class UpdateFileStatus(Resource):
                             help=ERROR_FILE_STATUS_NOT_PROVIDED)
         parser.add_argument('file_name', required=True, type=str,
                             help=ERROR_FILE_NAME_NOT_PROVIDED)
+        parser.add_argument('user_id', required=True, type=str,
+                            help=ERROR_USER_ID_NOT_PROVIDED)
+        parser.add_argument('user_name', required=True, type=str,
+                            help=ERROR_USER_NAME_NOT_PROVIDED)
         parser.add_argument('error_msg', type=str)
 
         args = parser.parse_args()
         file_status, file_name = args["file_status"], args["file_name"]
-        print("file-name = ", file_name)
+        user_id, user_name = args["user_id"], args["user_name"]
 
         if file_status not in accepted_file_status:
             return output_json({"msg": ERROR_INVALID_FILE_STATUS}, 400)
@@ -141,7 +171,7 @@ class UpdateFileStatus(Resource):
         response = output_json({"msg": "success"}, 200)
 
         if file_status == accepted_file_status[0]:
-            result = svc.delete_uploaded_file(file_name)
+            result = svc.delete_uploaded_file(file_name, user_id, user_name)
             if not result["success"]:
                 if result["error"] == redis_driver.ERROR_KEY_NOT_FOUND:
                     response = output_json(
@@ -152,7 +182,8 @@ class UpdateFileStatus(Resource):
         return response
 
 
-svc = init(index_cache_config, file_cache_config, rabbitmq_config)
+svc = init(index_cache_config, file_cache_config,
+           file_rabbitmq_config, user_rabbitmq_config, admin_rabbitmq_config)
 
 api.add_resource(Ping, '/ping')
 api.add_resource(UploadFile, '/file/upload',
