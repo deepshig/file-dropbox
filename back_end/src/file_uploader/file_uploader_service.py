@@ -6,9 +6,11 @@ from src.file_uploader import index_cache
 
 
 class FileUploader:
-    def __init__(self, file_cache, queue_manager, index_cache):
+    def __init__(self, file_cache, file_queue_manager, user_queue_manager, admin_queue_manager, index_cache):
         self.file_cache = file_cache
-        self.queue_manager = queue_manager
+        self.file_queue_manager = file_queue_manager
+        self.user_queue_manager = user_queue_manager
+        self.admin_queue_manager = admin_queue_manager
         self.index_cache = index_cache
 
     def send_file_for_upload(self, file_path, user_id, user_name):
@@ -61,4 +63,4 @@ class FileUploader:
                "event_timestamp": time.time()}
 
         msg_json = json.dumps(msg)
-        return self.queue_manager.publish(msg_json)
+        return self.file_queue_manager.publish(msg_json)

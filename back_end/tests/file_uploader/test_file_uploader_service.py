@@ -32,7 +32,7 @@ def test_send_file_for_upload(mocker):
     mocker.patch.object(FileCache, 'store', new=mock_file_cache_store)
 
     file_cache = FileCache(test_redis_config)
-    svc = FileUploader(file_cache, None, None)
+    svc = FileUploader(file_cache, None, None, None, None)
 
     result = svc.send_file_for_upload("/random/file/path", user_id, user_name)
     assert result["success"] == False
@@ -54,7 +54,7 @@ def test_send_file_for_upload(mocker):
 
     file_cache = FileCache(test_redis_config)
     index_cache = IndexCache(test_redis_config)
-    svc = FileUploader(file_cache, None, index_cache)
+    svc = FileUploader(file_cache, None, None, None, index_cache)
 
     result = svc.send_file_for_upload("/random/file/path", user_id, user_name)
     assert result["success"] == False
@@ -80,8 +80,8 @@ def test_send_file_for_upload(mocker):
 
     file_cache = FileCache(test_redis_config)
     index_cache = IndexCache(test_redis_config)
-    queue_manager = RabbitMQManager(test_rabbitmq_config)
-    svc = FileUploader(file_cache, queue_manager, index_cache)
+    file_queue_manager = RabbitMQManager(test_rabbitmq_config)
+    svc = FileUploader(file_cache, file_queue_manager, None, None, index_cache)
 
     result = svc.send_file_for_upload("/random/file/path", user_id, user_name)
     assert result["success"] == False
@@ -106,8 +106,8 @@ def test_send_file_for_upload(mocker):
 
     file_cache = FileCache(test_redis_config)
     index_cache = IndexCache(test_redis_config)
-    queue_manager = RabbitMQManager(test_rabbitmq_config)
-    svc = FileUploader(file_cache, queue_manager, index_cache)
+    file_queue_manager = RabbitMQManager(test_rabbitmq_config)
+    svc = FileUploader(file_cache, file_queue_manager, None, None, index_cache)
 
     result = svc.send_file_for_upload("/random/file/path", user_id, user_name)
     assert result["success"] == True
@@ -124,7 +124,7 @@ def test_delete_uploaded_file(mocker):
     mocker.patch.object(FileCache, 'delete', new=mock_file_cache_delete)
 
     file_cache = FileCache(test_redis_config)
-    svc = FileUploader(file_cache, None, None)
+    svc = FileUploader(file_cache, None, None, None, None)
 
     result = svc.delete_uploaded_file("file1")
     assert result["success"] == False
@@ -146,7 +146,7 @@ def test_delete_uploaded_file(mocker):
 
     file_cache = FileCache(test_redis_config)
     index_cache = IndexCache(test_redis_config)
-    svc = FileUploader(file_cache, None, index_cache)
+    svc = FileUploader(file_cache, None, None, None, index_cache)
 
     result = svc.delete_uploaded_file("file1")
     assert result["success"] == False
@@ -168,7 +168,7 @@ def test_delete_uploaded_file(mocker):
 
     file_cache = FileCache(test_redis_config)
     index_cache = IndexCache(test_redis_config)
-    svc = FileUploader(file_cache, None, index_cache)
+    svc = FileUploader(file_cache, None, None, None, index_cache)
 
     result = svc.delete_uploaded_file("file1")
     assert result["success"] == False
@@ -189,7 +189,7 @@ def test_delete_uploaded_file(mocker):
 
     file_cache = FileCache(test_redis_config)
     index_cache = IndexCache(test_redis_config)
-    svc = FileUploader(file_cache, None, index_cache)
+    svc = FileUploader(file_cache, None, None, None, index_cache)
 
     result = svc.delete_uploaded_file("file1")
     assert result["success"] == True
