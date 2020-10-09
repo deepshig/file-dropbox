@@ -1,0 +1,41 @@
+2020-10-09 13:34:30,016 - INFO - RabbitMq thread started app starting
+2020-10-09 13:34:30,021 - INFO - Pika version 1.1.0 connecting to ('172.21.0.5', 5672)
+2020-10-09 13:34:30,030 - INFO -  * Running on http://0.0.0.0:4500/ (Press CTRL+C to quit)
+2020-10-09 13:34:30,039 - ERROR - Socket failed to connect: <socket.socket fd=9, family=AddressFamily.AF_INET, type=2049, proto=6, laddr=('172.21.0.8', 33252)>; error=111 (Connection refused)
+2020-10-09 13:34:30,046 - ERROR - TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.21.0.5', 5672))
+2020-10-09 13:34:30,048 - ERROR - AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')
+2020-10-09 13:34:30,053 - ERROR - AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None.
+2020-10-09 13:34:30,058 - ERROR - AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None
+2020-10-09 13:34:30,059 - ERROR - Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None
+2020-10-09 13:34:30,065 - ERROR - Error in _create_connection().
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/site-packages/pika/adapters/blocking_connection.py", line 450, in _create_connection
+    raise self._reap_last_connection_workflow_error(error)
+pika.exceptions.AMQPConnectionError
+2020-10-09 13:36:17,266 - INFO - ClientHistory API
+2020-10-09 13:36:17,548 - INFO - MongoDB - Got client History
+2020-10-09 13:36:17,550 - INFO - MongoDb - Got client History
+2020-10-09 13:36:17,625 - INFO - 172.21.0.1 - - [09/Oct/2020 13:36:17] "[37mGET /client/history/5 HTTP/1.1[0m" 200 -
+2020-10-09 13:36:24,197 - INFO - fileUpload API
+2020-10-09 13:36:26,639 - INFO - AWS S3 - Upload successful
+2020-10-09 13:36:26,642 - INFO - {'clientName': ['Jon Doe'], 'clientId': ['5'], 'activity': ['1'], 'fileId': ['12'], 'fileName': 'weights/questions.pdf', 'url': 'https://s3.amazonaws.com/weightsbucket/weights/questions.pdf'}
+2020-10-09 13:36:26,669 - INFO - MongoDB - Inserted to the MongoDB
+2020-10-09 13:36:26,671 - INFO - 172.21.0.1 - - [09/Oct/2020 13:36:26] "[37mPOST /file/upload HTTP/1.1[0m" 200 -
+2020-10-09 13:36:29,849 - INFO - ClientHistory API
+2020-10-09 13:36:29,870 - INFO - MongoDB - Got client History
+2020-10-09 13:36:29,872 - INFO - MongoDb - Got client History
+2020-10-09 13:36:29,875 - INFO - 172.21.0.1 - - [09/Oct/2020 13:36:29] "[37mGET /client/history/5 HTTP/1.1[0m" 200 -
+2020-10-09 13:42:44,805 - INFO - RabbitMq thread started app starting
+2020-10-09 13:42:44,826 - INFO - Pika version 1.1.0 connecting to ('172.21.0.2', 5672)
+2020-10-09 13:42:44,830 - ERROR - Socket failed to connect: <socket.socket fd=9, family=AddressFamily.AF_INET, type=2049, proto=6, laddr=('172.21.0.7', 33134)>; error=111 (Connection refused)
+2020-10-09 13:42:44,851 - ERROR - TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.21.0.2', 5672))
+2020-10-09 13:42:44,845 - INFO -  * Running on http://0.0.0.0:4500/ (Press CTRL+C to quit)
+2020-10-09 13:42:44,854 - ERROR - AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')
+2020-10-09 13:42:44,857 - ERROR - AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None.
+2020-10-09 13:42:44,860 - ERROR - AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None
+2020-10-09 13:42:44,862 - ERROR - Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None
+2020-10-09 13:42:44,865 - ERROR - Error in _create_connection().
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/site-packages/pika/adapters/blocking_connection.py", line 450, in _create_connection
+    raise self._reap_last_connection_workflow_error(error)
+pika.exceptions.AMQPConnectionError

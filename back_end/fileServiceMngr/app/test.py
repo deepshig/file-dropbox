@@ -27,9 +27,6 @@
 # print(upload_file_key)
 # client.upload_fileobj(file, upload_file_bucket, str(upload_file_key))
 
-#import redis
-from flask import Flask
-import logging
 
 # logging.basicConfig(filename="/logs/logFile.txt",filemode="a+",format='%(asctime)s %(levelname)s-%(message)s',
 #                      datefmt='%Y-%m-%d %H:%M:%S')
@@ -90,17 +87,46 @@ import logging
 
 
 
-from pymongo import MongoClient
 
-from gridfs import GridFS
+#
+# db = MongoClient().mygrid
+#
+# fs = GridFS(db)
+#
+# ob = fs.put("hello world")
+#
+# print("Able to put")
+from flask import Flask, request, jsonify, make_response
+from config import config
+import logging
+import os
+from time import sleep
 
-db = MongoClient().mygrid
-
-fs = GridFS(db)
-
-ob = fs.put("hello world")
-
-print("Able to put")
+import logging.handlers
 
 
+logger = logging.getLogger()
+fh = logging.handlers.RotatingFileHandler(filename=config["logging"]["file_path"], maxBytes=10240, backupCount=5)
+#fh.setLevel(logging.DEBUG)#no matter what level I set here
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+fh.setFormatter(formatter)
+logger.addHandler(fh)
 
+logger.setLevel(logging.DEBUG)
+
+app = Flask(__name__)
+ENVIRONMENT_DEBUG = os.environ.get("APP_DEBUG", False)
+ENVIRONMENT_PORT = os.environ.get("APP_PORT", 6000)
+logging.info("HAHA")
+logging.debug("It is working finally using config --- also from outside")
+logging.info("Project has started")
+app.run(host='0.0.0.0', port=ENVIRONMENT_PORT,
+        debug=ENVIRONMENT_DEBUG, use_reloader=False, passthrough_errors=True)
+logging.info("After app run")
+#logging.getLogger().addHandler(logging.StreamHandler())
+
+# while(1):
+#     logging.info(config["logging"]["file_path"])
+#     logging.info("Started")
+#     print("Project started")
+#     sleep(10)

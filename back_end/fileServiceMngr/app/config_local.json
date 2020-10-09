@@ -1,9 +1,9 @@
 {
     "db": {
-            "url" : "mongodb://127.0.0.1:27017/",
-            "name" :"fileServiceMngr",
-            "user" :"",
-            "password" :""
+      "url" : "mongodb://127.0.0.1:27017/",
+      "name" :"fileServiceMngr",
+      "user" :"",
+      "password" :""
     },
     "aws" : {
        "access_key": "AKIA5UVQCCOP2IPAQU5J",
@@ -12,7 +12,7 @@
        "upload_file_key":"weights"
     },
     "logging":{
-      "file_path":"Users/jindeshubham/PycharmProjects/2020_group_12_s3993914_s4091221_s4199456/logs/logFile.txt"
+      "file_path":"logs/logFile.txt"
     },
     "rabbitmq_config":{
       "user": "guest",

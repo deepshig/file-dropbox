@@ -9,9 +9,9 @@ class model(object):
             "clientName": "string",
             "clientId": "string",
             "fileName": "string",
+            "fileId"  : "string",
             "activity": "int",
-            "url"     : "string",
-            "created": "datetime"
+            "url"     : "string"
         }
 
 

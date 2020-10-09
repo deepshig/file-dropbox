@@ -12,14 +12,17 @@
        "upload_file_key":"weights"
     },
     "logging":{
-      "file_path":"/logs/logFile.txt"
+      "file_path":"logs/logFile.txt"
     },
     "rabbitmq_config":{
       "user": "guest",
       "password": "guest",
       "host": "rabbitmq",
       "port": 5672,
-      "queue_name": "file_uploads_queue"
+      "queue_name": "file_uploads_queue",
+       "connection_timeout_s": 1200,
+      "idle_connection_timeout_s": 1800,
+      "connection_retry_s": 3
     },
     "index_cache_config":{
       "host":"redis",
