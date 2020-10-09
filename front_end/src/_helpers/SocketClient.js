@@ -13,14 +13,6 @@ export default class socketAPI {
 
 
     connect() {
-        // this.socket = io(host);
-        // // this.data = {query: {token: store.getState().authentication.token, uid: store.getState().authentication.user};
-        // this.socket.on('connect', function(data){
-        //     // {query: {token: store.getState().authentication.token, uid: store.getState().authentication.user}}
-        //
-        //         console.log("heloo")
-        //     }
-        // );
 
         let reattempts = 2;
 
@@ -93,14 +85,14 @@ export default class socketAPI {
         });
     }
 
-    onReadSuccess(file, offset, length, data) {
-        this.socket.emit('write-chunk', file.name, offset, data, function(offset, ack) {
+    onReadSuccess(file_id, file, offset, length, data) {
+        this.socket.emit('write-chunk', file_id, offset, data, function(offset, ack) {
             if (!ack)
-                this.onReadError(file, offset, 0, 'Transfer aborted by server')
+                this.onReadError(file_id, file, offset, 0, 'Transfer aborted by server')
         }.bind(this, offset));
         let end_offset = offset + length;
         if (end_offset < file.size)
-            this.readFileChunk(file, end_offset, chunk_size,
+            this.readFileChunk(file_id, file, end_offset, chunk_size,
                 this.onReadSuccess.bind(this),
                 this.onReadError.bind(this));
         else {
@@ -113,42 +105,47 @@ export default class socketAPI {
                     store.dispatch(successSocketFile());
                 }
             });
-            this.socket.emit('complete-upload', file.name, store.getState().authentication.user, store.getState().authentication.user_id, response => {
+            this.socket.emit('complete-upload', file_id, store.getState().authentication.user, store.getState().authentication.user_id, response => {
                 console.log("hi");
             });
         }
     }
 
-    onReadError(file, offset, length, error) {
-        console.log('Upload error for ' + file.name + ': ' + error);
+    onReadError(file_id, file, offset, length, error) {
+        console.log('Upload error for ' + file.name + ' | ' + file_id + ': ' + error);
         this.done = true;
     }
 
-    readFileChunk(file, offset) {
-        return new Promise((resolve, reject) => {
-            if (!this.socket) return reject('No socket connection.');
+    readFileChunk(file_id, file, offset) {
 
-            let success = this.onReadSuccess.bind(this);
-            let error = this.onReadError.bind(this);
+        let success = this.onReadSuccess.bind(this);
+        let error = this.onReadError.bind(this);
 
-            let end_offset = offset + chunk_size;
-            if (end_offset > file.size)
-                end_offset = file.size;
-            var r = new FileReader();
-            r.onload = function (file, offset, chunk_size, e) {
-                if (e.target.error != null)
-                    error(file, offset, chunk_size, e.target.error);
-                else
-                    success(file, offset, chunk_size, e.target.result);
-            }.bind(r, file, offset, chunk_size);
-            r.readAsArrayBuffer(file.slice(offset, end_offset));
-        });
+        let end_offset = offset + chunk_size;
+        if (end_offset > file.size)
+            end_offset = file.size;
+        var r = new FileReader();
+        r.onload = function (file, offset, chunk_size, e) {
+            if (e.target.error != null)
+                error(file_id, file, offset, chunk_size, e.target.error);
+            else
+                success(file_id, file, offset, chunk_size, e.target.result);
+        }.bind(r, file, offset, chunk_size);
+        r.readAsArrayBuffer(file.slice(offset, end_offset));
     }
     fileUpload(file, offset){
         return new Promise((resolve, reject) => {
             if (!this.socket) return reject('No socket connection.');
             this.done = false;
-            this.readFileChunk(file, offset)
+
+            this.socket.on('start-transfer', response => {
+                console.log(response['id']);
+                let file_id = response['id'];
+                this.readFileChunk(file_id, file, offset)
+                this.socket.off('start-transfer');
+            });
+            this.socket.emit('start-transfer', file.name, file.size);
+
         });
     }
 

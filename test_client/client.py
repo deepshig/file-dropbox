@@ -1,5 +1,7 @@
 import os
 import json
+import uuid
+
 import requests
 import threading
 import time
@@ -7,9 +9,6 @@ import random
 import jwt
 import socketio
 
-global user_name
-global user_id
-global access_token
 global host
 
 
@@ -25,6 +24,18 @@ class Client(threading.Thread):
             print(str(self.id) + ': Received data: ', data)
 
     def run(self):
+        user_name = uuid.uuid4()
+        resp = requests.post("http://" + host + ":4000/auth/signup/",
+                             {'name': user_name, 'role': 'user'})  # TODO : create user with role
+        if resp.status_code == 201:
+            # resp = requests.put("http://" + host + ":4000/auth/login/" + user_name)
+            # resp = resp.json()
+            decoded = jwt.decode(resp['jwt'], verify=False)
+            user_id = decoded['user_id']
+            access_token = decoded['access_token']
+        else:
+            print("Error with Login")
+
         self.socket.connect("http://" + host + ":5000/", headers={'user_id': user_id, 'access_token': access_token})
         print(str(self.id) + ": Connected")
         while True:
@@ -33,14 +44,9 @@ class Client(threading.Thread):
 
 
 if __name__ == "__main__":
-    numClients = 10
+    numClients = 20
     host = '127.0.0.1'
-    user_name = "hello"
-    resp = requests.put("http://" + host + ":4000/auth/login/" + user_name)
-    resp = resp.json()
-    decoded = jwt.decode(resp['jwt'], verify=False)
-    user_id = decoded['user_id']
-    access_token = decoded['access_token']
+
     # print(jwt.decode(resp['jwt'], verify=False))
 
     # print(jwt.decode(resp['jwt']))

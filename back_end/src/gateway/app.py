@@ -24,7 +24,7 @@ INSIDE_CONTAINER = os.environ.get('IN_CONTAINER_FLAG', False)
 
 CORS(app, supports_credentials=True)
 socket = SocketIO(app, cors_allowed_origins="*")
-file_path = os.path.abspath(pathlib.Path().absolute()) + '/'
+file_path = os.path.abspath(pathlib.Path().absolute()) + '/tmp/'
 
 
 def save_file(file):
@@ -72,6 +72,7 @@ def handleAlive(headers):
 @socket.on('start-transfer')
 def start_transfer(filename, size):
     """Process an upload request from the client."""
+    print("starting")
     _, ext = os.path.splitext(filename)
     if ext in ['.exe', '.bin', '.js', '.sh', '.py', '.php']:
         return False  # reject the upload
@@ -79,23 +80,21 @@ def start_transfer(filename, size):
     id = uuid.uuid4().hex  # server-side filename
     with open(file_path + id + '.json', 'wt') as f:
         json.dump({'filename': filename, 'size': size}, f)
-    with open(file_path + id + ext, 'wb') as f:
+    with open(file_path + id, 'wb') as f:
         pass
-    return id + ext  # allow the upload
+    emit('start-transfer', {'id': id})
+    return id  # allow the upload
 
 
 @socket.on('write-chunk')
 def write_chunk(filename, offset, data):
     """Write a chunk of data sent by the client."""
     # TODO: implement start transfer and file naming. Maybe paths aren't needed if forwarding to redis?
-    _, ext = os.path.splitext(filename)
-    print("transfer starting")
-    if ext in ['.exe', '.bin', '.js', '.sh', '.py', '.php']:
-        return False  # reject the upload
-
-    id = uuid.uuid4().hex  # server-side filename
-    with open(file_path + filename + '.json', 'wt') as f:
-        json.dump({'filename': filename}, f)
+    # _, ext = os.path.splitext(filename)
+    # if ext in ['.exe', '.bin', '.js', '.sh', '.py', '.php']:
+    #     return False  # reject the upload
+    #
+    # id = uuid.uuid4().hex  # server-side filename
     with open(file_path + filename, 'wb') as f:
         pass
     try:
@@ -109,16 +108,23 @@ def write_chunk(filename, offset, data):
 
 
 @socket.on('complete-upload')
-def complete_upload(filename, username, user_id):
+def complete_upload(file_id, username, user_id):
     print("Complete")
     print(user_id)
-    with open(file_path + filename, 'rb') as f:
-        if INSIDE_CONTAINER:
-            resp = requests.post('http://api-uploader:3500/file/upload', files={'file': f, 'user_id': user_id, 'user_name': username})
-        else:
-            resp = requests.post('http://127.0.0.1:3500/file/upload', files={'file': f, 'user_id': user_id, 'user_name': username})
-        print(resp.status_code)
-        if resp.status_code == 201:
+    with open(file_path + file_id + '.json', 'rb') as f:
+        data = json.load(f)
+        print(data)
+    with open(file_path + file_id, 'rb') as f:
+        # if INSIDE_CONTAINER:
+        #     resp = requests.post('http://api-uploader:3500/file/upload', files={'file': f, 'user_id': user_id, 'user_name': username, 'meta': data})
+        # else:
+        #     resp = requests.post('http://127.0.0.1:3500/file/upload', files={'file': f, 'user_id': user_id, 'user_name': username, 'meta': data})
+        # resp.status_code = 201
+        # print(resp.status_code)
+        # if resp.status_code == 201:
+        status_code = 201
+        print(status_code)
+        if status_code == 201:
             emit('complete-upload', {'data': True})
         else:
             emit('complete-upload', {'data': False})

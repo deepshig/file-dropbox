@@ -11,8 +11,6 @@ import time
 logging.basicConfig(filename=config["logging"]["file_path"], filemode="a+", format='%(asctime)s %(levelname)s-%(message)s',
                       datefmt='%Y-%m-%d %H:%M:%S')
 
-logging.getLogger().addHandler(logging.StreamHandler())
-
 
 logging.info(config["logging"]["file_path"])
 logging.info("Started")

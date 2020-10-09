@@ -5,3 +5,4 @@
 __pycache__
 .pytest_cache
 ./requirements.txt
+/back_end/src/gateway/tmp/
