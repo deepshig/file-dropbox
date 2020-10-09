@@ -4,21 +4,24 @@ import sys
 
 class RabbitMQManager:
     def __init__(self, rabbitmq_config):
-        self.connection_url = self.__get_connection_url(rabbitmq_config)
-        self.connection = self.__get_connection(self.connection_url)
+        self.connection = self.__get_connection(rabbitmq_config)
         self.queue_name = rabbitmq_config["queue_name"]
         self.__init_queue()
 
-    def __get_connection_url(self, rabbitmq_config):
-        return "amqp://{}:{}@{}:{}?connection_attempts=10&retry_delay=10".format(rabbitmq_config["user"],
-                                                                                 rabbitmq_config["password"],
-                                                                                 rabbitmq_config["host"],
-                                                                                 rabbitmq_config["port"])
-
-    def __get_connection(self, amqp_url):
+    def __get_connection(self, rabbitmq_config):
         try:
-            url_params = pika.URLParameters(amqp_url)
-            connection = pika.BlockingConnection(url_params)
+            credentials = pika.credentials.PlainCredentials(
+                username=rabbitmq_config["user"], password=rabbitmq_config["password"])
+
+            params = pika.connection.ConnectionParameters(
+                host=rabbitmq_config["host"],
+                port=rabbitmq_config["port"],
+                credentials=credentials,
+                heartbeat=rabbitmq_config["connection_timeout_s"],
+                blocked_connection_timeout=rabbitmq_config["idle_connection_timeout_s"],
+                retry_delay=rabbitmq_config["connection_retry_s"])
+
+            connection = pika.BlockingConnection(params)
         except pika.exceptions as err:
             error_str = "Error while connecting to rabbitmq : " + str(err)
             sys.exit(error_str)

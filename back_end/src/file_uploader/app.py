@@ -51,18 +51,27 @@ if INSIDE_CONTAINER:
                             "password": "guest",
                             "host": "rabbitmq",
                             "port": "5672",
+                            "connection_timeout_s": 1200,
+                            "idle_connection_timeout_s": 1800,
+                            "connection_retry_s": 3,
                             "queue_name": "file_uploads_queue"}
 
     user_rabbitmq_config = {"user": "guest",
                             "password": "guest",
                             "host": "rabbitmq",
                             "port": "5672",
+                            "connection_timeout_s": 1200,
+                            "idle_connection_timeout_s": 1800,
+                            "connection_retry_s": 3,
                             "queue_name": "user_notification_queue"}
 
     admin_rabbitmq_config = {"user": "guest",
                              "password": "guest",
                              "host": "rabbitmq",
                              "port": "5672",
+                             "connection_timeout_s": 1200,
+                             "idle_connection_timeout_s": 1800,
+                             "connection_retry_s": 3,
                              "queue_name": "admin_notification_queue"}
 else:
     index_cache_config = {"host": "127.0.0.1",
@@ -75,18 +84,27 @@ else:
                             "password": "guest",
                             "host": "127.0.0.1",
                             "port": "5672",
+                            "connection_timeout_s": 1200,
+                            "idle_connection_timeout_s": 1800,
+                            "connection_retry_s": 3,
                             "queue_name": "file_uploads_queue"}
 
     user_rabbitmq_config = {"user": "guest",
                             "password": "guest",
                             "host": "127.0.0.1",
                             "port": "5672",
+                            "connection_timeout_s": 1200,
+                            "idle_connection_timeout_s": 1800,
+                            "connection_retry_s": 3,
                             "queue_name": "user_notification_queue"}
 
     admin_rabbitmq_config = {"user": "guest",
                              "password": "guest",
                              "host": "127.0.0.1",
                              "port": "5672",
+                             "connection_timeout_s": 1200,
+                             "idle_connection_timeout_s": 1800,
+                             "connection_retry_s": 3,
                              "queue_name": "admin_notification_queue"}
 
 
@@ -113,8 +131,8 @@ class UploadFile(Resource):
 
     def post(self):
         parser = reqparse.RequestParser()
-        parser.add_argument(
-            'file', type=datastructures.FileStorage, location='files')
+        parser.add_argument('file', type=datastructures.FileStorage, location='files',
+                            help=ERROR_FILE_NOT_PROVIDED)
         parser.add_argument('user_id', required=True, type=str,
                             help=ERROR_USER_ID_NOT_PROVIDED, location='files')
         parser.add_argument('user_name', required=True, type=str,

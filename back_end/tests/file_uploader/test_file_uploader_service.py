@@ -16,18 +16,27 @@ test_file_rabbitmq_config = {"user": "guest",
                              "password": "guest",
                              "host": "127.0.0.1",
                              "port": "5672",
+                             "connection_timeout_s": 1200,
+                             "idle_connection_timeout_s": 1800,
+                             "connection_retry_s": 3,
                              "queue_name": "test_file_uploads"}
 
 test_user_rabbitmq_config = {"user": "guest",
                              "password": "guest",
                              "host": "127.0.0.1",
                              "port": "5672",
+                             "connection_timeout_s": 1200,
+                             "idle_connection_timeout_s": 1800,
+                             "connection_retry_s": 3,
                              "queue_name": "test_user_notification"}
 
 test_admin_rabbitmq_config = {"user": "guest",
                               "password": "guest",
                               "host": "127.0.0.1",
                               "port": "5672",
+                              "connection_timeout_s": 1200,
+                              "idle_connection_timeout_s": 1800,
+                              "connection_retry_s": 3,
                               "queue_name": "test_admin_notification"}
 
 
