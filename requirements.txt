@@ -1,0 +1,15 @@
+flask
+flask_cors
+pytest
+psycopg2
+flask-restful
+pyjwt
+redis
+flask-jwt-extended
+flask-socketio
+pika
+requests
+pymongo
+boto3
+etcd
+redis-py

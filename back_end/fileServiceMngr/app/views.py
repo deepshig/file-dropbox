@@ -7,13 +7,10 @@ import logging
 import consumer
 import threading
 import time
-
-logging.basicConfig(filename=config["logging"]["file_path"], filemode="a+", format='%(asctime)s %(levelname)s-%(message)s',
-                      datefmt='%Y-%m-%d %H:%M:%S')
+import logging.handlers
 
 
-logging.info(config["logging"]["file_path"])
-logging.info("Started")
+
 app = Flask(__name__)
 
 serv = service.service()
@@ -50,6 +47,8 @@ def fileUpload():
             url = '%s/%s/%s' % (serv.aws_client.meta.endpoint_url,
                                 config["aws"]["upload_file_bucket"], str(upload_file_key))
             req["fileName"] = upload_file_key
+            req["url"] = url
+
             inserted_id = serv.mongo_client.create(req)
             # TODO
             '''
@@ -68,11 +67,8 @@ def internal_error(exception):
 
 class ThreadedTask(threading.Thread):
     def __init__(self, ):
-
         threading.Thread.__init__(self)
-
     def run(self):
-
         queue_manager = consumer.RabbitMQManager()
         queue_manager.chan.basic_qos(prefetch_count=1)
         # define the queue consumption
@@ -84,6 +80,13 @@ class ThreadedTask(threading.Thread):
 
 if __name__ == '__main__':
     print("FSM")
+    logger = logging.getLogger()
+    fh = logging.handlers.RotatingFileHandler(filename=config["logging"]["file_path"], maxBytes=10240, backupCount=5)
+    # fh.setLevel(logging.DEBUG)#no matter what level I set here
+    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    fh.setFormatter(formatter)
+    logger.addHandler(fh)
+    logger.setLevel(logging.INFO)
     ENVIRONMENT_DEBUG = os.environ.get("APP_DEBUG", False)
     ENVIRONMENT_PORT = os.environ.get("APP_PORT", 4500)
     task = ThreadedTask()

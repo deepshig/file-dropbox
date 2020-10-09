@@ -1,9 +1,16 @@
 from pymongo import MongoClient
 from config import config
-import logging
+import logging.handlers
 import sys
-logging.basicConfig(filename=config["logging"]["file_path"],filemode="a+",format='%(asctime)s %(levelname)s-%(message)s',
-                       datefmt='%Y-%m-%d %H:%M:%S')
+
+# logger = logging.getLogger()
+# fh = logging.handlers.RotatingFileHandler(filename=config["logging"]["file_path"], maxBytes=10240, backupCount=5)
+# #fh.setLevel(logging.DEBUG)#no matter what level I set here
+# formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+# fh.setFormatter(formatter)
+# logger.addHandler(fh)
+# logger.setLevel(logging.INFO)
+
 
 class MongoDatabase(object):
      def __init__(self):
@@ -18,13 +25,16 @@ class MongoDatabase(object):
                #logging.error("MongoDB - Unable to connect")
 
      def insert(self, dict):
+          logging.info(dict)
           try:
                inserted = self.db["fileInfo"].insert_one(dict) # insert data to db
                logging.info("MongoDB - Inserted to the MongoDB")
                print("Insert to MongoDb", file=sys.stderr)
+
           except Exception as e:
                print("Unable to insert to MongoDb", file=sys.stderr)
                logging.error("MongoDB - Unable to insert")
+               logging.error(e)
           return str(inserted.inserted_id)
 
      def find(self, clientId, cursor=False):  # find all from db

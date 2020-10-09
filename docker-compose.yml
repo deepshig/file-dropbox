@@ -72,8 +72,10 @@ services:
     - docker_network
     environment:
       IN_CONTAINER_FLAG: 1
+    volumes:
+      - ./gateway-store:/src/tmp
 
-  api-uploader:
+  file-uploader:
     build: back_end/src/file_uploader
     ports:
       - 3500:3500
@@ -83,6 +85,11 @@ services:
       - docker_network
     environment:
       IN_CONTAINER_FLAG: 1
+    volumes:
+      - ./uploader-store:/src/tmp
+    command: [ "./wait-for-it.sh", "rabbitmq:5672", "--", "python", "./app.py" ]
+
+
 
   front-end:
     build:
@@ -125,6 +132,10 @@ services:
     container_name: fsm
     links:
       - mongodb
+    depends_on:
+      - mongodb
+      - rabbitmq
+      - redis
     ports:
       - 4500:4500
     volumes:
@@ -133,6 +144,7 @@ services:
     - docker_network
     environment:
       IN_CONTAINER_FLAG: 1
+    command: ["./wait-for-it.sh", "rabbitmq:5672", "--", "python", "./views.py"]
 
   mongodb:
     image: mongo:4.0.8

@@ -109,24 +109,29 @@ def write_chunk(filename, offset, data):
 
 @socket.on('complete-upload')
 def complete_upload(file_id, username, user_id):
+    print(file_id)
+    # file_id = file_id.split('tmp/')[1]
     print("Complete")
     print(user_id)
     with open(file_path + file_id + '.json', 'rb') as f:
         data = json.load(f)
+        data = json.dumps(data)
+        # data = pickle.dump()
         print(data)
     with open(file_path + file_id, 'rb') as f:
-        # if INSIDE_CONTAINER:
-        #     resp = requests.post('http://api-uploader:3500/file/upload', files={'file': f, 'user_id': user_id, 'user_name': username, 'meta': data})
-        # else:
-        #     resp = requests.post('http://127.0.0.1:3500/file/upload', files={'file': f, 'user_id': user_id, 'user_name': username, 'meta': data})
+        if INSIDE_CONTAINER:
+            resp = requests.post('http://file-uploader:3500/file/upload', files={'file': f, 'user_id': user_id, 'user_name': username, 'meta': data})
+        else:
+            resp = requests.post('http://127.0.0.1:3500/file/upload', files={'file': f, 'user_id': user_id, 'user_name': username, 'meta': data})
         # resp.status_code = 201
-        # print(resp.status_code)
-        # if resp.status_code == 201:
-        status_code = 201
-        print(status_code)
-        if status_code == 201:
+        print(resp.content)
+        if resp.status_code == 201:
+        # status_code = 201
+        # print(status_code)
+        # if status_code == 201:
             emit('complete-upload', {'data': True})
         else:
+            print(resp)
             emit('complete-upload', {'data': False})
 
 

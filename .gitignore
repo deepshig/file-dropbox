@@ -6,3 +6,11 @@ __pycache__
 .pytest_cache
 ./requirements.txt
 /back_end/src/gateway/tmp/
+/gateway-store/
+/index-db/
+/logs/
+/postgres/
+/postgres-test/
+/redis-data/
+/redis.conf/
+/uploader-store/

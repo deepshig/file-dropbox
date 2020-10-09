@@ -6,32 +6,46 @@ import utils
 import logging
 import requests
 import io
+import os
 from config import config
+import logging.handlers
+# logging.basicConfig(filename=config["logging"]["file_path"], filemode="a+", format='%(asctime)s %(levelname)s-%(message)s',
+#                     datefmt='%Y-%m-%d %H:%M:%S')
 
-logging.basicConfig(filename=config["logging"]["file_path"], filemode="a+", format='%(asctime)s %(levelname)s-%(message)s',
-                    datefmt='%Y-%m-%d %H:%M:%S')
+INSIDE_CONTAINER = os.environ.get('IN_CONTAINER_FLAG', False)
 
 serv = service.service()
 
 
 class RabbitMQManager:
     def __init__(self):
-        self.connection_url = self.__get_connection_url()
-        self.connection = self.__get_connection(self.connection_url)
+        # self.connection_url = self.__get_connection_url()
+        self.connection = self.__get_connection()
         self.chan = self.connection.channel()
         self.queue_name = config["rabbitmq_config"]["queue_name"]
         self.chan.queue_declare(queue=self.queue_name, durable=True)
 
-    def __get_connection_url(self):
-        return "amqp://{}:{}@{}:{}?connection_attempts=10&retry_delay=10".format(config["rabbitmq_config"]["user"],
-                                                                                 config["rabbitmq_config"]["password"],
-                                                                                 config["rabbitmq_config"]["host"],
-                                                                                 config["rabbitmq_config"]["port"])
+    # def __get_connection_url(self):
+    #     return "amqp://{}:{}@{}:{}?connection_attempts=10&retry_delay=10".format(config["rabbitmq_config"]["user"],
+    #                                                                              config["rabbitmq_config"]["password"],
+    #                                                                              config["rabbitmq_config"]["host"],
+    #                                                                              config["rabbitmq_config"]["port"],
+    #                                                                              )
 
-    def __get_connection(self, amqp_url):
+    def __get_connection(self):
         try:
-            url_params = pika.URLParameters(amqp_url)
-            connection = pika.BlockingConnection(url_params)
+            credentials = pika.credentials.PlainCredentials(
+                username=config["rabbitmq_config"]["user"], password=config["rabbitmq_config"]["password"])
+
+            params = pika.connection.ConnectionParameters(
+                host=config["rabbitmq_config"]["host"],
+                port=config["rabbitmq_config"]["port"],
+                credentials=credentials,
+                heartbeat=config["rabbitmq_config"]["connection_timeout_s"],
+                blocked_connection_timeout=config["rabbitmq_config"]["idle_connection_timeout_s"],
+                retry_delay=config["rabbitmq_config"]["connection_retry_s"])
+
+            connection = pika.BlockingConnection(params)
         except pika.exceptions as err:
             error_str = "Error while connecting to rabbitmq : " + str(err)
             sys.exit(error_str)
@@ -59,9 +73,14 @@ class RabbitMQManager:
             inserted_id = serv.mongo_client.create(req_obj)
             logging.info("File Uploaded Successfully")
             headers, data = utils.create_fileUpload_request(
-                "uploaded_successfully", msg["file_name"])
-            response = requests.put(
-                'http://localhost:3500/file/update/status', headers=headers, data=data)
+                "uploaded_successfully", msg["file_name"], msg['user_id'],msg['user_name'])
+            if INSIDE_CONTAINER:
+                response = requests.put(
+                    'http://file-uploader:3500/file/update/status', headers=headers, data=data)
+            else:
+                response = requests.put(
+                    'http://localhost:3500/file/update/status', headers=headers, data=data)
+
             if response:
                 logging.info("Consumer Task Completed")
             else:
@@ -69,9 +88,14 @@ class RabbitMQManager:
         except Exception as e:
             logging.error("AWS S3- Upload fail")
             headers, data = utils.create_fileUpload_request(
-                "upload_failed", msg["file_name"])
-            response = requests.put(
-                'http://localhost:3500/file/update/status', headers=headers, data=data)
+                "upload_failed", msg["file_name"], msg['user_id'],msg['user_name'])
+            if INSIDE_CONTAINER:
+                response = requests.put(
+                    'http://file-uploader:3500/file/update/status', headers=headers, data=data)
+            else:
+                response = requests.put(
+                    'http://localhost:3500/file/update/status', headers=headers, data=data)
+
             # print(response.body)
             # sys.exit(error_str)
         ch.basic_ack(delivery_tag=method.delivery_tag)
