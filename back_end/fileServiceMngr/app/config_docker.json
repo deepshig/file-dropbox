@@ -12,7 +12,7 @@
        "upload_file_key":"weights"
     },
     "logging":{
-      "file_path":"/logs/logFile.txt"
+      "file_path":"logs/logFile.txt"
     },
     "rabbitmq_config":{
       "user": "guest",

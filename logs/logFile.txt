@@ -1,0 +1,53 @@
+2020-10-09 10:31:16,909 - ERROR - Exception on /file/upload [POST]
+Traceback (most recent call last):
+  File "/factory/mongo_db.py", line 31, in insert
+    print("Insert to MongoDb", file=sys.stderr)
+NameError: name 'sys' is not defined
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/usr/local/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "./views.py", line 58, in fileUpload
+    inserted_id = serv.mongo_client.create(req)
+  File "/models/models.py", line 20, in create
+    res = self.db.insert(req)
+  File "/factory/mongo_db.py", line 34, in insert
+    print("Unable to insert to MongoDb", file=sys.stderr)
+NameError: name 'sys' is not defined
+2020-10-09 10:31:17,111 - ERROR - 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+2020-10-09 10:32:12,814 - INFO - MongoDB - Connection established
+2020-10-09 10:32:13,166 - INFO - MongoDB - Connection established
+2020-10-09 10:32:13,166 - INFO - MongoDB - Connection established
+2020-10-09 10:32:13,194 - INFO - RabbitMq thread started app starting
+2020-10-09 10:32:13,194 - INFO - RabbitMq thread started app starting
+2020-10-09 10:32:13,217 - INFO -  * Running on http://0.0.0.0:4500/ (Press CTRL+C to quit)
+2020-10-09 10:32:13,217 - INFO -  * Running on http://0.0.0.0:4500/ (Press CTRL+C to quit)
+2020-10-09 10:32:31,064 - INFO - fileUpload API
+2020-10-09 10:32:31,064 - INFO - fileUpload API
+2020-10-09 10:32:31,786 - INFO - AWS S3 - Upload successful
+2020-10-09 10:32:31,786 - INFO - AWS S3 - Upload successful
+2020-10-09 10:32:31,797 - INFO - {'clientName': ['Jon Doe'], 'clientId': ['5'], 'activity': ['1'], 'fileId': ['12'], 'fileName': 'weights/questions.pdf', 'url': 'https://s3.amazonaws.com/weightsbucket/weights/questions.pdf'}
+2020-10-09 10:32:31,797 - INFO - {'clientName': ['Jon Doe'], 'clientId': ['5'], 'activity': ['1'], 'fileId': ['12'], 'fileName': 'weights/questions.pdf', 'url': 'https://s3.amazonaws.com/weightsbucket/weights/questions.pdf'}
+2020-10-09 10:32:31,905 - INFO - MongoDB - Inserted to the MongoDB
+2020-10-09 10:32:31,905 - INFO - MongoDB - Inserted to the MongoDB
+2020-10-09 10:32:31,926 - INFO - 172.21.0.1 - - [09/Oct/2020 10:32:31] "[37mPOST /file/upload HTTP/1.1[0m" 200 -
+2020-10-09 10:32:31,926 - INFO - 172.21.0.1 - - [09/Oct/2020 10:32:31] "[37mPOST /file/upload HTTP/1.1[0m" 200 -
+2020-10-09 10:36:04,073 - INFO - RabbitMq thread started app starting
+2020-10-09 10:36:04,080 - INFO -  * Running on http://0.0.0.0:4500/ (Press CTRL+C to quit)
+2020-10-09 10:36:30,254 - INFO - fileUpload API
+2020-10-09 10:36:31,144 - INFO - AWS S3 - Upload successful
+2020-10-09 10:36:31,156 - INFO - {'clientName': ['Jon Doe'], 'clientId': ['5'], 'activity': ['1'], 'fileId': ['12'], 'fileName': 'weights/questions.pdf', 'url': 'https://s3.amazonaws.com/weightsbucket/weights/questions.pdf'}
+2020-10-09 10:36:31,308 - INFO - MongoDB - Inserted to the MongoDB
+2020-10-09 10:36:31,345 - INFO - 172.21.0.1 - - [09/Oct/2020 10:36:31] "[37mPOST /file/upload HTTP/1.1[0m" 200 -

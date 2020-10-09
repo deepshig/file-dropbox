@@ -1,0 +1,182 @@
+2020-10-09 10:07:48,414 - ERROR - Exception on /file/upload [POST]
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/usr/local/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "./views.py", line 63, in fileUpload
+    inserted_id = serv.mongo_client.create(req)
+  File "/models/models.py", line 20, in create
+    res = self.db.insert(req)
+  File "/factory/mongo_db.py", line 28, in insert
+    return str(inserted.inserted_id)
+UnboundLocalError: local variable 'inserted' referenced before assignment
+2020-10-09 10:07:48,433 - ERROR - 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+2020-10-09 10:11:49 INFO-logs/logFile.txt
+2020-10-09 10:11:49,098 - INFO - logs/logFile.txt
+2020-10-09 10:11:49 INFO-Started
+2020-10-09 10:11:49,099 - INFO - Started
+2020-10-09 10:11:49 INFO-MongoDB - Connection established
+2020-10-09 10:11:49,105 - INFO - MongoDB - Connection established
+2020-10-09 10:11:49 INFO-RabbitMq thread started app starting
+2020-10-09 10:11:49,119 - INFO - RabbitMq thread started app starting
+2020-10-09 10:11:49 INFO- * Running on http://0.0.0.0:4500/ (Press CTRL+C to quit)
+2020-10-09 10:11:49,129 - INFO -  * Running on http://0.0.0.0:4500/ (Press CTRL+C to quit)
+2020-10-09 10:12:06 INFO-fileUpload API
+2020-10-09 10:12:06,792 - INFO - fileUpload API
+2020-10-09 10:12:08 INFO-AWS S3 - Upload successful
+2020-10-09 10:12:08,073 - INFO - AWS S3 - Upload successful
+2020-10-09 10:12:08 INFO-{'clientName': ['Jon Doe'], 'clientId': ['5'], 'activity': ['1'], 'fileId': ['12'], 'fileName': 'weights/questions.pdf'}
+2020-10-09 10:12:08,075 - INFO - {'clientName': ['Jon Doe'], 'clientId': ['5'], 'activity': ['1'], 'fileId': ['12'], 'fileName': 'weights/questions.pdf'}
+2020-10-09 10:12:38 ERROR-MongoDB - Unable to insert
+2020-10-09 10:12:38,265 - ERROR - MongoDB - Unable to insert
+2020-10-09 10:12:38 ERROR-Exception on /file/upload [POST]
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/usr/local/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "./views.py", line 63, in fileUpload
+    inserted_id = serv.mongo_client.create(req)
+  File "/models/models.py", line 20, in create
+    res = self.db.insert(req)
+  File "/factory/mongo_db.py", line 29, in insert
+    return str(inserted.inserted_id)
+UnboundLocalError: local variable 'inserted' referenced before assignment
+2020-10-09 10:12:38,283 - ERROR - Exception on /file/upload [POST]
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/usr/local/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "./views.py", line 63, in fileUpload
+    inserted_id = serv.mongo_client.create(req)
+  File "/models/models.py", line 20, in create
+    res = self.db.insert(req)
+  File "/factory/mongo_db.py", line 29, in insert
+    return str(inserted.inserted_id)
+UnboundLocalError: local variable 'inserted' referenced before assignment
+2020-10-09 10:12:38 ERROR-500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+2020-10-09 10:12:38,308 - ERROR - 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+2020-10-09 10:16:34 INFO-logs/logFile.txt
+2020-10-09 10:16:34,531 - INFO - logs/logFile.txt
+2020-10-09 10:16:34 INFO-Started
+2020-10-09 10:16:34,533 - INFO - Started
+2020-10-09 10:16:34 INFO-MongoDB - Connection established
+2020-10-09 10:16:34,541 - INFO - MongoDB - Connection established
+2020-10-09 10:16:34 INFO-RabbitMq thread started app starting
+2020-10-09 10:16:34,557 - INFO - RabbitMq thread started app starting
+2020-10-09 10:16:34 INFO- * Running on http://0.0.0.0:4500/ (Press CTRL+C to quit)
+2020-10-09 10:16:34,570 - INFO -  * Running on http://0.0.0.0:4500/ (Press CTRL+C to quit)
+2020-10-09 10:16:40 INFO-fileUpload API
+2020-10-09 10:16:40,791 - INFO - fileUpload API
+2020-10-09 10:16:41 INFO-AWS S3 - Upload successful
+2020-10-09 10:16:41,274 - INFO - AWS S3 - Upload successful
+2020-10-09 10:16:41 INFO-{'clientName': ['Jon Doe'], 'clientId': ['5'], 'activity': ['1'], 'fileId': ['12'], 'fileName': 'weights/questions.pdf', 'url': 'https://s3.amazonaws.com/weightsbucket/weights/questions.pdf'}
+2020-10-09 10:16:41,276 - INFO - {'clientName': ['Jon Doe'], 'clientId': ['5'], 'activity': ['1'], 'fileId': ['12'], 'fileName': 'weights/questions.pdf', 'url': 'https://s3.amazonaws.com/weightsbucket/weights/questions.pdf'}
+2020-10-09 10:17:11 ERROR-MongoDB - Unable to insert
+2020-10-09 10:17:11,669 - ERROR - MongoDB - Unable to insert
+2020-10-09 10:17:11 ERROR-Exception on /file/upload [POST]
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/usr/local/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "./views.py", line 65, in fileUpload
+    inserted_id = serv.mongo_client.create(req)
+  File "/models/models.py", line 20, in create
+    res = self.db.insert(req)
+  File "/factory/mongo_db.py", line 29, in insert
+    return str(inserted.inserted_id)
+UnboundLocalError: local variable 'inserted' referenced before assignment
+2020-10-09 10:17:11,713 - ERROR - Exception on /file/upload [POST]
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/usr/local/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "./views.py", line 65, in fileUpload
+    inserted_id = serv.mongo_client.create(req)
+  File "/models/models.py", line 20, in create
+    res = self.db.insert(req)
+  File "/factory/mongo_db.py", line 29, in insert
+    return str(inserted.inserted_id)
+UnboundLocalError: local variable 'inserted' referenced before assignment
+2020-10-09 10:17:11 ERROR-500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+2020-10-09 10:17:11,760 - ERROR - 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+2020-10-09 10:19:27 INFO-logs/logFile.txt
+2020-10-09 10:19:27,334 - INFO - logs/logFile.txt
+2020-10-09 10:19:27 INFO-Started
+2020-10-09 10:19:27,336 - INFO - Started
+2020-10-09 10:19:27 INFO-MongoDB - Connection established
+2020-10-09 10:19:27,341 - INFO - MongoDB - Connection established
+2020-10-09 10:19:27 INFO-RabbitMq thread started app starting
+2020-10-09 10:19:27,349 - INFO - RabbitMq thread started app starting
+2020-10-09 10:19:27 INFO- * Running on http://0.0.0.0:4500/ (Press CTRL+C to quit)
+2020-10-09 10:19:41 INFO-fileUpload API
+2020-10-09 10:19:42 INFO-AWS S3 - Upload successful
+2020-10-09 10:19:42 INFO-{'clientName': ['Jon Doe'], 'clientId': ['5'], 'activity': ['1'], 'fileId': ['12'], 'fileName': 'weights/questions.pdf', 'url': 'https://s3.amazonaws.com/weightsbucket/weights/questions.pdf'}
+2020-10-09 10:20:12 ERROR-MongoDB - Unable to insert
+2020-10-09 10:20:12 ERROR-127.0.0.1:27017: [Errno 111] Connection refused, Timeout: 30s, Topology Description: <TopologyDescription id: 5f80392f62aa61b383ee45d3, topology_type: Single, servers: [<ServerDescription ('127.0.0.1', 27017) server_type: Unknown, rtt: None, error=AutoReconnect('127.0.0.1:27017: [Errno 111] Connection refused',)>]>
+2020-10-09 10:20:12 ERROR-Exception on /file/upload [POST]
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/usr/local/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "./views.py", line 65, in fileUpload
+    inserted_id = serv.mongo_client.create(req)
+  File "/models/models.py", line 20, in create
+    res = self.db.insert(req)
+  File "/factory/mongo_db.py", line 31, in insert
+    return str(inserted.inserted_id)
+UnboundLocalError: local variable 'inserted' referenced before assignment
+2020-10-09 10:20:12 ERROR-500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.

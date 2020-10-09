@@ -1,0 +1,125 @@
+2020-10-09 10:19:27,370 - INFO -  * Running on http://0.0.0.0:4500/ (Press CTRL+C to quit)
+2020-10-09 10:19:41,773 - INFO - fileUpload API
+2020-10-09 10:19:42,210 - INFO - AWS S3 - Upload successful
+2020-10-09 10:19:42,212 - INFO - {'clientName': ['Jon Doe'], 'clientId': ['5'], 'activity': ['1'], 'fileId': ['12'], 'fileName': 'weights/questions.pdf', 'url': 'https://s3.amazonaws.com/weightsbucket/weights/questions.pdf'}
+2020-10-09 10:20:12,506 - ERROR - MongoDB - Unable to insert
+2020-10-09 10:20:12,508 - ERROR - 127.0.0.1:27017: [Errno 111] Connection refused, Timeout: 30s, Topology Description: <TopologyDescription id: 5f80392f62aa61b383ee45d3, topology_type: Single, servers: [<ServerDescription ('127.0.0.1', 27017) server_type: Unknown, rtt: None, error=AutoReconnect('127.0.0.1:27017: [Errno 111] Connection refused',)>]>
+2020-10-09 10:20:12,511 - ERROR - Exception on /file/upload [POST]
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/usr/local/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "./views.py", line 65, in fileUpload
+    inserted_id = serv.mongo_client.create(req)
+  File "/models/models.py", line 20, in create
+    res = self.db.insert(req)
+  File "/factory/mongo_db.py", line 31, in insert
+    return str(inserted.inserted_id)
+UnboundLocalError: local variable 'inserted' referenced before assignment
+2020-10-09 10:20:12,519 - ERROR - 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+2020-10-09 10:22:22 INFO-logs/logFile.txt
+2020-10-09 10:22:22,219 - INFO - logs/logFile.txt
+2020-10-09 10:22:22 INFO-Started
+2020-10-09 10:22:22,220 - INFO - Started
+2020-10-09 10:22:22 INFO-MongoDB - Connection established
+2020-10-09 10:22:22,236 - INFO - MongoDB - Connection established
+2020-10-09 10:22:22 INFO-RabbitMq thread started app starting
+2020-10-09 10:22:22,302 - INFO - RabbitMq thread started app starting
+2020-10-09 10:22:22 INFO- * Running on http://0.0.0.0:4500/ (Press CTRL+C to quit)
+2020-10-09 10:22:22,325 - INFO -  * Running on http://0.0.0.0:4500/ (Press CTRL+C to quit)
+2020-10-09 10:22:30 INFO-fileUpload API
+2020-10-09 10:22:30,287 - INFO - fileUpload API
+2020-10-09 10:22:30 INFO-AWS S3 - Upload successful
+2020-10-09 10:22:30,774 - INFO - AWS S3 - Upload successful
+2020-10-09 10:22:30 INFO-{'clientName': ['Jon Doe'], 'clientId': ['5'], 'activity': ['1'], 'fileId': ['12'], 'fileName': 'weights/questions.pdf', 'url': 'https://s3.amazonaws.com/weightsbucket/weights/questions.pdf'}
+2020-10-09 10:22:30,778 - INFO - {'clientName': ['Jon Doe'], 'clientId': ['5'], 'activity': ['1'], 'fileId': ['12'], 'fileName': 'weights/questions.pdf', 'url': 'https://s3.amazonaws.com/weightsbucket/weights/questions.pdf'}
+2020-10-09 10:22:30 INFO-MongoDB - Inserted to the MongoDB
+2020-10-09 10:22:30,902 - INFO - MongoDB - Inserted to the MongoDB
+2020-10-09 10:22:30 INFO-172.21.0.1 - - [09/Oct/2020 10:22:30] "[37mPOST /file/upload HTTP/1.1[0m" 200 -
+2020-10-09 10:22:30,916 - INFO - 172.21.0.1 - - [09/Oct/2020 10:22:30] "[37mPOST /file/upload HTTP/1.1[0m" 200 -
+2020-10-09 10:22:34 INFO-ClientHistory API
+2020-10-09 10:22:34,986 - INFO - ClientHistory API
+2020-10-09 10:22:35 INFO-MongoDB - Got client History
+2020-10-09 10:22:35,018 - INFO - MongoDB - Got client History
+2020-10-09 10:22:35 INFO-MongoDb - Got client History
+2020-10-09 10:22:35,023 - INFO - MongoDb - Got client History
+2020-10-09 10:22:35 INFO-172.21.0.1 - - [09/Oct/2020 10:22:35] "[37mGET /client/history/5 HTTP/1.1[0m" 200 -
+2020-10-09 10:22:35,029 - INFO - 172.21.0.1 - - [09/Oct/2020 10:22:35] "[37mGET /client/history/5 HTTP/1.1[0m" 200 -
+2020-10-09 10:28:20,115 - INFO - RabbitMq thread started app starting
+2020-10-09 10:28:20,131 - INFO -  * Running on http://0.0.0.0:4500/ (Press CTRL+C to quit)
+2020-10-09 10:28:25,209 - INFO - ClientHistory API
+2020-10-09 10:28:25,279 - ERROR - MongoDb - Got error on fetching data from MongoDb
+2020-10-09 10:28:25,281 - ERROR - Exception on /client/history/5 [GET]
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 1953, in full_dispatch_request
+    return self.finalize_request(rv)
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 1968, in finalize_request
+    response = self.make_response(rv)
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 2098, in make_response
+    "The view function did not return a valid response. The"
+TypeError: The view function did not return a valid response. The function either returned None or ended without a return statement.
+2020-10-09 10:28:25,284 - ERROR - 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+2020-10-09 10:28:34,928 - INFO - ClientHistory API
+2020-10-09 10:28:35,080 - ERROR - MongoDb - Got error on fetching data from MongoDb
+2020-10-09 10:28:35,081 - ERROR - Exception on /client/history/5 [GET]
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 1953, in full_dispatch_request
+    return self.finalize_request(rv)
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 1968, in finalize_request
+    response = self.make_response(rv)
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 2098, in make_response
+    "The view function did not return a valid response. The"
+TypeError: The view function did not return a valid response. The function either returned None or ended without a return statement.
+2020-10-09 10:28:35,085 - ERROR - 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+2020-10-09 10:28:38,114 - INFO - fileUpload API
+2020-10-09 10:28:38,959 - INFO - AWS S3 - Upload successful
+2020-10-09 10:28:38,963 - ERROR - Exception on /file/upload [POST]
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/usr/local/lib/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/local/lib/python3.6/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "./views.py", line 58, in fileUpload
+    inserted_id = serv.mongo_client.create(req)
+  File "/models/models.py", line 20, in create
+    res = self.db.insert(req)
+  File "/factory/mongo_db.py", line 21, in insert
+    logging.info(dict)
+NameError: name 'logging' is not defined
+2020-10-09 10:28:38,995 - ERROR - 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+2020-10-09 10:30:49,199 - INFO - MongoDB - Connection established
+2020-10-09 10:30:49,658 - INFO - MongoDB - Connection established
+2020-10-09 10:30:49,658 - INFO - MongoDB - Connection established
+2020-10-09 10:30:49,701 - INFO - RabbitMq thread started app starting
+2020-10-09 10:30:49,701 - INFO - RabbitMq thread started app starting
+2020-10-09 10:30:49,710 - INFO -  * Running on http://0.0.0.0:4500/ (Press CTRL+C to quit)
+2020-10-09 10:30:49,710 - INFO -  * Running on http://0.0.0.0:4500/ (Press CTRL+C to quit)
+2020-10-09 10:31:16,085 - INFO - fileUpload API
+2020-10-09 10:31:16,085 - INFO - fileUpload API
+2020-10-09 10:31:16,791 - INFO - AWS S3 - Upload successful
+2020-10-09 10:31:16,791 - INFO - AWS S3 - Upload successful
+2020-10-09 10:31:16,798 - INFO - {'clientName': ['Jon Doe'], 'clientId': ['5'], 'activity': ['1'], 'fileId': ['12'], 'fileName': 'weights/questions.pdf', 'url': 'https://s3.amazonaws.com/weightsbucket/weights/questions.pdf'}
+2020-10-09 10:31:16,798 - INFO - {'clientName': ['Jon Doe'], 'clientId': ['5'], 'activity': ['1'], 'fileId': ['12'], 'fileName': 'weights/questions.pdf', 'url': 'https://s3.amazonaws.com/weightsbucket/weights/questions.pdf'}
+2020-10-09 10:31:16,900 - INFO - MongoDB - Inserted to the MongoDB
+2020-10-09 10:31:16,900 - INFO - MongoDB - Inserted to the MongoDB

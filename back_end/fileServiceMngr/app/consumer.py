@@ -7,9 +7,9 @@ import logging
 import requests
 import io
 from config import config
-
-logging.basicConfig(filename=config["logging"]["file_path"], filemode="a+", format='%(asctime)s %(levelname)s-%(message)s',
-                    datefmt='%Y-%m-%d %H:%M:%S')
+import logging.handlers
+# logging.basicConfig(filename=config["logging"]["file_path"], filemode="a+", format='%(asctime)s %(levelname)s-%(message)s',
+#                     datefmt='%Y-%m-%d %H:%M:%S')
 
 serv = service.service()
 
