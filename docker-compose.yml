@@ -125,6 +125,10 @@ services:
     container_name: fsm
     links:
       - mongodb
+    depends_on:
+      - mongodb
+      - rabbitmq
+      - redis
     ports:
       - 4500:4500
     volumes:

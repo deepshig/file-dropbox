@@ -16,22 +16,33 @@ serv = service.service()
 
 class RabbitMQManager:
     def __init__(self):
-        self.connection_url = self.__get_connection_url()
-        self.connection = self.__get_connection(self.connection_url)
+        # self.connection_url = self.__get_connection_url()
+        self.connection = self.__get_connection()
         self.chan = self.connection.channel()
         self.queue_name = config["rabbitmq_config"]["queue_name"]
         self.chan.queue_declare(queue=self.queue_name, durable=True)
 
-    def __get_connection_url(self):
-        return "amqp://{}:{}@{}:{}?connection_attempts=10&retry_delay=10".format(config["rabbitmq_config"]["user"],
-                                                                                 config["rabbitmq_config"]["password"],
-                                                                                 config["rabbitmq_config"]["host"],
-                                                                                 config["rabbitmq_config"]["port"])
+    # def __get_connection_url(self):
+    #     return "amqp://{}:{}@{}:{}?connection_attempts=10&retry_delay=10".format(config["rabbitmq_config"]["user"],
+    #                                                                              config["rabbitmq_config"]["password"],
+    #                                                                              config["rabbitmq_config"]["host"],
+    #                                                                              config["rabbitmq_config"]["port"],
+    #                                                                              )
 
-    def __get_connection(self, amqp_url):
+    def __get_connection(self):
         try:
-            url_params = pika.URLParameters(amqp_url)
-            connection = pika.BlockingConnection(url_params)
+            credentials = pika.credentials.PlainCredentials(
+                username=config["rabbitmq_config"]["user"], password=config["rabbitmq_config"]["password"])
+
+            params = pika.connection.ConnectionParameters(
+                host=config["rabbitmq_config"]["host"],
+                port=config["rabbitmq_config"]["port"],
+                credentials=credentials,
+                heartbeat=config["rabbitmq_config"]["connection_timeout_s"],
+                blocked_connection_timeout=config["rabbitmq_config"]["idle_connection_timeout_s"],
+                retry_delay=config["rabbitmq_config"]["connection_retry_s"])
+
+            connection = pika.BlockingConnection(params)
         except pika.exceptions as err:
             error_str = "Error while connecting to rabbitmq : " + str(err)
             sys.exit(error_str)
