@@ -89,8 +89,8 @@ if __name__ == '__main__':
     logger.setLevel(logging.INFO)
     ENVIRONMENT_DEBUG = os.environ.get("APP_DEBUG", False)
     ENVIRONMENT_PORT = os.environ.get("APP_PORT", 4500)
-    # task = ThreadedTask()
-    # task.start()
+    task = ThreadedTask()
+    task.start()
     logging.info("RabbitMq thread started app starting")
     app.run(host='0.0.0.0', port=ENVIRONMENT_PORT,
             debug=ENVIRONMENT_DEBUG, use_reloader=False, passthrough_errors=True)
