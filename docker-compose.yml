@@ -73,7 +73,7 @@ services:
     environment:
       IN_CONTAINER_FLAG: 1
 
-  api-uploader:
+  file-uploader:
     build: back_end/src/file_uploader
     ports:
       - 3500:3500
