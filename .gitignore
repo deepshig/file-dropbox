@@ -14,3 +14,4 @@ __pycache__
 /redis-data/
 /redis.conf/
 /uploader-store/
+/postgres-test/
