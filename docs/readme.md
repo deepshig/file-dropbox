@@ -12,3 +12,4 @@ cd ~/docs
 make html
 ```
 
+TODO: Add support for make latex pdf

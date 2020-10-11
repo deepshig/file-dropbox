@@ -8,13 +8,18 @@ import json
 import uuid
 from datetime import datetime
 import os
-import shutil
+import pika
 import pathlib
+import sys
+from .config import config
+from .rabbitmq import RabbitMQManager
 # import etcd
 
-app = Flask(__name__)
-SECRET_KEY = "i5uitypjchnar0rlz31yh0u5sgs8rui2baxxgw8e"
 
+
+app = Flask(__name__)
+
+SECRET_KEY = "i5uitypjchnar0rlz31yh0u5sgs8rui2baxxgw8e"
 app.config['SECRET_KEY'] = SECRET_KEY
 
 INSIDE_CONTAINER = os.environ.get('IN_CONTAINER_FLAG', False)
@@ -24,6 +29,7 @@ CORS(app, supports_credentials=True)
 socket = SocketIO(app, cors_allowed_origins="*")
 file_path = os.path.abspath(pathlib.Path().absolute()) + '/tmp/'
 
+rbmq = RabbitMQManager(config["rabbitmq_config"])
 
 @socket.on('connect')
 def connect():
@@ -65,9 +71,10 @@ def connect():
 @socket.on('message')    # send(message=msg, broadcast=True)
 def handleMessage(msg):
     """
+    Handles a message event and responds with hello
 
-    :param msg:
-    :return:
+    :param msg: receive any JSON format message from a client. Needs 'client_id' in data
+    :return: {'data': 'hello : ' + str(msg['client_id'])}
     """
     # print(msg)
     emit('message', {'data': 'hello : ' + str(msg['client_id'])})
@@ -76,9 +83,10 @@ def handleMessage(msg):
 @socket.on('alive')    # send(message=msg, broadcast=True)
 def handleAlive(headers):
     """
+    When queried replies to user that they are successfully hitting the service.
 
-    :param headers:
-    :return:
+    :param headers: headers['user_id']
+    :return: {'alive': True}, room=headers['user_id']
     """
     emit('alive', {'alive': True}, room=headers['user_id'])
 
@@ -86,11 +94,12 @@ def handleAlive(headers):
 @socket.on('start-transfer')
 def start_transfer(filename, size):
     """
-    Process an upload request from the client.
+    Prepare for an upload request from the client. Generates a UUID for the requested file,
+    client then uses this file_id for uploading a unique file.
 
-    :param filename:
-    :param size:
-    :return:
+    :param filename: Desired npy file.
+    :param size: byte size of file being uploaded
+    :return: emit('start-transfer', {'id': id})
     """
 
     print("starting")
@@ -110,18 +119,14 @@ def start_transfer(filename, size):
 @socket.on('write-chunk')
 def write_chunk(filename, offset, data):
     """
+    Writes chunks at an offset for the file identified by the given UUID
 
-    :param filename:
-    :param offset:
-    :param data:
+    :param filename: UUID returned from start_transfer
+    :param offset: chunk sizes
+    :param data: data packet
     :return:
     """
-    # TODO: implement start transfer and file naming. Maybe paths aren't needed if forwarding to redis?
-    # _, ext = os.path.splitext(filename)
-    # if ext in ['.exe', '.bin', '.js', '.sh', '.py', '.php']:
-    #     return False  # reject the upload
-    #
-    # id = uuid.uuid4().hex  # server-side filename
+
     with open(file_path + filename, 'wb') as f:
         pass
     try:
@@ -137,11 +142,13 @@ def write_chunk(filename, offset, data):
 @socket.on('complete-upload')
 def complete_upload(file_id, username, user_id):
     """
+    Complete the upload process by reading completed file, matching with metadata uploaded at
+    start_transfer. Send these two files to the uploader service.
 
-    :param file_id:
-    :param username:
-    :param user_id:
-    :return:
+    :param file_id: UUID from start_transfer
+    :param username: text username
+    :param user_id: user_id passed from auth service
+    :return: emit('complete-upload', {'data': Boolean})
     """
     print(file_id)
     # file_id = file_id.split('tmp/')[1]

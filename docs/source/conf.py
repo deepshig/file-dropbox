@@ -12,7 +12,7 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../back_end/src/gateway'))
+sys.path.insert(0, os.path.abspath('../../back_end/src/gateway'))
 
 
 # -- Project information -----------------------------------------------------

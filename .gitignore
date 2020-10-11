@@ -9,11 +9,9 @@ requirements.txt
 /gateway-store/
 /index-db/
 /logs/
-/postgres/
 /postgres-test/
 /redis-data/
 /redis.conf/
 /uploader-store/
-/postgres-test/
 .DS_Store
 /docs/build/

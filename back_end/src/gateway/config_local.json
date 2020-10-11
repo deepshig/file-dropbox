@@ -1,0 +1,9 @@
+{
+    "rabbitmq_config":{
+      "user": "guest",
+      "password": "guest",
+      "host": "rabbitmq",
+      "port": 5672,
+      "queue_name": "admin_notification_queue"
+    }
+}
