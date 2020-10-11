@@ -1,8 +1,0 @@
-Flask
-mysql-connector
-pymongo
-boto3
-redis
-requests
-pika
-tasks

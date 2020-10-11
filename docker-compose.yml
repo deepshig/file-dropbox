@@ -123,14 +123,14 @@ services:
       - ALLOW_NONE_AUTHENTICATION=yes
       - ETCD_ADVERTISE_CLIENT_URLS=http://etcd:2379
     volumes:
-      - ./etcd/etcd.conf.yml:/opt/bitnami/etcd/conf/etcd.conf.yml
+      - ./back_end/etcd/etcd.conf.yml:/opt/bitnami/etcd/conf/etcd.conf.yml
     ports:
       - 2379:2379
       - 2380:2380
     networks:
       - docker_network
   fsm:
-    build: ./back_end/fileServiceMngr/app
+    build: ./back_end/src/fileServiceMngr/app
     container_name: fsm
     links:
       - mongodb
