@@ -11,8 +11,8 @@ import os
 import pika
 import pathlib
 import sys
-from .config import config
-from .rabbitmq import RabbitMQManager
+from config import config
+from rabbitmq import RabbitMQManager
 # import etcd
 
 
@@ -29,7 +29,7 @@ CORS(app, supports_credentials=True)
 socket = SocketIO(app, cors_allowed_origins="*")
 file_path = os.path.abspath(pathlib.Path().absolute()) + '/tmp/'
 
-rbmq = RabbitMQManager(config["rabbitmq_config"])
+# rbmq = RabbitMQManager(config["rabbitmq_config"])
 
 @socket.on('connect')
 def connect():
