@@ -3,19 +3,27 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to WACC's documentation!
-================================
+Welcome to Group 12's documentation!
+====================================
+
+Documentation for the systems project for Group 12
+
+`<https://thomas-cokelaer.info/tutorials/sphinx/rest_syntax.html>`_
+
+
 
 .. toctree::
    :maxdepth: 2
    :caption: Table of Contents:
 
    usage/interfaces
+   usage/gateway
 
 
 
 Indices and tables
 ==================
+
 
 * :ref:`genindex`
 * :ref:`modindex`

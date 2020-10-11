@@ -27,15 +27,12 @@ socket = SocketIO(app, cors_allowed_origins="*")
 file_path = os.path.abspath(pathlib.Path().absolute()) + '/tmp/'
 
 
-def save_file(file):
-    location = os.path.abspath(pathlib.Path().absolute())
-    with open("file.gz", 'wb') as location:
-        shutil.copyfileobj(file, location)
-    del file
-
-
 @socket.on('connect')
 def connect():
+    """
+
+    :return:
+    """
     if request.args.get('access_token') is not None:
         token = request.args.get('access_token')
         user_id = request.args.get('user_id')
@@ -60,18 +57,35 @@ def connect():
 
 @socket.on('message')    # send(message=msg, broadcast=True)
 def handleMessage(msg):
+    """
+
+    :param msg:
+    :return:
+    """
     # print(msg)
     emit('message', {'data': 'hello : ' + str(msg['client_id'])})
 
 
 @socket.on('alive')    # send(message=msg, broadcast=True)
 def handleAlive(headers):
+    """
+
+    :param headers:
+    :return:
+    """
     emit('alive', {'alive': True}, room=headers['user_id'])
 
 
 @socket.on('start-transfer')
 def start_transfer(filename, size):
-    """Process an upload request from the client."""
+    """
+    Process an upload request from the client.
+
+    :param filename:
+    :param size:
+    :return:
+    """
+
     print("starting")
     _, ext = os.path.splitext(filename)
     if ext in ['.exe', '.bin', '.js', '.sh', '.py', '.php']:
@@ -83,12 +97,18 @@ def start_transfer(filename, size):
     with open(file_path + id, 'wb') as f:
         pass
     emit('start-transfer', {'id': id})
-    return id  # allow the upload
+    return id  # TODO: return an emit? this line? ^^
 
 
 @socket.on('write-chunk')
 def write_chunk(filename, offset, data):
-    """Write a chunk of data sent by the client."""
+    """
+
+    :param filename:
+    :param offset:
+    :param data:
+    :return:
+    """
     # TODO: implement start transfer and file naming. Maybe paths aren't needed if forwarding to redis?
     # _, ext = os.path.splitext(filename)
     # if ext in ['.exe', '.bin', '.js', '.sh', '.py', '.php']:

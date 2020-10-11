@@ -74,6 +74,8 @@ services:
       IN_CONTAINER_FLAG: 1
     volumes:
       - ./gateway-store:/src/tmp
+    command: [ "python", "./gateway.py" ]
+
 
   file-uploader:
     build: back_end/src/file_uploader

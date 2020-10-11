@@ -12,7 +12,6 @@ RUN pip install -r requirements.txt
 
 # copy the content of the local gateway directory to the working directory
 #COPY ../src/auth/ .
-COPY app.py .
+COPY gateway.py .
 
 # command to run on container start
-CMD [ "python", "./app.py" ]

@@ -10,14 +10,14 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
+import os
+import sys
+sys.path.insert(0, os.path.abspath('../back_end/src/gateway'))
 
 
 # -- Project information -----------------------------------------------------
 
-project = 'WACC'
+project = 'Group 12'
 copyright = '2020, Deepshi Garg, Diarmuid Kelly, Shubham Jinde'
 author = 'Deepshi Garg, Diarmuid Kelly, Shubham Jinde'
 
@@ -31,6 +31,7 @@ release = '0.0.1'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+'sphinx.ext.autodoc'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
