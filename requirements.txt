@@ -13,3 +13,5 @@ pymongo
 boto3
 etcd
 redis-py
+numpy
+sphinx
