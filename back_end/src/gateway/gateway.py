@@ -12,8 +12,6 @@ import shutil
 import pathlib
 # import etcd
 
-
-
 app = Flask(__name__)
 SECRET_KEY = "i5uitypjchnar0rlz31yh0u5sgs8rui2baxxgw8e"
 
@@ -30,7 +28,16 @@ file_path = os.path.abspath(pathlib.Path().absolute()) + '/tmp/'
 @socket.on('connect')
 def connect():
     """
+    Passing of args to host::/connect through headers or JSON query.
 
+    headers={'user_id': user_id, 'access_token': access_token}
+
+    or
+
+    query: {access_token: store.getState().authentication.token, user_id: store.getState().authentication.user_id},
+
+    :parameter access_token: retrieved from request.args.get('access_token') or token = request.headers['access_token']
+    :parameter user_id: retrieved from request.args.get('user_id') or token = request.headers['user_id']
     :return:
     """
     if request.args.get('access_token') is not None:
@@ -129,6 +136,13 @@ def write_chunk(filename, offset, data):
 
 @socket.on('complete-upload')
 def complete_upload(file_id, username, user_id):
+    """
+
+    :param file_id:
+    :param username:
+    :param user_id:
+    :return:
+    """
     print(file_id)
     # file_id = file_id.split('tmp/')[1]
     print("Complete")
