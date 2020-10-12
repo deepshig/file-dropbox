@@ -1,5 +1,6 @@
 import {authentication} from './authentication.reducer'
 import {socketReducer} from "./socket.reducer";
+import {sidebarReducer} from "./sidebar.reducer";
 import {combineReducers} from "redux";
 
 function handleData(state = {data1: {}}, action) {
@@ -11,6 +12,7 @@ function handleData(state = {data1: {}}, action) {
 const allReducers = combineReducers({
     authentication,
     socketReducer,
+    sidebarReducer,
 });
 
 export default allReducers

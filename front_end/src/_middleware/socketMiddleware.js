@@ -9,12 +9,23 @@ export default function socketMiddleware(newSock) {
         switch(action.type) {
             case socketConstants.SOCKET_REQUEST : {
                 socket.connect();
-                // socket.send("message", action.payload);
+                socket.connected();
                 break;
             }
             case socketConstants.SEND_WEBSOCKET_MESSAGE: {
                 socket.send(action.event, action.payload);
-                return;
+                break;
+            }
+            case socketConstants.SOCKET_MESSAGE_RECEIVE: {
+                socket.on(action.event, action.payload);
+                break;
+            }
+            case socketConstants.SOCKET_DISCONNECT: {
+                socket.disconnect();
+                break;
+            }
+            case socketConstants.SOCKET_UPLOAD:{
+                socket.fileUpload(action.file, 0);
             }
         }
 

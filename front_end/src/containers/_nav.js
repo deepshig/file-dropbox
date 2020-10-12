@@ -12,13 +12,13 @@
     {
     _tag: 'CSidebarNavItem',
     name: 'Active',
-    to: '/theme/colors',
+    to: '/active',
     icon: 'cil-drop',
     },
     {
     _tag: 'CSidebarNavItem',
     name: 'History',
-    to: '/theme/typography',
+    to: '/history',
     icon: 'cil-pencil',
     },
     {
@@ -69,11 +69,15 @@
         _tag: 'CSidebarNavItem',
         name: 'Error 404',
         to: '/404',
+          addLinkClass: 'c-disabled',
+          'disabled': true
       },
       {
         _tag: 'CSidebarNavItem',
         name: 'Error 500',
         to: '/500',
+          addLinkClass: 'c-disabled',
+          'disabled': true
       },
     ],
     },

@@ -2,10 +2,10 @@ import pytest
 import uuid
 import sys
 import psycopg2
-from psycopg2 import Error
+from psycopg2 import Error, errorcodes
 sys.path.append('../')
 
-from src.auth.user_db import UserDB, ERROR_USER_NOT_FOUND  # NOQA
+from src.auth.user_db import UserDB, ERROR_USER_NOT_FOUND, ERROR_USER_NAME_ALREADY_EXISTS  # NOQA
 
 
 def test_db():
@@ -23,7 +23,7 @@ def tear_down(cursor, db_driver):
     cursor.execute("TRUNCATE users;")
     db_driver.connection.commit()
     cursor.close()
-    db_driver.connection.close()
+    # db_driver.connection.close()
 
 
 def test_create_user():
@@ -32,38 +32,52 @@ def test_create_user():
     """
     db = test_db()
     user_details = {"id": uuid.uuid4(),
+                    "name": "user-1",
                     "role": "dummy",
                     "access_token": uuid.uuid4(),
                     "logged_in": True}
     result = db.create_user(user_details)
     assert result["user_created"] == True
 
-    fetch_user_query = '''SELECT * FROM users WHERE id = %s'''
-    try:
-        cursor = db.db_driver.connection.cursor()
-        cursor.execute(fetch_user_query, [user_details["id"]])
-        db.db_driver.connection.commit()
-
-        fetched_user = cursor.fetchone()
-
-        assert fetched_user[1] == user_details["role"]
-        assert fetched_user[2] == user_details["access_token"]
-        assert fetched_user[3] == user_details["logged_in"]
-    except psycopg2.Error as err:
-        print("Error while checking if user created : ", err)
+    cursor = db.db_driver.connection.cursor()
+    fetched_user = get_test_user(db, cursor, user_details["id"])
+    assert fetched_user["user_fetched"] == True
+    assert fetched_user["id"] == user_details["id"]
+    assert fetched_user["name"] == user_details["name"]
+    assert fetched_user["role"] == user_details["role"]
+    assert fetched_user["access_token"] == user_details["access_token"]
+    assert fetched_user["logged_in"] == user_details["logged_in"]
 
     """
     failure : when user_id is not uuid
     """
     user_details = {"id": "some_random_id",
+                    "name": "user-1",
                     "role": "dummy",
                     "access_token": uuid.uuid4(),
                     "logged_in": True}
     result = db.create_user(user_details)
     assert result["user_created"] == False
     assert result["error"].pgcode == '22P02'
+    assert result["error"].pgcode == psycopg2.errorcodes.INVALID_TEXT_REPRESENTATION
 
-    # tear_down(cursor, db.db_driver)
+    """
+    failure : when user_name violates uniqueness constraint
+    """
+    user_details = {"id": uuid.uuid4(),
+                    "name": "user-2",
+                    "role": "dummy",
+                    "access_token": uuid.uuid4(),
+                    "logged_in": True}
+    create_test_user(
+        db, cursor, user_details["id"], user_details["name"], user_details["access_token"])
+
+    user_details["id"] = uuid.uuid4()
+    result = db.create_user(user_details)
+    assert result["user_created"] == False
+    assert result["error"] == ERROR_USER_NAME_ALREADY_EXISTS
+
+    tear_down(cursor, db.db_driver)
 
 
 def test_get_user():
@@ -106,10 +120,10 @@ def test_login():
     """
     failure : user doesn't exist
     """
-    user_id = uuid.uuid4()
+    user_name = "user-1"
     access_token = uuid.uuid4()
 
-    result = db.login(user_id, access_token)
+    result = db.login(user_name, access_token)
     assert result["user_logged_in"] == False
     assert result["error"] == ERROR_USER_NOT_FOUND
 
@@ -117,34 +131,24 @@ def test_login():
     success
     """
     user_id = uuid.uuid4()
+    user_name = "user-1"
     access_token = uuid.uuid4()
-    create_user_query = '''INSERT INTO users(id, role, access_token, logged_in, created_at, updated_at) VALUES ((%s), (%s), (%s), (%s), now(), now())'''
+
     cursor = db.db_driver.connection.cursor()
-    psycopg2.extras.register_uuid()
-    try:
-        cursor.execute(create_user_query, [
-            user_id, "dummy", access_token, False])
-        db.db_driver.connection.commit()
-    except psycopg2.Error as err:
-        print("Error in creating test user : ", err)
+    create_test_user(db, cursor, user_id, user_name, access_token)
 
-    result = db.login(user_id, access_token)
+    result = db.login(user_name, access_token)
     assert result["user_logged_in"] == True
+    assert result["user_id"] == user_id
 
-    fetch_user_query = '''SELECT * FROM users WHERE id = %s'''
-    try:
+    fetched_user = get_test_user(db, cursor, user_id)
 
-        cursor.execute(fetch_user_query, [user_id])
-        db.db_driver.connection.commit()
+    assert fetched_user["user_fetched"] == True
+    assert fetched_user["id"] == user_id
+    assert fetched_user["access_token"] == access_token
+    assert fetched_user["logged_in"] == True
 
-        fetched_user = cursor.fetchone()
-
-        assert fetched_user[2] == access_token
-        assert fetched_user[3] == True
-    except psycopg2.Error as err:
-        print("Error while checking if user logged in : ", err)
-    finally:
-        tear_down(cursor, db.db_driver)
+    tear_down(cursor, db.db_driver)
 
 
 def test_logout():
@@ -152,9 +156,9 @@ def test_logout():
     """
     failure : user doesn't exist
     """
-    user_id = uuid.uuid4()
+    user_name = "user-5"
 
-    result = db.logout(user_id)
+    result = db.logout(user_name)
     assert result["user_logged_out"] == False
     assert result["error"] == ERROR_USER_NOT_FOUND
 
@@ -163,29 +167,52 @@ def test_logout():
     """
     user_id = uuid.uuid4()
     access_token = uuid.uuid4()
-    create_user_query = '''INSERT INTO users(id, role, access_token, logged_in, created_at, updated_at) VALUES ((%s), (%s), (%s), (%s), now(), now())'''
+    user_name = "user-2"
+
     cursor = db.db_driver.connection.cursor()
+    create_test_user(db, cursor, user_id, user_name, access_token)
+
+    result = db.logout(user_name)
+    assert result["user_logged_out"] == True
+
+    fetched_user = get_test_user(db, cursor, user_id)
+    assert fetched_user["user_fetched"] == True
+    assert fetched_user["name"] == user_name
+    assert fetched_user["logged_in"] == False
+
+    tear_down(cursor, db.db_driver)
+
+
+def create_test_user(db, cursor, user_id, user_name, access_token):
+    create_user_query = '''INSERT INTO users(id, name, role, access_token, logged_in, created_at, updated_at) VALUES ((%s), (%s), (%s), (%s), (%s), now(), now())'''
     psycopg2.extras.register_uuid()
+
     try:
         cursor.execute(create_user_query, [
-            user_id, "dummy", access_token, False])
+            user_id, user_name, "admin", access_token, False])
         db.db_driver.connection.commit()
     except psycopg2.Error as err:
         print("Error in creating test user : ", err)
 
-    result = db.logout(user_id)
-    assert result["user_logged_out"] == True
 
-    fetch_user_query = '''SELECT * FROM users WHERE id = %s'''
+def get_test_user(db, cursor, user_id):
+    get_user_query = '''SELECT id, name, role, access_token, logged_in, created_at, updated_at FROM users WHERE id = (%s)'''
     try:
-
-        cursor.execute(fetch_user_query, [user_id])
+        cursor.execute(get_user_query, [user_id])
         db.db_driver.connection.commit()
-
-        fetched_user = cursor.fetchone()
-
-        assert fetched_user[3] == False
     except psycopg2.Error as err:
-        print("Error while checking if user logged in : ", err)
-    finally:
-        tear_down(cursor, db.db_driver)
+        print("Error while fetching the test user : ", err)
+        return {"user_fetched": False,
+                "error": err}
+    else:
+        user = cursor.fetchone()
+        if user is not None:
+            return {"user_fetched": True,
+                    "id": user[0],
+                    "name": user[1],
+                    "role": user[2],
+                    "access_token": user[3],
+                    "logged_in": user[4]}
+        else:
+            return {"user_fetched": False,
+                    "error": ERROR_USER_NOT_FOUND}

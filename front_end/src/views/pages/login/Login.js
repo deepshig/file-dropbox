@@ -1,8 +1,9 @@
 import React, {Component} from 'react'
-import { Link, Redirect } from 'react-router-dom'
+import { Link, Redirect, withRouter } from 'react-router-dom'
 import { connect } from 'react-redux';
-import {callLogin, createSocket, setLogin} from "../../../_actions";
+import {callLogin, createSocket, setLogin, setLoginfail} from "../../../_actions";
 import store from "../../../_helpers/store";
+import jwt from 'jwt-decode';
 // import history from "../../../_helpers/history"
 
 import {
@@ -26,7 +27,7 @@ class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      UID: 'test',
+      UID: 'hello',
     }
 
   }
@@ -35,10 +36,10 @@ class Login extends Component {
   }
   handleClick(){
     store.dispatch(callLogin(this.state.UID));
-    fetch("http://127.0.0.1:4000/auth/test", {
-      method: "POST",
+    fetch("http://" + process.env.REACT_APP_HOST_IP + ":" + process.env.REACT_APP_AUTHENTICATION_PORT + "/auth/login/" + this.state.UID, {
+      method: "PUT",
       crossDomain: true,
-      credentials: 'include',
+      // credentials: 'include',
       headers: {
         "Content-Type": "application/json",
         "Accept": "application/json",
@@ -46,13 +47,22 @@ class Login extends Component {
       body: JSON.stringify({
         UID: this.state.UID,
       })
-    }).then(response => response.json())
-        .then((response) => {store.dispatch(setLogin(this.state.UID, response['access_token'])); store.dispatch(createSocket())}) // TODO: pass token
-        .then(<Redirect to="/dashboard" />)
+    }).then((response) => {
+        if(response.status===400){
+            store.dispatch(setLoginfail());
+            return "";
+        }
+        else {
+
+            response.json().then((response) => {console.log(jwt(response['jwt'])['user_id']); store.dispatch(setLogin(this.state.UID, jwt(response['jwt'])['access_token'], jwt(response['jwt'])['user_id'])); store.dispatch(createSocket())})
+            // response.json().then((response) => {store.dispatch(console.log(jwt(response['jwt'])))})
+        }
+        })
+        // .then((response) => console.log(jwt(response['jwt'])['access_token'])) // TODO: pass token
+        .then(this.props.history.push('/login'))
   }
   render()
   {
-
     return (
         <div className="c-app c-default-layout flex-row align-items-center">
           <CContainer>
@@ -71,7 +81,7 @@ class Login extends Component {
                               <CIcon name="cil-user"/>
                             </CInputGroupText>
                           </CInputGroupPrepend>
-                          <CInput value={this.state.UID} onChange={evt => this.updateInputValue(evt)} type="text" placeholder="Username" autoComplete="username"/>
+                          <CInput value={this.state.UID} onChange={evt => this.updateInputValue(evt)} type="text"/>
                         </CInputGroup>
                         <CRow>
                           <CCol xs="6">

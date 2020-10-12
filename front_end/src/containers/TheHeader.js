@@ -1,5 +1,4 @@
 import React from 'react'
-import { useSelector, useDispatch } from 'react-redux'
 import {
   CHeader,
   CToggler,
@@ -9,10 +8,12 @@ import {
   CHeaderNavLink,
   CSubheader,
   CBreadcrumbRouter,
-  CLink
+  CLink,
+    CImg
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
-
+import store from '../_helpers/store';
+import {toggleSidebarAction} from '../_actions/index'
 // routes config
 import routes from '../routes'
 
@@ -23,20 +24,17 @@ import {
   TheHeaderDropdownTasks
 }  from './index'
 import TheHeaderStatus from "./TheHeaderStatus";
+import {showSidebar} from "../_actions";
 
 const TheHeader = () => {
-  const dispatch = useDispatch()
-  const sidebarShow = useSelector(state => state.sidebarShow)
 
   const toggleSidebar = () => {
-    const val = [true, 'responsive'].includes(sidebarShow) ? false : 'responsive'
-    dispatch({type: 'set', sidebarShow: val})
-  }
+    store.dispatch(toggleSidebarAction(!store.getState().sidebarReducer.status));
+  };
 
   const toggleSidebarMobile = () => {
-    const val = [false, 'responsive'].includes(sidebarShow) ? true : 'responsive'
-    dispatch({type: 'set', sidebarShow: val})
-  }
+    store.dispatch(toggleSidebarAction(!store.getState().sidebarReducer.status));
+  };
 
   return (
     <CHeader withSubheader>
@@ -51,7 +49,8 @@ const TheHeader = () => {
         onClick={toggleSidebar}
       />
       <CHeaderBrand className="mx-auto d-lg-none" to="/">
-        <CIcon name="logo" height="48" alt="Logo"/>
+          {/*<CIcon name="logo" height="48" alt="Logo"/>*/}
+          <CImg name="logo" height="48" alt="Logo"/>
       </CHeaderBrand>
 
       <CHeaderNav className="d-md-down-none mr-auto">
@@ -62,7 +61,7 @@ const TheHeader = () => {
           <CHeaderNavLink to="/users">Users</CHeaderNavLink>
         </CHeaderNavItem>
         <CHeaderNavItem className="px-3">
-          <CHeaderNavLink>Settings</CHeaderNavLink>
+          <CHeaderNavLink to="/admin">Admin</CHeaderNavLink>
         </CHeaderNavItem>
       </CHeaderNav>
 

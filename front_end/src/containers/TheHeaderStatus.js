@@ -6,6 +6,7 @@ import {
     CCol,
     CRow
 } from '@coreui/react'
+import {createSocket, disconnectSocket} from "../_actions";
 
 class TheHeaderStatus extends Component {
     constructor(props){
@@ -13,15 +14,13 @@ class TheHeaderStatus extends Component {
         this._isMounted = false;
         this.state = {
             status: store.getState().socketReducer.status };
+        TheHeaderStatus.handleClickConnect = TheHeaderStatus.handleClickConnect.bind(this);
     }
     startSubscribe(){
         this.unsubscribe = store.subscribe(()=>{
             const status = store.getState().socketReducer.status;
-            console.log(status);
-            console.log(this.state.status);
             if (status !== this.state.status){
-                console.log(this._isMounted);
-                this._isMounted && this.setState({status: status});
+                this._isMounted && this.setState({status});
             }
         });
     }
@@ -35,11 +34,24 @@ class TheHeaderStatus extends Component {
         this._isMounted = false;
     }
 
+
+    static handleClickConnect(){
+        if (store.getState().authentication.loggedIn){
+            store.dispatch(createSocket())
+        }
+    }
+
     ButtonRender(props){
         if(props.status === 'connected'){
-            return <CButton color="success" size="md" block>Connected</CButton>
+            return <CButton onClick={() => store.dispatch(disconnectSocket())} color="success" size="md" block>Connected</CButton>
         }
-        return <CButton variant="outline" color="danger" size="md" block>Disconnected</CButton>
+        if(props.status === 'connecting'){
+            return <CButton color="warning" size="md" block>Connecting</CButton>
+        }
+        if(props.status === 'failed'){
+            return <CButton onClick={() => TheHeaderStatus.handleClickConnect()} color="danger" size="md" block>Failed</CButton>
+        }
+        return <CButton onClick={() => TheHeaderStatus.handleClickConnect()} variant="outline" color="danger" size="md" block>Disconnected</CButton>
 
 
     }
@@ -47,7 +59,7 @@ class TheHeaderStatus extends Component {
         return (
                 <CRow className="align-items-center" style={{padding: "5px"}}>
                     {/*<CCol col="6" sm="4" md="2" xl className="mb-3 mb-xl-0">Connection: </CCol>*/}
-                    <CCol col="6" sm="4" md="2" xl className="mb-3 mb-xl-0">
+                    <CCol>
                         {/*{(function (){*/}
                             {/*switch (socketStatus){*/}
                                 {/*case 'connected':*/}

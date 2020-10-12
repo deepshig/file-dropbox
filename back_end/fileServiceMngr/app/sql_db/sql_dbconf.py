@@ -4,7 +4,7 @@ def dbCon():
     config = {
         'user': 'root',
         'password': 'root',
-        'host': 'db',
+        'host': 'sqldb',
         'port': '3306',
         'database': 'fileServiceMgr'
     }

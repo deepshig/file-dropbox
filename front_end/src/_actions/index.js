@@ -1,5 +1,6 @@
 import {userConstants} from "../_constants/user.constants";
 import {socketConstants} from "../_constants/socket.constants";
+import {sidebarConstants} from "../_constants/sidebar.constants";
 
 export const callLogin = (UID) => {
     return{
@@ -7,16 +8,46 @@ export const callLogin = (UID) => {
         UID: UID,
     }
 };
-export const setLogin = (UID, token) => {
+export const setLogin = (UID, token, user_id) => {
     return{
         type: userConstants.LOGIN_SUCCESS,
         UID: UID,
+        user_id: user_id,
         token: token
+    }
+};
+export const callRegister = (UID) => {
+    return{
+        type: userConstants.REGISTER_REQUEST,
+        UID: UID,
+    }
+};
+export const setLoginfail = () => {
+    return{
+        type: userConstants.LOGIN_FAILURE,
+        UID: '',
+        token: ''
     }
 };
 export const createSocket = () => {
     return{
         type: socketConstants.SOCKET_REQUEST,
+    }
+};
+export const successSocket = (host) => {
+    return{
+        type: socketConstants.SOCKET_SUCCESS,
+        payload: host,
+    }
+};
+export const failedSocket = () => {
+    return{
+        type: socketConstants.SOCKET_FAILURE,
+    }
+};
+export const disconnectSocket = () => {
+    return{
+        type: socketConstants.SOCKET_DISCONNECT,
     }
 };
 export const sendSocketMessage = (ev, message) => {
@@ -37,5 +68,22 @@ export const storeSocketMessage = (message) => {
     return{
         type: socketConstants.SOCKET_MESSAGE_STORE,
         payload: message,
+    }
+};
+export const uploadSocketFile = (file) => {
+    return{
+        type: socketConstants.SOCKET_UPLOAD,
+        file: file,
+    }
+};
+export const successSocketFile = () => {
+    return{
+        type: socketConstants.SOCKET_UPLOAD_SUCCESS,
+    }
+};
+export const toggleSidebarAction = (status) => {
+    return{
+        type: sidebarConstants.SIDEBAR_TOGGLE,
+        payload: status,
     }
 };

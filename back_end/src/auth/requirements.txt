@@ -4,3 +4,7 @@ pytest
 psycopg2
 flask-restful
 pyjwt
+flask-jwt-extended
+pytest-mock
+werkzeug
+requests
