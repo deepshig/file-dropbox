@@ -22,3 +22,46 @@
 2020-10-12 10:39:56,836 - INFO - MongoDB - Inserted to the MongoDB
 2020-10-12 10:39:56,837 - INFO - File Uploaded Successfully
 2020-10-12 10:39:56,852 - INFO - Consumer Task Completed
+2020-10-12 10:46:13,418 - INFO - RabbitMq thread started app starting
+2020-10-12 10:46:13,445 - INFO - Pika version 1.1.0 connecting to ('172.18.0.9', 5672)
+2020-10-12 10:46:13,465 - ERROR - Socket failed to connect: <socket.socket fd=9, family=AddressFamily.AF_INET, type=2049, proto=6, laddr=('172.18.0.14', 38154)>; error=111 (Connection refused)
+2020-10-12 10:46:13,480 - INFO -  * Running on http://0.0.0.0:4500/ (Press CTRL+C to quit)
+2020-10-12 10:46:13,509 - ERROR - TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.18.0.9', 5672))
+2020-10-12 10:46:13,541 - ERROR - AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')
+2020-10-12 10:46:13,557 - ERROR - AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None.
+2020-10-12 10:46:13,564 - ERROR - AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None
+2020-10-12 10:46:13,568 - ERROR - Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None
+2020-10-12 10:46:13,572 - ERROR - Error in _create_connection().
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/site-packages/pika/adapters/blocking_connection.py", line 450, in _create_connection
+    raise self._reap_last_connection_workflow_error(error)
+pika.exceptions.AMQPConnectionError
+2020-10-12 11:00:00,468 - INFO - RabbitMq thread started app starting
+2020-10-12 11:00:00,499 - INFO -  * Running on http://0.0.0.0:4500/ (Press CTRL+C to quit)
+2020-10-12 11:00:00,508 - INFO - Pika version 1.1.0 connecting to ('172.18.0.9', 5672)
+2020-10-12 11:00:00,515 - INFO - Socket connected: <socket.socket fd=10, family=AddressFamily.AF_INET, type=2049, proto=6, laddr=('172.18.0.14', 41660), raddr=('172.18.0.9', 5672)>
+2020-10-12 11:00:00,518 - INFO - Streaming transport linked up: (<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f03b1f5bb38>, _StreamingProtocolShim: <SelectConnection PROTOCOL transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f03b1f5bb38> params=<ConnectionParameters host=rabbitmq port=5672 virtual_host=/ ssl=False>>).
+2020-10-12 11:00:00,535 - INFO - AMQPConnector - reporting success: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f03b1f5bb38> params=<ConnectionParameters host=rabbitmq port=5672 virtual_host=/ ssl=False>>
+2020-10-12 11:00:00,536 - INFO - AMQPConnectionWorkflow - reporting success: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f03b1f5bb38> params=<ConnectionParameters host=rabbitmq port=5672 virtual_host=/ ssl=False>>
+2020-10-12 11:00:00,539 - INFO - Connection workflow succeeded: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f03b1f5bb38> params=<ConnectionParameters host=rabbitmq port=5672 virtual_host=/ ssl=False>>
+2020-10-12 11:00:00,544 - INFO - Created channel=1
+2020-10-12 11:00:02,228 - INFO - AWS S3 - Upload successful
+2020-10-12 11:00:02,230 - INFO - {'clientName': "<FileStorage: 'user_name' (None)>", 'clientId': "<FileStorage: 'user_id' (None)>", 'filename': '975854aa-b703-4c7c-812a-decdee59f34c', 'activity': 1, 'created': datetime.datetime(2020, 10, 12, 11, 0, 2, 230313), 'url': 'https://s3.amazonaws.com/weightsbucket/weights/975854aa-b703-4c7c-812a-decdee59f34c'}
+2020-10-12 11:00:02,248 - INFO - MongoDB - Inserted to the MongoDB
+2020-10-12 11:00:02,249 - INFO - File Uploaded Successfully
+2020-10-12 11:00:02,293 - INFO - Consumer Task Completed
+2020-10-12 11:00:26,031 - INFO - AWS S3 - Upload successful
+2020-10-12 11:00:26,032 - INFO - {'clientName': "<FileStorage: 'user_name' (None)>", 'clientId': "<FileStorage: 'user_id' (None)>", 'filename': '80221e98-f844-4177-89e2-a35a91077195', 'activity': 1, 'created': datetime.datetime(2020, 10, 12, 11, 0, 26, 32296), 'url': 'https://s3.amazonaws.com/weightsbucket/weights/80221e98-f844-4177-89e2-a35a91077195'}
+2020-10-12 11:00:26,034 - INFO - MongoDB - Inserted to the MongoDB
+2020-10-12 11:00:26,035 - INFO - File Uploaded Successfully
+2020-10-12 11:00:26,051 - INFO - Consumer Task Completed
+2020-10-12 11:00:31,955 - INFO - AWS S3 - Upload successful
+2020-10-12 11:00:31,956 - INFO - {'clientName': "<FileStorage: 'user_name' (None)>", 'clientId': "<FileStorage: 'user_id' (None)>", 'filename': '59195e9e-261b-4dda-83eb-8ee93508deff', 'activity': 1, 'created': datetime.datetime(2020, 10, 12, 11, 0, 31, 956090), 'url': 'https://s3.amazonaws.com/weightsbucket/weights/59195e9e-261b-4dda-83eb-8ee93508deff'}
+2020-10-12 11:00:31,957 - INFO - MongoDB - Inserted to the MongoDB
+2020-10-12 11:00:31,958 - INFO - File Uploaded Successfully
+2020-10-12 11:00:31,976 - INFO - Consumer Task Completed
+2020-10-12 11:00:37,260 - INFO - AWS S3 - Upload successful
+2020-10-12 11:00:37,260 - INFO - {'clientName': "<FileStorage: 'user_name' (None)>", 'clientId': "<FileStorage: 'user_id' (None)>", 'filename': '48d829fe-cf2d-446d-b475-c41ff858fe72', 'activity': 1, 'created': datetime.datetime(2020, 10, 12, 11, 0, 37, 260894), 'url': 'https://s3.amazonaws.com/weightsbucket/weights/48d829fe-cf2d-446d-b475-c41ff858fe72'}
+2020-10-12 11:00:37,262 - INFO - MongoDB - Inserted to the MongoDB
+2020-10-12 11:00:37,263 - INFO - File Uploaded Successfully
+2020-10-12 11:00:37,279 - INFO - Consumer Task Completed

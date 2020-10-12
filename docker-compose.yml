@@ -24,19 +24,19 @@ services:
     networks:
     - docker_network
 
-  postgresdb-test:
-      image: postgres
-      restart: always
-      ports:
-      - 5433:5432
-      environment:
-        POSTGRES_PASSWORD: postgres
-        POSTGRES_USER: postgres
-        POSTGRES_DB: user_auth_test
-      volumes:
-      - ./postgres-test:/var/lib/postgresql/data
-      networks:
-      - docker_network
+#  postgresdb-test:
+#      image: postgres
+#      restart: always
+#      ports:
+#      - 5433:5432
+#      environment:
+#        POSTGRES_PASSWORD: postgres
+#        POSTGRES_USER: postgres
+#        POSTGRES_DB: user_auth_test
+#      volumes:
+#      - ./postgres-test:/var/lib/postgresql/data
+#      networks:
+#      - docker_network
 
   adminer:
     image: adminer
@@ -91,8 +91,6 @@ services:
       - ./uploader-store:/src/tmp
     command: [ "./wait-for-it.sh", "rabbitmq:5672", "--", "python", "./app.py" ]
 
-
-
   front-end:
     build:
       context: front_end
@@ -117,18 +115,19 @@ services:
     networks:
     - docker_network
 
-  etcd:
-    image: 'bitnami/etcd:latest'
-    environment:
-      - ALLOW_NONE_AUTHENTICATION=yes
-      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd:2379
-    volumes:
-      - ./back_end/etcd/etcd.conf.yml:/opt/bitnami/etcd/conf/etcd.conf.yml
-    ports:
-      - 2379:2379
-      - 2380:2380
-    networks:
-      - docker_network
+#  etcd:
+#    image: 'bitnami/etcd:latest'
+#    environment:
+#      - ALLOW_NONE_AUTHENTICATION=yes
+#      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd:2379
+#    volumes:
+#      - ./back_end/etcd/etcd.conf.yml:/opt/bitnami/etcd/conf/etcd.conf.yml
+#    ports:
+#      - 2379:2379
+#      - 2380:2380
+#    networks:
+#      - docker_network
+
   fsm:
     build: ./back_end/src/fileServiceMngr/app
     container_name: fsm
@@ -186,7 +185,7 @@ services:
     volumes:
       - .:/etc/logstash
       - ./logs:/logs
-    command: logstash -f /etc/logstash/back_end/fileServiceMngr/app/logstash.conf
+    command: logstash -f /etc/logstash/back_end/src/fileServiceMngr/app/logstash.conf
     ports:
        - 9600:9600
     depends_on:
