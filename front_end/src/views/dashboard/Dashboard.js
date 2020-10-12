@@ -25,7 +25,12 @@ class Dashboard extends Component {
             file: '',
         };
         this.handleSubmit = this.handleSubmit.bind(this);
+        // this.uploadListen = this.uploadListen.bind(this);
+        // this.uploadListen();
     }
+    uploadListen(){
+        store.dispatch(receiveSocketMessage("admin", {'data':'none'}));
+    };
     startSubscribe(){
         this.unsubscribe = store.subscribe(()=>{
             const payload = store.getState().socketReducer.payload;
@@ -45,7 +50,9 @@ class Dashboard extends Component {
         this._isMounted = false;
     }
     handleListen = () => {
-        store.dispatch(receiveSocketMessage("test", {'data':'none'}));
+        // store.dispatch(receiveSocketMessage("test", {'data':'none'}));
+        store.dispatch(receiveSocketMessage("admin", {'data':'none'}));
+
     };
     handleEmit=()=>{
         if(this.state.socketStatus==="On"){

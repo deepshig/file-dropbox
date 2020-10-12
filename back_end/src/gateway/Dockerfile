@@ -5,13 +5,13 @@ FROM python:3.8
 WORKDIR /src
 
 # copy the dependencies file to the working directory
-COPY requirements.txt .
+#COPY requirements.txt .
+COPY . .
 
 # install dependencies
 RUN pip install -r requirements.txt
 
 # copy the content of the local gateway directory to the working directory
-#COPY ../src/auth/ .
-COPY gateway.py .
+#COPY gateway.py .
 
 # command to run on container start

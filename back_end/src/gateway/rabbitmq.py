@@ -1,10 +1,12 @@
 import pika
 import sys
+import json
 
 
 class RabbitMQManager:
     def __init__(self, rabbitmq_config):
         self.connection = self.__get_connection(rabbitmq_config)
+        self.chan = self.connection.channel()
         self.queue_name = rabbitmq_config["queue_name"]
         self.__init_queue()
 
@@ -60,3 +62,13 @@ class RabbitMQManager:
         finally:
             if chan is not None:
                 chan.close()
+
+    def receive_msg(self, ch, method, properties, body):
+        # msg_json = body.decode('utf-8')
+        # msg = json.loads(msg_json)
+        # print(msg)
+        # key = msg["file_cache_key"]
+        # print(" [x] Received %r" % body)
+
+        ch.basic_ack(delivery_tag=method.delivery_tag)
+        return body

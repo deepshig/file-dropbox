@@ -1,5 +1,24 @@
-2020-10-11 13:17:37,845 - INFO - Streaming transport linked up: (<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f9d18bff780>, _StreamingProtocolShim: <SelectConnection PROTOCOL transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f9d18bff780> params=<ConnectionParameters host=rabbitmq port=5672 virtual_host=/ ssl=False>>).
-2020-10-11 13:17:37,913 - INFO - AMQPConnector - reporting success: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f9d18bff780> params=<ConnectionParameters host=rabbitmq port=5672 virtual_host=/ ssl=False>>
-2020-10-11 13:17:37,915 - INFO - AMQPConnectionWorkflow - reporting success: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f9d18bff780> params=<ConnectionParameters host=rabbitmq port=5672 virtual_host=/ ssl=False>>
-2020-10-11 13:17:37,916 - INFO - Connection workflow succeeded: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f9d18bff780> params=<ConnectionParameters host=rabbitmq port=5672 virtual_host=/ ssl=False>>
-2020-10-11 13:17:37,918 - INFO - Created channel=1
+2020-10-12 10:29:00,471 - INFO - {'clientName': "<FileStorage: 'user_name' (None)>", 'clientId': "<FileStorage: 'user_id' (None)>", 'filename': '7b3d675d-6618-47c8-90f3-62fc356c1cff', 'activity': 1, 'created': datetime.datetime(2020, 10, 12, 10, 29, 0, 471052), 'url': 'https://s3.amazonaws.com/weightsbucket/weights/7b3d675d-6618-47c8-90f3-62fc356c1cff'}
+2020-10-12 10:29:00,506 - INFO - MongoDB - Inserted to the MongoDB
+2020-10-12 10:29:00,507 - INFO - File Uploaded Successfully
+2020-10-12 10:29:00,540 - INFO - Consumer Task Completed
+2020-10-12 10:31:09,792 - INFO - AWS S3 - Upload successful
+2020-10-12 10:31:09,820 - INFO - {'clientName': "<FileStorage: 'user_name' (None)>", 'clientId': "<FileStorage: 'user_id' (None)>", 'filename': '0cc7997b-c481-4b6b-85bb-4cdfd9bccabc', 'activity': 1, 'created': datetime.datetime(2020, 10, 12, 10, 31, 9, 820293), 'url': 'https://s3.amazonaws.com/weightsbucket/weights/0cc7997b-c481-4b6b-85bb-4cdfd9bccabc'}
+2020-10-12 10:31:09,871 - INFO - MongoDB - Inserted to the MongoDB
+2020-10-12 10:31:09,882 - INFO - File Uploaded Successfully
+2020-10-12 10:31:09,937 - INFO - Consumer Task Completed
+2020-10-12 10:35:30,833 - INFO - AWS S3 - Upload successful
+2020-10-12 10:35:30,833 - INFO - {'clientName': "<FileStorage: 'user_name' (None)>", 'clientId': "<FileStorage: 'user_id' (None)>", 'filename': 'e09fdfde-42e0-4166-b589-420ace003bd9', 'activity': 1, 'created': datetime.datetime(2020, 10, 12, 10, 35, 30, 833890), 'url': 'https://s3.amazonaws.com/weightsbucket/weights/e09fdfde-42e0-4166-b589-420ace003bd9'}
+2020-10-12 10:35:30,835 - INFO - MongoDB - Inserted to the MongoDB
+2020-10-12 10:35:30,836 - INFO - File Uploaded Successfully
+2020-10-12 10:35:30,853 - INFO - Consumer Task Completed
+2020-10-12 10:36:32,521 - INFO - AWS S3 - Upload successful
+2020-10-12 10:36:32,533 - INFO - {'clientName': "<FileStorage: 'user_name' (None)>", 'clientId': "<FileStorage: 'user_id' (None)>", 'filename': '49bfff7c-64a7-4845-a888-044479c82869', 'activity': 1, 'created': datetime.datetime(2020, 10, 12, 10, 36, 32, 533278), 'url': 'https://s3.amazonaws.com/weightsbucket/weights/49bfff7c-64a7-4845-a888-044479c82869'}
+2020-10-12 10:36:32,547 - INFO - MongoDB - Inserted to the MongoDB
+2020-10-12 10:36:32,548 - INFO - File Uploaded Successfully
+2020-10-12 10:36:32,588 - INFO - Consumer Task Completed
+2020-10-12 10:39:56,834 - INFO - AWS S3 - Upload successful
+2020-10-12 10:39:56,835 - INFO - {'clientName': "<FileStorage: 'user_name' (None)>", 'clientId': "<FileStorage: 'user_id' (None)>", 'filename': 'd38e6b97-b981-402d-9b79-f3609b816dfe', 'activity': 1, 'created': datetime.datetime(2020, 10, 12, 10, 39, 56, 835002), 'url': 'https://s3.amazonaws.com/weightsbucket/weights/d38e6b97-b981-402d-9b79-f3609b816dfe'}
+2020-10-12 10:39:56,836 - INFO - MongoDB - Inserted to the MongoDB
+2020-10-12 10:39:56,837 - INFO - File Uploaded Successfully
+2020-10-12 10:39:56,852 - INFO - Consumer Task Completed

@@ -81,6 +81,7 @@ export default class socketAPI {
 
             this.socket.on(event, (response) =>{
                 store.dispatch(storeSocketMessage(response['data'])); console.log(response['data'])});
+                // console.log(response['data'])});
             return resolve();
         });
     }

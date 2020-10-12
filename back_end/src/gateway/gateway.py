@@ -16,7 +16,6 @@ from rabbitmq import RabbitMQManager
 # import etcd
 
 
-
 app = Flask(__name__)
 
 SECRET_KEY = "i5uitypjchnar0rlz31yh0u5sgs8rui2baxxgw8e"
@@ -29,7 +28,19 @@ CORS(app, supports_credentials=True)
 socket = SocketIO(app, cors_allowed_origins="*")
 file_path = os.path.abspath(pathlib.Path().absolute()) + '/tmp/'
 
-# rbmq = RabbitMQManager(config["rabbitmq_config"])
+print(config["rabbitmq_config"])
+
+
+def send_message(event, msg):
+    """
+
+    :param event:
+    :param msg:
+    :return:
+    """
+    print(msg)
+    emit(event, {'data': msg})
+
 
 @socket.on('connect')
 def connect():
@@ -186,6 +197,28 @@ class threads(threading.Thread):
             time.sleep(5)
 
 
+class RBMQThread(threading.Thread):
+    def __init__(self, ):
+        threading.Thread.__init__(self)
+        self.queue_manager = RabbitMQManager(config['rabbitmq_config'])
+        self.queue_manager.chan.basic_qos(prefetch_count=1)
+
+    def run(self):
+        # define the queue consumption
+        self.queue_manager.chan.basic_consume(queue=self.queue_manager.queue_name,
+                                         on_message_callback=self.callback)
+        # start consuming
+        self.queue_manager.chan.start_consuming()
+
+    def callback(self, ch, method, props, body):
+        resp = self.queue_manager.receive_msg(ch, method, props, body)
+        print(resp)
+        my_json = resp.decode('utf8').replace("'", '"')
+        print(my_json)
+        socket.emit('admin', {'data': my_json})
+        # send_message('admin', resp)
+
+
 if __name__ == '__main__':
     port = 5000
     # if INSIDE_CONTAINER:
@@ -199,5 +232,7 @@ if __name__ == '__main__':
     # print(client.read('/nodes/n1').value)
     thread = threads()
     thread.start()
+    rbmq = RBMQThread()
+    rbmq.start()
     socket.run(app, debug=True, use_debugger=False, use_reloader=False,
                passthrough_errors=True, host="0.0.0.0", port=port)
