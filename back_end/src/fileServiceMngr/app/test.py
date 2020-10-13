@@ -1,4 +1,4 @@
-# import pymongo
+import pymongo
 #
 # client = pymongo.MongoClient("mongodb://:27017/")
 #
@@ -86,16 +86,26 @@
 #     return make_response(jsonify(success=False))
 
 
+from pymongo import MongoClient
+from gridfs import GridFS
+from bson import objectid
+
+db = MongoClient("mongodb://127.0.0.1:27017/").mygrid
+
+fs = GridFS(db,"stringfiles")
 
 
-#
-# db = MongoClient().mygrid
-#
-# fs = GridFS(db)
-#
-# ob = fs.put("hello world")
-#
-# print("Able to put")
+ob = fs.put("hello worldasas", encoding='utf-8',filename='test1.txt')
+
+f_id = db.stringfiles.files.find_one({ "filename" : "test1.txt" },{ "_id" : 1 })
+
+print(type(ob))
+print(fs.get(f_id['_id']).read())
+
+
+#print(fs.get(ob).read())
+
+'''
 from flask import Flask, request, jsonify, make_response
 from config import config
 import logging
@@ -123,6 +133,7 @@ logging.info("Project has started")
 app.run(host='0.0.0.0', port=ENVIRONMENT_PORT,
         debug=ENVIRONMENT_DEBUG, use_reloader=False, passthrough_errors=True)
 logging.info("After app run")
+'''
 #logging.getLogger().addHandler(logging.StreamHandler())
 
 # while(1):
