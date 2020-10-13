@@ -32,7 +32,7 @@ def test_create(mocker):
     assert result["success"] == True
 
     value = json.loads(result["value"])
-    assert value == {'status': STATUS_FILE_CACHED}
+    assert value["status"] == STATUS_FILE_CACHED
 
     teardown_redis(cache.redis.connection)
 
@@ -65,12 +65,13 @@ def test_update(mocker):
     assert result["success"] == True
 
     result = cache.update(file_name, new_status)
-    print(result)
     assert result["success"] == True
 
     result = cache.redis.get(index_key)
     assert result["success"] == True
-    assert result["value"] == new_status
+
+    value = json.loads(result["value"])
+    assert value["status"] == new_status
 
     teardown_redis(cache.redis.connection)
 

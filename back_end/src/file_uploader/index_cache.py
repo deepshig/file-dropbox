@@ -25,7 +25,10 @@ class IndexCache:
         if not result["success"]:
             return result
 
-        result = self.redis.set(index_key, updated_status)
+        value = {"status": updated_status}
+        val_json = json.dumps(value)
+
+        result = self.redis.set(index_key, val_json)
         return result
 
     def __check_if_index_key_exists(self, file_name):
