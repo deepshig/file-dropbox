@@ -2,6 +2,7 @@ from src.file_uploader.redis_driver import RedisDriver
 import pytest
 from pytest_mock import mocker
 import sys
+import json
 sys.path.append('../')
 
 from src.file_uploader.index_cache import IndexCache, STATUS_FILE_CACHED  # NOQA
@@ -29,7 +30,9 @@ def test_create(mocker):
     key = "file_index:" + file_name
     result = cache.redis.get(key)
     assert result["success"] == True
-    assert result["value"] == STATUS_FILE_CACHED
+
+    value = json.loads(result["value"])
+    assert value == {'status': STATUS_FILE_CACHED}
 
     teardown_redis(cache.redis.connection)
 

@@ -1,4 +1,5 @@
 from src.file_uploader import redis_driver
+import json
 # import redis_driver
 
 STATUS_FILE_CACHED = "File stored in cache"
@@ -11,7 +12,10 @@ class IndexCache:
 
     def create(self, file_name):
         index_key = self.__get_key(file_name)
-        result = self.redis.set(index_key, STATUS_FILE_CACHED)
+        value = {"status": STATUS_FILE_CACHED}
+        val_json = json.dumps(value)
+
+        result = self.redis.set(index_key, val_json)
         return result
 
     def update(self, file_name, updated_status):
