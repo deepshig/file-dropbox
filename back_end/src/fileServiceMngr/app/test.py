@@ -89,18 +89,25 @@ import pymongo
 from pymongo import MongoClient
 from gridfs import GridFS
 from bson import objectid
+import service
+serv = service.service()
 
 db = MongoClient("mongodb://127.0.0.1:27017/").mygrid
 
 fs = GridFS(db,"stringfiles")
 
 
-ob = fs.put("hello worldasas", encoding='utf-8',filename='test1.txt')
+ob_id = serv.gridfs_client.insert("absas","test4.txt")
+#f_id =serv.gridfs_client.db.files.find_one({ "filename" : "test3.txt" },{ "_id" : 1 })
 
-f_id = db.stringfiles.files.find_one({ "filename" : "test1.txt" },{ "_id" : 1 })
+print(serv.gridfs_client.search("test4.txt"))
 
-print(type(ob))
-print(fs.get(f_id['_id']).read())
+# ob = fs.put("hello worldasas", encoding='utf-8',filename='test1.txt')
+#
+# f_id = db.stringfiles.files.find_one({ "filename" : "test1.txt" },{ "_id" : 1 })
+#
+# print(type(ob))
+# print(fs.get(f_id['_id']).read())
 
 
 #print(fs.get(ob).read())

@@ -4,7 +4,7 @@ from gridfs import GridFS
 from bson import objectid
 from config import config
 import logging.handlers
-
+import sys
 
 class GridFsDatabase(object):
     def __init__(self):

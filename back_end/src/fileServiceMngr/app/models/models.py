@@ -7,11 +7,11 @@ class model(object):
         self.db = MongoDatabase()
         self.fields = {
             "clientName": "string",
-            "clientId": "string",
-            "fileName": "string",
-            "fileId"  : "string",
-            "activity": "int",
-            "url"     : "string"
+            "clientId"  : "string",
+            "fileName"  : "string",
+            "fileId"    : "string",
+            "activity"  : "int",
+            "gridFs_id" : "string"
         }
 
 

@@ -2,7 +2,7 @@
     "db": {
       "url" : "mongodb://mongodb:27017/",
       "name" :"fileServiceMngr",
-      "gridFS_name":"files"
+      "gridFS_name":"files",
       "user" :"",
       "password" :""
     },
