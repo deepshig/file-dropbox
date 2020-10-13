@@ -22,7 +22,7 @@ class RabbitMQManager:
                 retry_delay=rabbitmq_config["connection_retry_s"])
 
             connection = pika.BlockingConnection(params)
-        except pika.exceptions as err:
+        except Exception as err:
             error_str = "Error while connecting to rabbitmq : " + str(err)
             sys.exit(error_str)
         else:
@@ -32,7 +32,7 @@ class RabbitMQManager:
         try:
             chan = self.connection.channel()
             chan.queue_declare(queue=self.queue_name, durable=True)
-        except pika.exceptions as err:
+        except Exception as err:
             error_str = "Error while creating queue : " + str(err)
             sys.exit(error_str)
         else:
@@ -50,7 +50,7 @@ class RabbitMQManager:
             chan = self.connection.channel()
             chan.basic_publish(exchange='', routing_key=self.queue_name,
                                body=message_body, properties=pika.BasicProperties(delivery_mode=2))
-        except pika.exceptions as err:
+        except Exception as err:
             err_str = "Error while publishing message to queue=" + \
                 self.queue_name + " : " + str(err)
             return {"message_published": False,

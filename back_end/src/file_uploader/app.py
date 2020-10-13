@@ -24,6 +24,7 @@ ERROR_USER_ID_NOT_PROVIDED = "User ID not provided"
 ERROR_USER_NAME_NOT_PROVIDED = "User name not provided"
 ERROR_INVALID_FILE_STATUS = "File status is invalid"
 ERROR_FILE_DOES_NOT_EXIST = "File does not exist"
+ERROR_MAX_ATTEMPTS_FOR_FILE_UPLOAD_REACHED = "File upload has been retried max number of times"
 ERROR_INTERNAL_SERVER = "Internal Server Error"
 
 accepted_file_status = ["uploaded_successfully", "upload_failed"]
@@ -149,7 +150,8 @@ class UploadFile(Resource):
                             location='files')
 
         args = parser.parse_args()
-        data_file, user_id, user_name, meta_data = args['file'], args['user_id'], args['user_name'], args['meta']
+        data_file, user_id, user_name, meta_data = args[
+            'file'], args['user_id'], args['user_name'], args['meta']
         print(meta_data)
 
         if data_file is None or data_file.filename == '':
@@ -205,6 +207,15 @@ class UpdateFileStatus(Resource):
                 if result["error"] == redis_driver.ERROR_KEY_NOT_FOUND:
                     response = output_json(
                         {"msg": ERROR_FILE_DOES_NOT_EXIST}, 400)
+                else:
+                    response = output_json({"msg": ERROR_INTERNAL_SERVER}, 500)
+
+        elif file_status == accepted_file_status[1]:
+            result = svc.handle_failed_upload(file_name, user_id, user_name)
+            if not result["success"]:
+                if result["error"] == index_cache.ERROR_MAX_ATTEMPTS_REACHED:
+                    response = output_json(
+                        {"msg": ERROR_MAX_ATTEMPTS_FOR_FILE_UPLOAD_REACHED}, 200)
                 else:
                     response = output_json({"msg": ERROR_INTERNAL_SERVER}, 500)
 
