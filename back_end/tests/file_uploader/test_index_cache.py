@@ -33,6 +33,7 @@ def test_create(mocker):
 
     value = json.loads(result["value"])
     assert value["status"] == STATUS_FILE_CACHED
+    assert value["attempt"] == 1
 
     teardown_redis(cache.redis.connection)
 

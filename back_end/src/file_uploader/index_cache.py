@@ -12,7 +12,8 @@ class IndexCache:
 
     def create(self, file_name):
         index_key = self.__get_key(file_name)
-        value = {"status": STATUS_FILE_CACHED}
+        value = {"status": STATUS_FILE_CACHED,
+                 "attempt": 1}
         val_json = json.dumps(value)
 
         result = self.redis.set(index_key, val_json)
