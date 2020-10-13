@@ -54,7 +54,7 @@ class FileUploader:
             return result
 
         result = self.__publish_client_notification_queue_event(
-            file_name, user_id, user_name)
+            file_name, user_id, user_name, index_cache.STATUS_FILE_UPLOADED)
         if not result["message_published"]:
             result["success"] = False
             return result
@@ -99,7 +99,7 @@ class FileUploader:
             return result
 
         result = self.__publish_client_notification_queue_event(
-            file_name, user_id, user_name)
+            file_name, user_id, user_name, index_cache.STATUS_UPLOAD_FAILED)
         if not result["message_published"]:
             return {"success": False,
                     "error": result["error_msg"]}
@@ -118,9 +118,10 @@ class FileUploader:
         msg_json = json.dumps(msg)
         return self.file_queue_manager.publish(msg_json)
 
-    def __publish_client_notification_queue_event(self, file_name, user_id, user_name):
+    def __publish_client_notification_queue_event(self, file_name, user_id, user_name, status):
         msg = {"id": str(uuid.uuid4()),
                "file_name": file_name,
+               "status": status,
                "user_id": user_id,
                "user_name": user_name,
                "event_timestamp": time.time()}
