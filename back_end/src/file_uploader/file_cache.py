@@ -31,9 +31,6 @@ class FileCache:
         file_key = self.get_key(file_name)
 
         result = self.redis.set(file_key, file_contents)
-        if result["success"]:
-            result["file_key"] = file_key
-
         return result
 
     def delete(self, file_name):
