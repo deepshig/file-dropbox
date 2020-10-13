@@ -55,6 +55,8 @@ class IndexCache:
         val_json = json.dumps(value)
 
         result = self.redis.set(index_key, val_json)
+        if result["success"]:
+            result["metadata"] = value["metadata"]
         return result
 
     def __update_upload_failed(self, file_name, max_attempts):

@@ -15,7 +15,7 @@ class FileUploader:
         self.admin_queue_manager = admin_queue_manager
         self.index_cache = index_cache
 
-    def send_file_for_upload(self, file_path, user_id, user_name):
+    def send_file_for_upload(self, file_path, user_id, user_name, metadata):
         file_name = str(uuid.uuid4())
 
         result = self.file_cache.store(file_path, file_name)
@@ -25,13 +25,13 @@ class FileUploader:
 
         file_cache_key = self.file_cache.get_key(file_name)
 
-        result = self.index_cache.create(file_name, "")
+        result = self.index_cache.create(file_name, metadata)
         if not result["success"]:
             result["error_msg"] = "Error while creating file index on the cache : " + result["error"]
             return result
 
         result = self.__publish_file_upload_queue_event(
-            file_name, file_cache_key, user_id, user_name)
+            file_name, file_cache_key, user_id, user_name, metadata)
         if not result["message_published"]:
             result["success"] = False
             result["error_msg"] = result["error"]
@@ -79,9 +79,10 @@ class FileUploader:
                     "error": error_msg}
 
         file_cache_key = self.file_cache.get_key(file_name)
+        metadata = result["metadata"]
 
         result = self.__publish_file_upload_queue_event(
-            file_name, file_cache_key, user_id, user_name)
+            file_name, file_cache_key, user_id, user_name, metadata)
 
         if not result["message_published"]:
             result["success"] = False
@@ -105,10 +106,11 @@ class FileUploader:
 
         return {"success": True}
 
-    def __publish_file_upload_queue_event(self, file_name, file_key, user_id, user_name):
+    def __publish_file_upload_queue_event(self, file_name, file_key, user_id, user_name, metadata):
         msg = {"id": str(uuid.uuid4()),
                "file_name": file_name,
                "file_cache_key": file_key,
+               "file_metadata": metadata,
                "user_id": user_id,
                "user_name": user_name,
                "event_timestamp": time.time()}

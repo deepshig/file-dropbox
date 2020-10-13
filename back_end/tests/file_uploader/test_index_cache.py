@@ -149,6 +149,7 @@ def test_update_retry(mocker):
 
     result = cache.update_retry(file_name, max_attempts)
     assert result["success"] == True
+    assert result["metadata"] == metadata_str
 
     result = cache.redis.get(index_key)
     assert result["success"] == True

@@ -1,6 +1,7 @@
 import pytest
 from pytest_mock import mocker
 import sys
+import json
 sys.path.append('../')
 
 from src.file_uploader import file_uploader_service  # NOQA
@@ -43,6 +44,10 @@ test_admin_rabbitmq_config = {"user": "guest",
 def test_send_file_for_upload(mocker):
     user_id = "user:1"
     user_name = "test_user"
+
+    metadata = {"key1": "value1", "key2": "value2"}
+    metadata_str = json.dumps(metadata)
+
     """
     failure : error while storing file in cache
     """
@@ -56,7 +61,8 @@ def test_send_file_for_upload(mocker):
     svc = file_uploader_service.FileUploader(
         file_cache, None, None, None, None)
 
-    result = svc.send_file_for_upload("/random/file/path", user_id, user_name)
+    result = svc.send_file_for_upload(
+        "/random/file/path", user_id, user_name, metadata_str)
     assert result["success"] == False
     assert result["error_msg"] == "Error while storing the file contents in cache : some_error"
 
@@ -78,7 +84,8 @@ def test_send_file_for_upload(mocker):
     svc = file_uploader_service.FileUploader(
         file_cache, None, None, None, index_cache)
 
-    result = svc.send_file_for_upload("/random/file/path", user_id, user_name)
+    result = svc.send_file_for_upload(
+        "/random/file/path", user_id, user_name, metadata_str)
     assert result["success"] == False
     assert result["error_msg"] == "Error while creating file index on the cache : some_error_in_indexing"
 
@@ -105,7 +112,8 @@ def test_send_file_for_upload(mocker):
     svc = file_uploader_service.FileUploader(
         file_cache, file_queue_manager, None, None, index_cache)
 
-    result = svc.send_file_for_upload("/random/file/path", user_id, user_name)
+    result = svc.send_file_for_upload(
+        "/random/file/path", user_id, user_name, metadata_str)
     assert result["success"] == False
     assert result["error_msg"] == "something failing"
 
@@ -131,7 +139,8 @@ def test_send_file_for_upload(mocker):
     svc = file_uploader_service.FileUploader(
         file_cache, file_queue_manager, None, None, index_cache)
 
-    result = svc.send_file_for_upload("/random/file/path", user_id, user_name)
+    result = svc.send_file_for_upload(
+        "/random/file/path", user_id, user_name, metadata_str)
     assert result["success"] == True
 
 
@@ -351,7 +360,8 @@ def test_handle_failed_upload(mocker):
     failure : failed to publish file upload retry rabbitmq event
     """
     def mock_index_cache_update_retry(obj, file_name, max_attempts):
-        return {"success": True}
+        return {"success": True,
+                "metadata": "some json data"}
 
     def mock_publish(obj, msg_body):
         return {"message_published": False,
@@ -375,7 +385,8 @@ def test_handle_failed_upload(mocker):
     success
     """
     def mock_index_cache_update_retry(obj, file_name, max_attempts):
-        return {"success": True}
+        return {"success": True,
+                "metadata": "some json data"}
 
     def mock_publish(obj, msg_body):
         return {"message_published": True}
