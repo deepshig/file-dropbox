@@ -13,9 +13,10 @@ class IndexCache:
     def __init__(self, redis_config):
         self.redis = redis_driver.RedisDriver(redis_config)
 
-    def create(self, file_name):
+    def create(self, file_name, meta_data):
         index_key = self.__get_key(file_name)
         value = {"status": STATUS_FILE_CACHED,
+                 "metadata": meta_data,
                  "attempt": 1}
         val_json = json.dumps(value)
 
@@ -45,7 +46,7 @@ class IndexCache:
 
         value = json.loads(result["value"])
         if value["attempt"] >= max_attempts:
-            self.__update_upload_failed(file_name)
+            self.__update_upload_failed(file_name, max_attempts)
             return {"success": False,
                     "error": ERROR_MAX_ATTEMPTS_REACHED}
 
@@ -56,10 +57,10 @@ class IndexCache:
         result = self.redis.set(index_key, val_json)
         return result
 
-    def __update_upload_failed(self, file_name):
+    def __update_upload_failed(self, file_name, max_attempts):
         index_key = self.__get_key(file_name)
 
-        value = {"status": STATUS_UPLOAD_FAILED}
+        value = {"status": STATUS_UPLOAD_FAILED, "attempt": max_attempts}
         val_json = json.dumps(value)
 
         result = self.redis.set(index_key, val_json)

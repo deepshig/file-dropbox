@@ -1,4 +1,3 @@
-from src.file_uploader.redis_driver import RedisDriver
 import pytest
 from pytest_mock import mocker
 import sys
@@ -19,12 +18,14 @@ def teardown_redis(redis_conn):
 
 def test_create(mocker):
     file_name = "file1"
+    metadata = {"key1": "value1", "key2": "value2"}
+    metadata_str = json.dumps(metadata)
 
     """
     success
     """
     cache = index_cache.IndexCache(test_redis_config)
-    result = cache.create(file_name)
+    result = cache.create(file_name, metadata_str)
     assert result["success"] == True
 
     key = "file_index:" + file_name
@@ -33,6 +34,7 @@ def test_create(mocker):
 
     value = json.loads(result["value"])
     assert value["status"] == index_cache.STATUS_FILE_CACHED
+    assert value["metadata"] == metadata_str
     assert value["attempt"] == 1
 
     teardown_redis(cache.redis.connection)
@@ -47,7 +49,7 @@ def test_create(mocker):
     mocker.patch.object(RedisDriver, 'set', new=mock_redis_set)
 
     cache = index_cache.IndexCache(test_redis_config)
-    result = cache.create(file_name)
+    result = cache.create(file_name, metadata_str)
     assert result["success"] == False
     assert result["error"] == "some redis error"
 
@@ -56,7 +58,10 @@ def test_update_uploaded(mocker):
     file_name = "file1"
     index_key = "file_index:" + file_name
 
-    value = {"status": "old_status", "attempt": 2}
+    metadata = {"key1": "value1", "key2": "value2"}
+    metadata_str = json.dumps(metadata)
+
+    value = {"status": "old_status", "metadata": metadata_str, "attempt": 2}
     val_json = json.dumps(value)
 
     cache = index_cache.IndexCache(test_redis_config)
@@ -76,6 +81,7 @@ def test_update_uploaded(mocker):
 
     value = json.loads(result["value"])
     assert value["status"] == index_cache.STATUS_FILE_UPLOADED
+    assert value["metadata"] == metadata_str
     assert value["attempt"] == 2
 
     teardown_redis(cache.redis.connection)
@@ -124,9 +130,13 @@ def test_update_uploaded(mocker):
 def test_update_retry(mocker):
     file_name = "file2"
     index_key = "file_index:" + file_name
+
+    metadata = {"key1": "value1", "key2": "value2"}
+    metadata_str = json.dumps(metadata)
+
     max_attempts = 3
 
-    value = {"status": "old_status", "attempt": 2}
+    value = {"status": "old_status", "metadata": metadata_str, "attempt": 2}
     val_json = json.dumps(value)
 
     cache = index_cache.IndexCache(test_redis_config)
@@ -145,6 +155,7 @@ def test_update_retry(mocker):
 
     value = json.loads(result["value"])
     assert value["status"] == index_cache.STATUS_RETRY_UPLOAD
+    assert value["metadata"] == metadata_str
     assert value["attempt"] == 3
 
     """
@@ -159,6 +170,7 @@ def test_update_retry(mocker):
 
     value = json.loads(result["value"])
     assert value["status"] == index_cache.STATUS_UPLOAD_FAILED
+    assert value["attempt"] == 3
 
     teardown_redis(cache.redis.connection)
 

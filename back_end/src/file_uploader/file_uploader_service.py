@@ -25,7 +25,7 @@ class FileUploader:
 
         file_cache_key = self.file_cache.get_key(file_name)
 
-        result = self.index_cache.create(file_name)
+        result = self.index_cache.create(file_name, "")
         if not result["success"]:
             result["error_msg"] = "Error while creating file index on the cache : " + result["error"]
             return result

@@ -66,7 +66,7 @@ def test_send_file_for_upload(mocker):
     def mock_file_cache_store(obj, file_path, file_name):
         return {"success": True}
 
-    def mock_index_cache_create(obj, file_name):
+    def mock_index_cache_create(obj, file_name, meta_data):
         return {"success": False,
                 "error": "some_error_in_indexing"}
 
@@ -88,7 +88,7 @@ def test_send_file_for_upload(mocker):
     def mock_file_cache_store(obj, file_path, file_name):
         return {"success": True}
 
-    def mock_index_cache_create(obj, file_name):
+    def mock_index_cache_create(obj, file_name, meta_data):
         return {"success": True}
 
     def mock_publish(obj, msg_body):
@@ -115,7 +115,7 @@ def test_send_file_for_upload(mocker):
     def mock_file_cache_store(obj, file_path, file_name):
         return {"success": True}
 
-    def mock_index_cache_create(obj, file_name):
+    def mock_index_cache_create(obj, file_name, meta_data):
         return {"success": True}
 
     def mock_publish(obj, msg_body):
