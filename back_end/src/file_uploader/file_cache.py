@@ -9,7 +9,7 @@ class FileCache:
     def __init__(self, redis_config):
         self.redis = redis_driver.RedisDriver(redis_config)
 
-    def __key(self, file_name):
+    def get_key(self, file_name):
         return "file:" + file_name
 
     def store(self, file_path, file_name):
@@ -28,7 +28,7 @@ class FileCache:
             return {"success": False,
                     "error": ERROR_EMPTY_FILE}
 
-        file_key = self.__key(file_name)
+        file_key = self.get_key(file_name)
 
         result = self.redis.set(file_key, file_contents)
         if result["success"]:
@@ -37,5 +37,5 @@ class FileCache:
         return result
 
     def delete(self, file_name):
-        file_key = self.__key(file_name)
+        file_key = self.get_key(file_name)
         return self.redis.delete(file_key)
