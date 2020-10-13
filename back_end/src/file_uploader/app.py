@@ -22,6 +22,7 @@ ERROR_FILE_STATUS_NOT_PROVIDED = "File status not provided"
 ERROR_FILE_NAME_NOT_PROVIDED = "File name not provided"
 ERROR_USER_ID_NOT_PROVIDED = "User ID not provided"
 ERROR_USER_NAME_NOT_PROVIDED = "User name not provided"
+ERROR_FILE_METADATA_NOT_PROVIDED = "File metadata not provided"
 ERROR_INVALID_FILE_STATUS = "File status is invalid"
 ERROR_FILE_DOES_NOT_EXIST = "File does not exist"
 ERROR_MAX_ATTEMPTS_FOR_FILE_UPLOAD_REACHED = "File upload has been retried max number of times"
@@ -138,21 +139,19 @@ class UploadFile(Resource):
         #                     help=ERROR_USER_ID_NOT_PROVIDED)
         # parser.add_argument('user_name', required=True, type=str,
         #                     help=ERROR_USER_NAME_NOT_PROVIDED)
-        # parser.add_argument('meta', required=True, type=str
-        #                     )
-
+        # parser.add_argument('metadata', required=True,
+        #                     type=str, help=ERROR_FILE_METADATA_NOT_PROVIDED)
 
         parser.add_argument('user_id', required=True, type=str,
                             help=ERROR_USER_ID_NOT_PROVIDED, location='files')
         parser.add_argument('user_name', required=True, type=str,
                             help=ERROR_USER_NAME_NOT_PROVIDED, location='files')
-        parser.add_argument('meta', required=True, type=str,
-                            location='files')
+        parser.add_argument('metadata', required=True, type=str,
+                            help=ERROR_FILE_METADATA_NOT_PROVIDED, location='files')
 
         args = parser.parse_args()
-        data_file, user_id, user_name, meta_data = args[
-            'file'], args['user_id'], args['user_name'], args['meta']
-        print(meta_data)
+        data_file, metadata = args['file'], args['metadata']
+        user_id, user_name = args['user_id'], args['user_name']
 
         if data_file is None or data_file.filename == '':
             return output_json({"msg": ERROR_FILE_NOT_PROVIDED}, 400)
@@ -161,7 +160,8 @@ class UploadFile(Resource):
         file_path = FILE_TEMP_UPLOAD_PATH+file_name
         data_file.save(file_path)
 
-        result = self.svc.send_file_for_upload(file_path, user_id, user_name)
+        result = self.svc.send_file_for_upload(
+            file_path, user_id, user_name, metadata)
         if result["success"]:
             resp = output_json(
                 {"msg": index_cache.STATUS_FILE_CACHED}, 201)
