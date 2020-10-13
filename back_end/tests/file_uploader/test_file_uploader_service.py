@@ -284,7 +284,7 @@ def test_handle_failed_upload(mocker):
 
     result = svc.handle_failed_upload(file_name, user_id, user_name)
     assert result["success"] == False
-    assert result["error_msg"] == "Error while updating file status in index cache : some_error from redis"
+    assert result["error"] == "Error while retrying file upload : some_error from redis"
 
     """
     failure : max attempts reached
@@ -297,22 +297,58 @@ def test_handle_failed_upload(mocker):
         return {"success": True,
                 "file_key": "file:file-3"}
 
+    def mock_publish(obj, msg_body):
+        return {"message_published": True}
+
     mocker.patch.object(IndexCache, 'update_retry',
                         new=mock_index_cache_update_retry)
     mocker.patch.object(FileCache, 'delete', new=mock_file_cache_delete)
+    mocker.patch.object(RabbitMQManager, 'publish', new=mock_publish)
 
     index_cache = IndexCache(test_redis_config)
     file_cache = FileCache(test_redis_config)
-    svc = file_uploader_service.FileUploader(
-        file_cache, None, None, None, index_cache)
+    user_queue_manager = RabbitMQManager(test_user_rabbitmq_config)
+    admin_queue_manager = RabbitMQManager(test_admin_rabbitmq_config)
+    svc = file_uploader_service.FileUploader(file_cache, None, user_queue_manager,
+                                             admin_queue_manager, index_cache)
 
     result = svc.handle_failed_upload(file_name, user_id, user_name)
     assert result["success"] == False
     assert result["error"] == ERROR_MAX_ATTEMPTS_REACHED
-    assert result["error_msg"] == "Error while updating file status in index cache : File upload has been retried maximum number of times"
 
     """
-    failure : failed to publish rabbitmq event
+    failure : max attempts reached, failed to publish to user notification queue
+    """
+    def mock_index_cache_update_retry(obj, file_name, max_attempts):
+        return {"success": False,
+                "error": ERROR_MAX_ATTEMPTS_REACHED}
+
+    def mock_file_cache_delete(obj, file_name):
+        return {"success": True,
+                "file_key": "file:file-3"}
+
+    def mock_publish(obj, msg_body):
+        return {"message_published": False,
+                "error": "some error from rabbitmq"}
+
+    mocker.patch.object(IndexCache, 'update_retry',
+                        new=mock_index_cache_update_retry)
+    mocker.patch.object(FileCache, 'delete', new=mock_file_cache_delete)
+    mocker.patch.object(RabbitMQManager, 'publish', new=mock_publish)
+
+    index_cache = IndexCache(test_redis_config)
+    file_cache = FileCache(test_redis_config)
+    user_queue_manager = RabbitMQManager(test_user_rabbitmq_config)
+    admin_queue_manager = RabbitMQManager(test_admin_rabbitmq_config)
+    svc = file_uploader_service.FileUploader(file_cache, None, user_queue_manager,
+                                             admin_queue_manager, index_cache)
+
+    result = svc.handle_failed_upload(file_name, user_id, user_name)
+    assert result["success"] == False
+    assert result["error"] == "Error while retrying file upload : Error while publishing message to user notification queue : some error from rabbitmq"
+
+    """
+    failure : failed to publish file upload retry rabbitmq event
     """
     def mock_index_cache_update_retry(obj, file_name, max_attempts):
         return {"success": True}
@@ -333,7 +369,7 @@ def test_handle_failed_upload(mocker):
 
     result = svc.handle_failed_upload(file_name, user_id, user_name)
     assert result["success"] == False
-    assert result["error_msg"] == "something failing"
+    assert result["error"] == "something failing"
 
     """
     success

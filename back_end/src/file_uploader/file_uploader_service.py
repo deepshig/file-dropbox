@@ -67,9 +67,16 @@ class FileUploader:
 
         if not result["success"]:
             if result["error"] == index_cache.ERROR_MAX_ATTEMPTS_REACHED:
-                self.file_cache.delete(file_name)
-            result["error_msg"] = "Error while updating file status in index cache : " + result["error"]
-            return result
+                result = self.__handle_max_retried_upload(
+                    file_name, user_id, user_name)
+                if result["success"]:
+                    return {"success":  False,
+                            "error": index_cache.ERROR_MAX_ATTEMPTS_REACHED}
+
+            error_msg = "Error while retrying file upload : " + \
+                result["error"]
+            return {"success": False,
+                    "error": error_msg}
 
         file_cache_key = self.file_cache.get_key(file_name)
 
@@ -78,11 +85,25 @@ class FileUploader:
 
         if not result["message_published"]:
             result["success"] = False
-            result["error_msg"] = result["error"]
             return result
 
         result["success"] = True
         return result
+
+    def __handle_max_retried_upload(self, file_name, user_id, user_name):
+        result = self.file_cache.delete(file_name)
+        if not result["success"]:
+            result["error"] = "Error while deleting file from cache : " + \
+                result["error"]
+            return result
+
+        result = self.__publish_client_notification_queue_event(
+            file_name, user_id, user_name)
+        if not result["message_published"]:
+            return {"success": False,
+                    "error": result["error_msg"]}
+
+        return {"success": True}
 
     def __publish_file_upload_queue_event(self, file_name, file_key, user_id, user_name):
         msg = {"id": str(uuid.uuid4()),
