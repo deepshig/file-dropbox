@@ -4,6 +4,9 @@ import json
 
 STATUS_FILE_CACHED = "File stored in cache"
 STATUS_FILE_UPLOADED = "File uplaoded successfully"
+STATUS_RETRY_UPLOAD = "File upload failed previously. Retrying now."
+STATUS_UPLOAD_FAILED = "FIle upload failed after max attempts"
+ERROR_MAX_ATTEMPTS_REACHED = "File upload has been retried maximum number of times"
 
 
 class IndexCache:
@@ -28,6 +31,35 @@ class IndexCache:
 
         value = json.loads(result["value"])
         value["status"] = STATUS_FILE_UPLOADED
+        val_json = json.dumps(value)
+
+        result = self.redis.set(index_key, val_json)
+        return result
+
+    def update_retry(self, file_name, max_attempts):
+        index_key = self.__get_key(file_name)
+
+        result = self.__check_if_index_key_exists(index_key)
+        if not result["success"]:
+            return result
+
+        value = json.loads(result["value"])
+        if value["attempt"] >= max_attempts:
+            self.__update_upload_failed(file_name)
+            return {"success": False,
+                    "error": ERROR_MAX_ATTEMPTS_REACHED}
+
+        value["status"] = STATUS_RETRY_UPLOAD
+        value["attempt"] += 1
+        val_json = json.dumps(value)
+
+        result = self.redis.set(index_key, val_json)
+        return result
+
+    def __update_upload_failed(self, file_name):
+        index_key = self.__get_key(file_name)
+
+        value = {"status": STATUS_UPLOAD_FAILED}
         val_json = json.dumps(value)
 
         result = self.redis.set(index_key, val_json)
