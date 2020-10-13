@@ -45,8 +45,7 @@ class FileUploader:
                 result["error"]
             return result
 
-        result = self.index_cache.update(
-            file_name, index_cache.STATUS_FILE_UPLOADED)
+        result = self.index_cache.update_uploaded(file_name)
         if not result["success"]:
             result["error_msg"] = "Error while updating file status in index cache  : " + \
                 result["error"]

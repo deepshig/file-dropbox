@@ -19,14 +19,15 @@ class IndexCache:
         result = self.redis.set(index_key, val_json)
         return result
 
-    def update(self, file_name, updated_status):
+    def update_uploaded(self, file_name):
         index_key = self.__get_key(file_name)
 
         result = self.__check_if_index_key_exists(index_key)
         if not result["success"]:
             return result
 
-        value = {"status": updated_status}
+        value = json.loads(result["value"])
+        value["status"] = STATUS_FILE_UPLOADED
         val_json = json.dumps(value)
 
         result = self.redis.set(index_key, val_json)

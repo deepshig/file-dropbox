@@ -182,12 +182,13 @@ def test_delete_uploaded_file(mocker):
         return {"success": True,
                 "file_key": "file:file_name"}
 
-    def mock_index_cache_update(obj, file_name, status):
+    def mock_index_cache_update_uploaded(obj, file_name):
         return {"success": False,
                 "error": "some_error_in_redis"}
 
     mocker.patch.object(FileCache, 'delete', new=mock_file_cache_delete)
-    mocker.patch.object(IndexCache, 'update', new=mock_index_cache_update)
+    mocker.patch.object(IndexCache, 'update_uploaded',
+                        new=mock_index_cache_update_uploaded)
 
     file_cache = FileCache(test_redis_config)
     index_cache = IndexCache(test_redis_config)
@@ -204,7 +205,7 @@ def test_delete_uploaded_file(mocker):
         return {"success": True,
                 "file_key": "file:file_name"}
 
-    def mock_index_cache_update(obj, file_name, status):
+    def mock_index_cache_update_uploaded(obj, file_name):
         return {"success": True}
 
     def mock_publish(obj, msg_body):
@@ -212,7 +213,8 @@ def test_delete_uploaded_file(mocker):
                 "error": "some error from rabbitmq"}
 
     mocker.patch.object(FileCache, 'delete', new=mock_file_cache_delete)
-    mocker.patch.object(IndexCache, 'update', new=mock_index_cache_update)
+    mocker.patch.object(IndexCache, 'update_uploaded',
+                        new=mock_index_cache_update_uploaded)
     mocker.patch.object(RabbitMQManager, 'publish', new=mock_publish)
 
     file_cache = FileCache(test_redis_config)
@@ -234,14 +236,15 @@ def test_delete_uploaded_file(mocker):
         return {"success": True,
                 "file_key": "file:file_name"}
 
-    def mock_index_cache_update(obj, file_name, status):
+    def mock_index_cache_update_uploaded(obj, file_name):
         return {"success": True}
 
     def mock_publish(obj, msg_body):
         return {"message_published": True}
 
     mocker.patch.object(FileCache, 'store', new=mock_file_cache_store)
-    mocker.patch.object(IndexCache, 'update', new=mock_index_cache_update)
+    mocker.patch.object(IndexCache, 'update_uploaded',
+                        new=mock_index_cache_update_uploaded)
     mocker.patch.object(RabbitMQManager, 'publish', new=mock_publish)
 
     file_cache = FileCache(test_redis_config)

@@ -5,7 +5,7 @@ import sys
 import json
 sys.path.append('../')
 
-from src.file_uploader.index_cache import IndexCache, STATUS_FILE_CACHED  # NOQA
+from src.file_uploader.index_cache import IndexCache, STATUS_FILE_CACHED, STATUS_FILE_UPLOADED  # NOQA
 from src.file_uploader.redis_driver import RedisDriver, ERROR_KEY_NOT_FOUND  # NOQA
 
 test_redis_config = {"host": "127.0.0.1",
@@ -52,34 +52,38 @@ def test_create(mocker):
     assert result["error"] == "some redis error"
 
 
-def test_update(mocker):
+def test_update_uploaded(mocker):
     file_name = "file1"
     index_key = "file_index:" + file_name
-    new_status = "something"
+
+    value = {"status": "old_status", "attempt": 2}
+    val_json = json.dumps(value)
 
     cache = IndexCache(test_redis_config)
 
     """
     success
     """
-    result = cache.redis.set(index_key, "old_status")
+
+    result = cache.redis.set(index_key, val_json)
     assert result["success"] == True
 
-    result = cache.update(file_name, new_status)
+    result = cache.update_uploaded(file_name)
     assert result["success"] == True
 
     result = cache.redis.get(index_key)
     assert result["success"] == True
 
     value = json.loads(result["value"])
-    assert value["status"] == new_status
+    assert value["status"] == STATUS_FILE_UPLOADED
+    assert value["attempt"] == 2
 
     teardown_redis(cache.redis.connection)
 
     """
     failure : key doesn't exist
     """
-    result = cache.update(file_name, new_status)
+    result = cache.update_uploaded(file_name)
     assert result["success"] == False
     assert result["error"] == ERROR_KEY_NOT_FOUND
 
@@ -93,7 +97,7 @@ def test_update(mocker):
     mocker.patch.object(RedisDriver, 'get', new=mock_redis_get)
 
     cache = IndexCache(test_redis_config)
-    result = cache.update(file_name, new_status)
+    result = cache.update_uploaded(file_name)
     assert result["success"] == False
     assert result["error"] == "Redis not responding"
 
@@ -101,7 +105,8 @@ def test_update(mocker):
     failure : redis is not responsive while setting the key
     """
     def mock_redis_get(obj, key):
-        return {"success": True}
+        return {"success": True,
+                "value": val_json}
 
     def mock_redis_set(obj, key, value):
         return {"success": False,
@@ -111,6 +116,6 @@ def test_update(mocker):
     mocker.patch.object(RedisDriver, 'set', new=mock_redis_set)
 
     cache = IndexCache(test_redis_config)
-    result = cache.update(file_name, new_status)
+    result = cache.update_uploaded(file_name)
     assert result["success"] == False
     assert result["error"] == "Redis not responding"
