@@ -1,68 +1,75 @@
-2020-10-11 13:17:37,845 - INFO - Streaming transport linked up: (<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f9d18bff780>, _StreamingProtocolShim: <SelectConnection PROTOCOL transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f9d18bff780> params=<ConnectionParameters host=rabbitmq port=5672 virtual_host=/ ssl=False>>).
-2020-10-11 13:17:37,913 - INFO - AMQPConnector - reporting success: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f9d18bff780> params=<ConnectionParameters host=rabbitmq port=5672 virtual_host=/ ssl=False>>
-2020-10-11 13:17:37,915 - INFO - AMQPConnectionWorkflow - reporting success: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f9d18bff780> params=<ConnectionParameters host=rabbitmq port=5672 virtual_host=/ ssl=False>>
-2020-10-11 13:17:37,916 - INFO - Connection workflow succeeded: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f9d18bff780> params=<ConnectionParameters host=rabbitmq port=5672 virtual_host=/ ssl=False>>
-2020-10-11 13:17:37,918 - INFO - Created channel=1
-2020-10-12 08:32:32,606 - INFO - Pika version 1.1.0 connecting to ('172.18.0.5', 5672)
-2020-10-12 08:32:32,609 - INFO - RabbitMq thread started app starting
-2020-10-12 08:32:32,612 - ERROR - Socket failed to connect: <socket.socket fd=9, family=AddressFamily.AF_INET, type=2049, proto=6, laddr=('172.18.0.11', 38922)>; error=111 (Connection refused)
-2020-10-12 08:32:32,641 - ERROR - TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.18.0.5', 5672))
-2020-10-12 08:32:32,642 - ERROR - AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')
-2020-10-12 08:32:32,644 - ERROR - AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None.
-2020-10-12 08:32:32,649 - ERROR - AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None
-2020-10-12 08:32:32,650 - ERROR - Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None
-2020-10-12 08:32:32,651 - ERROR - Error in _create_connection().
+2020-10-12 10:29:00,471 - INFO - {'clientName': "<FileStorage: 'user_name' (None)>", 'clientId': "<FileStorage: 'user_id' (None)>", 'filename': '7b3d675d-6618-47c8-90f3-62fc356c1cff', 'activity': 1, 'created': datetime.datetime(2020, 10, 12, 10, 29, 0, 471052), 'url': 'https://s3.amazonaws.com/weightsbucket/weights/7b3d675d-6618-47c8-90f3-62fc356c1cff'}
+2020-10-12 10:29:00,506 - INFO - MongoDB - Inserted to the MongoDB
+2020-10-12 10:29:00,507 - INFO - File Uploaded Successfully
+2020-10-12 10:29:00,540 - INFO - Consumer Task Completed
+2020-10-12 10:31:09,792 - INFO - AWS S3 - Upload successful
+2020-10-12 10:31:09,820 - INFO - {'clientName': "<FileStorage: 'user_name' (None)>", 'clientId': "<FileStorage: 'user_id' (None)>", 'filename': '0cc7997b-c481-4b6b-85bb-4cdfd9bccabc', 'activity': 1, 'created': datetime.datetime(2020, 10, 12, 10, 31, 9, 820293), 'url': 'https://s3.amazonaws.com/weightsbucket/weights/0cc7997b-c481-4b6b-85bb-4cdfd9bccabc'}
+2020-10-12 10:31:09,871 - INFO - MongoDB - Inserted to the MongoDB
+2020-10-12 10:31:09,882 - INFO - File Uploaded Successfully
+2020-10-12 10:31:09,937 - INFO - Consumer Task Completed
+2020-10-12 10:35:30,833 - INFO - AWS S3 - Upload successful
+2020-10-12 10:35:30,833 - INFO - {'clientName': "<FileStorage: 'user_name' (None)>", 'clientId': "<FileStorage: 'user_id' (None)>", 'filename': 'e09fdfde-42e0-4166-b589-420ace003bd9', 'activity': 1, 'created': datetime.datetime(2020, 10, 12, 10, 35, 30, 833890), 'url': 'https://s3.amazonaws.com/weightsbucket/weights/e09fdfde-42e0-4166-b589-420ace003bd9'}
+2020-10-12 10:35:30,835 - INFO - MongoDB - Inserted to the MongoDB
+2020-10-12 10:35:30,836 - INFO - File Uploaded Successfully
+2020-10-12 10:35:30,853 - INFO - Consumer Task Completed
+2020-10-12 10:36:32,521 - INFO - AWS S3 - Upload successful
+2020-10-12 10:36:32,533 - INFO - {'clientName': "<FileStorage: 'user_name' (None)>", 'clientId': "<FileStorage: 'user_id' (None)>", 'filename': '49bfff7c-64a7-4845-a888-044479c82869', 'activity': 1, 'created': datetime.datetime(2020, 10, 12, 10, 36, 32, 533278), 'url': 'https://s3.amazonaws.com/weightsbucket/weights/49bfff7c-64a7-4845-a888-044479c82869'}
+2020-10-12 10:36:32,547 - INFO - MongoDB - Inserted to the MongoDB
+2020-10-12 10:36:32,548 - INFO - File Uploaded Successfully
+2020-10-12 10:36:32,588 - INFO - Consumer Task Completed
+2020-10-12 10:39:56,834 - INFO - AWS S3 - Upload successful
+2020-10-12 10:39:56,835 - INFO - {'clientName': "<FileStorage: 'user_name' (None)>", 'clientId': "<FileStorage: 'user_id' (None)>", 'filename': 'd38e6b97-b981-402d-9b79-f3609b816dfe', 'activity': 1, 'created': datetime.datetime(2020, 10, 12, 10, 39, 56, 835002), 'url': 'https://s3.amazonaws.com/weightsbucket/weights/d38e6b97-b981-402d-9b79-f3609b816dfe'}
+2020-10-12 10:39:56,836 - INFO - MongoDB - Inserted to the MongoDB
+2020-10-12 10:39:56,837 - INFO - File Uploaded Successfully
+2020-10-12 10:39:56,852 - INFO - Consumer Task Completed
+2020-10-12 10:46:13,418 - INFO - RabbitMq thread started app starting
+2020-10-12 10:46:13,445 - INFO - Pika version 1.1.0 connecting to ('172.18.0.9', 5672)
+2020-10-12 10:46:13,465 - ERROR - Socket failed to connect: <socket.socket fd=9, family=AddressFamily.AF_INET, type=2049, proto=6, laddr=('172.18.0.14', 38154)>; error=111 (Connection refused)
+2020-10-12 10:46:13,480 - INFO -  * Running on http://0.0.0.0:4500/ (Press CTRL+C to quit)
+2020-10-12 10:46:13,509 - ERROR - TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.18.0.9', 5672))
+2020-10-12 10:46:13,541 - ERROR - AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')
+2020-10-12 10:46:13,557 - ERROR - AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None.
+2020-10-12 10:46:13,564 - ERROR - AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None
+2020-10-12 10:46:13,568 - ERROR - Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None
+2020-10-12 10:46:13,572 - ERROR - Error in _create_connection().
 Traceback (most recent call last):
   File "/usr/local/lib/python3.6/site-packages/pika/adapters/blocking_connection.py", line 450, in _create_connection
     raise self._reap_last_connection_workflow_error(error)
 pika.exceptions.AMQPConnectionError
-2020-10-12 08:32:32,655 - INFO -  * Running on http://0.0.0.0:4500/ (Press CTRL+C to quit)
-2020-10-12 08:37:33,609 - INFO - RabbitMq thread started app starting
-2020-10-12 08:37:33,615 - INFO -  * Running on http://0.0.0.0:4500/ (Press CTRL+C to quit)
-2020-10-12 08:37:33,615 - INFO - Pika version 1.1.0 connecting to ('172.18.0.5', 5672)
-2020-10-12 08:37:33,626 - INFO - Socket connected: <socket.socket fd=10, family=AddressFamily.AF_INET, type=2049, proto=6, laddr=('172.18.0.11', 39142), raddr=('172.18.0.5', 5672)>
-2020-10-12 08:37:33,629 - INFO - Streaming transport linked up: (<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7fc0da0b5ac8>, _StreamingProtocolShim: <SelectConnection PROTOCOL transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7fc0da0b5ac8> params=<ConnectionParameters host=rabbitmq port=5672 virtual_host=/ ssl=False>>).
-2020-10-12 08:37:33,652 - INFO - AMQPConnector - reporting success: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7fc0da0b5ac8> params=<ConnectionParameters host=rabbitmq port=5672 virtual_host=/ ssl=False>>
-2020-10-12 08:37:33,655 - INFO - AMQPConnectionWorkflow - reporting success: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7fc0da0b5ac8> params=<ConnectionParameters host=rabbitmq port=5672 virtual_host=/ ssl=False>>
-2020-10-12 08:37:33,656 - INFO - Connection workflow succeeded: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7fc0da0b5ac8> params=<ConnectionParameters host=rabbitmq port=5672 virtual_host=/ ssl=False>>
-2020-10-12 08:37:33,661 - INFO - Created channel=1
-2020-10-12 08:37:35,279 - INFO - AWS S3 - Upload successful
-2020-10-12 08:37:35,281 - INFO - {'clientName': "<FileStorage: 'user_name' (None)>", 'clientId': "<FileStorage: 'user_id' (None)>", 'filename': '206e8a8e-1edf-4533-ac1c-de0423f51e49', 'activity': 1, 'created': datetime.datetime(2020, 10, 12, 8, 37, 35, 281053), 'url': 'https://s3.amazonaws.com/weightsbucket/weights/206e8a8e-1edf-4533-ac1c-de0423f51e49'}
-2020-10-12 08:37:35,356 - INFO - MongoDB - Inserted to the MongoDB
-2020-10-12 08:37:35,357 - INFO - File Uploaded Successfully
-2020-10-12 08:37:35,404 - INFO - Consumer Task Completed
-2020-10-12 09:17:26,535 - INFO - AWS S3 - Upload successful
-2020-10-12 09:17:26,543 - INFO - {'clientName': "<FileStorage: 'user_name' (None)>", 'clientId': "<FileStorage: 'user_id' (None)>", 'filename': 'f4dcd936-b47e-4eec-b577-a0a8d4dada4a', 'activity': 1, 'created': datetime.datetime(2020, 10, 12, 9, 17, 26, 543236), 'url': 'https://s3.amazonaws.com/weightsbucket/weights/f4dcd936-b47e-4eec-b577-a0a8d4dada4a'}
-2020-10-12 09:17:26,553 - INFO - MongoDB - Inserted to the MongoDB
-2020-10-12 09:17:26,554 - INFO - File Uploaded Successfully
-2020-10-12 09:17:26,581 - INFO - Consumer Task Completed
-2020-10-12 09:18:05,929 - INFO - AWS S3 - Upload successful
-2020-10-12 09:18:05,929 - INFO - {'clientName': "<FileStorage: 'user_name' (None)>", 'clientId': "<FileStorage: 'user_id' (None)>", 'filename': '044ed52b-2151-4f46-9b85-761e516f1592', 'activity': 1, 'created': datetime.datetime(2020, 10, 12, 9, 18, 5, 929707), 'url': 'https://s3.amazonaws.com/weightsbucket/weights/044ed52b-2151-4f46-9b85-761e516f1592'}
-2020-10-12 09:18:05,932 - INFO - MongoDB - Inserted to the MongoDB
-2020-10-12 09:18:05,932 - INFO - File Uploaded Successfully
-2020-10-12 09:18:05,946 - INFO - Consumer Task Completed
-2020-10-12 09:25:57,602 - INFO - RabbitMq thread started app starting
-2020-10-12 09:25:57,604 - INFO - Pika version 1.1.0 connecting to ('172.18.0.5', 5672)
-2020-10-12 09:25:57,607 - INFO - Socket connected: <socket.socket fd=9, family=AddressFamily.AF_INET, type=2049, proto=6, laddr=('172.18.0.11', 39752), raddr=('172.18.0.5', 5672)>
-2020-10-12 09:25:57,619 - INFO - Streaming transport linked up: (<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f0450d894e0>, _StreamingProtocolShim: <SelectConnection PROTOCOL transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f0450d894e0> params=<ConnectionParameters host=rabbitmq port=5672 virtual_host=/ ssl=False>>).
-2020-10-12 09:25:57,622 - INFO -  * Running on http://0.0.0.0:4500/ (Press CTRL+C to quit)
-2020-10-12 09:25:57,630 - INFO - AMQPConnector - reporting success: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f0450d894e0> params=<ConnectionParameters host=rabbitmq port=5672 virtual_host=/ ssl=False>>
-2020-10-12 09:25:57,634 - INFO - AMQPConnectionWorkflow - reporting success: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f0450d894e0> params=<ConnectionParameters host=rabbitmq port=5672 virtual_host=/ ssl=False>>
-2020-10-12 09:25:57,636 - INFO - Connection workflow succeeded: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f0450d894e0> params=<ConnectionParameters host=rabbitmq port=5672 virtual_host=/ ssl=False>>
-2020-10-12 09:25:57,641 - INFO - Created channel=1
-2020-10-12 09:31:13,299 - INFO - AWS S3 - Upload successful
-2020-10-12 09:31:13,316 - INFO - {'clientName': "<FileStorage: 'user_name' (None)>", 'clientId': "<FileStorage: 'user_id' (None)>", 'filename': '46be343e-1a48-4e3b-be8e-727ad359f788', 'activity': 1, 'created': datetime.datetime(2020, 10, 12, 9, 31, 13, 316459), 'url': 'https://s3.amazonaws.com/weightsbucket/weights/46be343e-1a48-4e3b-be8e-727ad359f788'}
-2020-10-12 09:31:13,345 - INFO - MongoDB - Inserted to the MongoDB
-2020-10-12 09:31:13,346 - INFO - File Uploaded Successfully
-2020-10-12 09:31:13,392 - INFO - Consumer Task Completed
-2020-10-12 09:33:44,264 - INFO - AWS S3 - Upload successful
-2020-10-12 09:33:44,266 - INFO - {'clientName': "<FileStorage: 'user_name' (None)>", 'clientId': "<FileStorage: 'user_id' (None)>", 'filename': 'e015c74c-e9ef-406c-8e71-9fb07ea4559c', 'activity': 1, 'created': datetime.datetime(2020, 10, 12, 9, 33, 44, 266680), 'url': 'https://s3.amazonaws.com/weightsbucket/weights/e015c74c-e9ef-406c-8e71-9fb07ea4559c'}
-2020-10-12 09:33:44,270 - INFO - MongoDB - Inserted to the MongoDB
-2020-10-12 09:33:44,274 - INFO - File Uploaded Successfully
-2020-10-12 09:33:44,295 - INFO - Consumer Task Completed
-2020-10-12 09:40:18,558 - INFO - AWS S3 - Upload successful
-2020-10-12 09:40:18,566 - INFO - {'clientName': "<FileStorage: 'user_name' (None)>", 'clientId': "<FileStorage: 'user_id' (None)>", 'filename': '85b43fd3-b2ec-4129-bfc2-5b458557e549', 'activity': 1, 'created': datetime.datetime(2020, 10, 12, 9, 40, 18, 566926), 'url': 'https://s3.amazonaws.com/weightsbucket/weights/85b43fd3-b2ec-4129-bfc2-5b458557e549'}
-2020-10-12 09:40:18,570 - INFO - MongoDB - Inserted to the MongoDB
-2020-10-12 09:40:18,575 - INFO - File Uploaded Successfully
-2020-10-12 09:40:18,614 - INFO - Consumer Task Completed
-2020-10-12 10:29:00,466 - INFO - AWS S3 - Upload successful
+2020-10-12 11:00:00,468 - INFO - RabbitMq thread started app starting
+2020-10-12 11:00:00,499 - INFO -  * Running on http://0.0.0.0:4500/ (Press CTRL+C to quit)
+2020-10-12 11:00:00,508 - INFO - Pika version 1.1.0 connecting to ('172.18.0.9', 5672)
+2020-10-12 11:00:00,515 - INFO - Socket connected: <socket.socket fd=10, family=AddressFamily.AF_INET, type=2049, proto=6, laddr=('172.18.0.14', 41660), raddr=('172.18.0.9', 5672)>
+2020-10-12 11:00:00,518 - INFO - Streaming transport linked up: (<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f03b1f5bb38>, _StreamingProtocolShim: <SelectConnection PROTOCOL transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f03b1f5bb38> params=<ConnectionParameters host=rabbitmq port=5672 virtual_host=/ ssl=False>>).
+2020-10-12 11:00:00,535 - INFO - AMQPConnector - reporting success: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f03b1f5bb38> params=<ConnectionParameters host=rabbitmq port=5672 virtual_host=/ ssl=False>>
+2020-10-12 11:00:00,536 - INFO - AMQPConnectionWorkflow - reporting success: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f03b1f5bb38> params=<ConnectionParameters host=rabbitmq port=5672 virtual_host=/ ssl=False>>
+2020-10-12 11:00:00,539 - INFO - Connection workflow succeeded: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f03b1f5bb38> params=<ConnectionParameters host=rabbitmq port=5672 virtual_host=/ ssl=False>>
+2020-10-12 11:00:00,544 - INFO - Created channel=1
+2020-10-12 11:00:02,228 - INFO - AWS S3 - Upload successful
+2020-10-12 11:00:02,230 - INFO - {'clientName': "<FileStorage: 'user_name' (None)>", 'clientId': "<FileStorage: 'user_id' (None)>", 'filename': '975854aa-b703-4c7c-812a-decdee59f34c', 'activity': 1, 'created': datetime.datetime(2020, 10, 12, 11, 0, 2, 230313), 'url': 'https://s3.amazonaws.com/weightsbucket/weights/975854aa-b703-4c7c-812a-decdee59f34c'}
+2020-10-12 11:00:02,248 - INFO - MongoDB - Inserted to the MongoDB
+2020-10-12 11:00:02,249 - INFO - File Uploaded Successfully
+2020-10-12 11:00:02,293 - INFO - Consumer Task Completed
+2020-10-12 11:00:26,031 - INFO - AWS S3 - Upload successful
+2020-10-12 11:00:26,032 - INFO - {'clientName': "<FileStorage: 'user_name' (None)>", 'clientId': "<FileStorage: 'user_id' (None)>", 'filename': '80221e98-f844-4177-89e2-a35a91077195', 'activity': 1, 'created': datetime.datetime(2020, 10, 12, 11, 0, 26, 32296), 'url': 'https://s3.amazonaws.com/weightsbucket/weights/80221e98-f844-4177-89e2-a35a91077195'}
+2020-10-12 11:00:26,034 - INFO - MongoDB - Inserted to the MongoDB
+2020-10-12 11:00:26,035 - INFO - File Uploaded Successfully
+2020-10-12 11:00:26,051 - INFO - Consumer Task Completed
+2020-10-12 11:00:31,955 - INFO - AWS S3 - Upload successful
+2020-10-12 11:00:31,956 - INFO - {'clientName': "<FileStorage: 'user_name' (None)>", 'clientId': "<FileStorage: 'user_id' (None)>", 'filename': '59195e9e-261b-4dda-83eb-8ee93508deff', 'activity': 1, 'created': datetime.datetime(2020, 10, 12, 11, 0, 31, 956090), 'url': 'https://s3.amazonaws.com/weightsbucket/weights/59195e9e-261b-4dda-83eb-8ee93508deff'}
+2020-10-12 11:00:31,957 - INFO - MongoDB - Inserted to the MongoDB
+2020-10-12 11:00:31,958 - INFO - File Uploaded Successfully
+2020-10-12 11:00:31,976 - INFO - Consumer Task Completed
+2020-10-12 11:00:37,260 - INFO - AWS S3 - Upload successful
+2020-10-12 11:00:37,260 - INFO - {'clientName': "<FileStorage: 'user_name' (None)>", 'clientId': "<FileStorage: 'user_id' (None)>", 'filename': '48d829fe-cf2d-446d-b475-c41ff858fe72', 'activity': 1, 'created': datetime.datetime(2020, 10, 12, 11, 0, 37, 260894), 'url': 'https://s3.amazonaws.com/weightsbucket/weights/48d829fe-cf2d-446d-b475-c41ff858fe72'}
+2020-10-12 11:00:37,262 - INFO - MongoDB - Inserted to the MongoDB
+2020-10-12 11:00:37,263 - INFO - File Uploaded Successfully
+2020-10-12 11:00:37,279 - INFO - Consumer Task Completed
+2020-10-12 14:33:19,842 - INFO - RabbitMq thread started app starting
+2020-10-12 14:33:19,848 - INFO -  * Running on http://0.0.0.0:4500/ (Press CTRL+C to quit)
+2020-10-12 14:33:19,861 - INFO - Pika version 1.1.0 connecting to ('172.19.0.2', 5672)
+2020-10-12 14:33:19,865 - ERROR - Socket failed to connect: <socket.socket fd=10, family=AddressFamily.AF_INET, type=2049, proto=6, laddr=('172.19.0.5', 53590)>; error=111 (Connection refused)
+2020-10-12 14:33:19,871 - ERROR - TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.19.0.2', 5672))
+2020-10-12 14:33:19,874 - ERROR - AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')
+2020-10-12 14:33:19,878 - ERROR - AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None.
+2020-10-12 14:33:19,881 - ERROR - AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None
