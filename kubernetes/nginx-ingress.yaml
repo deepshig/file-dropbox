@@ -21,3 +21,11 @@ spec:
           backend:
             serviceName: socket-gateway
             servicePort: 5000
+        - path: /postgres
+          backend:
+            serviceName: adminer
+            servicePort: 8080
+        - path: /rabbitmq
+          backend:
+            serviceName: rabbitmq
+            servicePort: 15672

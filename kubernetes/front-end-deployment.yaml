@@ -25,13 +25,15 @@ spec:
         io.kompose.service: front-end
     spec:
       containers:
-      - image: front-end
-        imagePullPolicy: ""
+      - image: diarmuidk/wacc:front-end
+        imagePullPolicy: Always
         name: front-end
         ports:
         - containerPort: 80
         resources: {}
         stdin: true
+      imagePullSecrets:
+        - name: regcred
       restartPolicy: Always
       serviceAccountName: ""
       volumes: null

@@ -36,12 +36,14 @@ spec:
           value: postgresdb
         - name: IN_CONTAINER_FLAG
           value: "1"
-        image: auth
+        image: diarmuidk/wacc:auth-service
         imagePullPolicy: ""
         name: auth
         ports:
         - containerPort: 4000
         resources: {}
+      imagePullSecrets:
+        - name: regcred
       restartPolicy: Always
       serviceAccountName: ""
       volumes: null

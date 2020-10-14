@@ -39,7 +39,7 @@ class Register extends Component {
 
     handleSubmit(event){
         store.dispatch(callRegister(this.state.UID));
-        fetch("http://" + process.env.REACT_APP_HOST_IP + ":" + process.env.REACT_APP_AUTHENTICATION_PORT + "/auth/signup", {
+        fetch("http://" + process.env.REACT_APP_HOST_IP + process.env.REACT_APP_AUTHENTICATION_PORT + "/auth/signup", {
             method: "POST",
             crossDomain: true,
             // credentials: 'include',

@@ -31,12 +31,14 @@ spec:
         env:
         - name: IN_CONTAINER_FLAG
           value: "1"
-        image: socket-gateway
+        image: diarmuidk/wacc:socket-gateway
         imagePullPolicy: ""
         name: socket-gateway
         ports:
         - containerPort: 5000
         resources: {}
+      imagePullSecrets:
+        - name: regcred
       restartPolicy: Always
       serviceAccountName: ""
       volumes: null

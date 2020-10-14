@@ -23,7 +23,7 @@ const Admin = () => {
                     Postgres
                 </CCol>
                 <CCol col="6" sm="4" md="2" xl className="mb-3 mb-xl-0">
-                    <a target="_blank" href={'http://localhost:8080'}> <CButton  block color="primary">Panel</CButton></a>
+                    <a target="_blank" href={"http://" + process.env.REACT_APP_HOST_IP + process.env.REACT_APP_ADMINER_PORT + "/postgres/"}> <CButton  block color="primary">Panel</CButton></a>
                 </CCol>
                 <CCol></CCol>
                 <CCol></CCol>
@@ -33,7 +33,7 @@ const Admin = () => {
                     RabbitMQ
                 </CCol>
                 <CCol col="6" sm="4" md="2" xl className="mb-3 mb-xl-0">
-                    <a target="_blank" href={'http://localhost:15672'}><CButton block color="primary">Panel</CButton></a>
+                    <a target="_blank" href={"http://" + process.env.REACT_APP_HOST_IP + process.env.REACT_APP_RABBITMQ_PORT + "/rabbitmq/"}><CButton block color="primary">Panel</CButton></a>
                 </CCol>
                 <CCol></CCol>
                 <CCol></CCol>
