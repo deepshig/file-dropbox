@@ -69,9 +69,8 @@ class RabbitMQManager:
             url = '%s/%s/%s' % (serv.aws_client.meta.endpoint_url,
                                 config["aws"]["upload_file_bucket"],  str(
                 config["aws"]["upload_file_key"]+"/"+str(msg["file_name"])))
-            req_obj = utils.create_mongoDb_insert_obj(msg)
-            ob_id = serv.gridfs_client.insert(file_contents["value"],msg["file_name"])
-            req_obj["gridFs_id"] = ob_id
+            ob_id = serv.gridfs_client.insert(file_contents["value"], msg["file_name"])
+            req_obj = utils.create_mongoDb_insert_obj(msg,ob_id)
             inserted_id = serv.mongo_client.create(req_obj)
             logging.info("File Uploaded Successfully")
             headers, data = utils.create_fileUpload_request(

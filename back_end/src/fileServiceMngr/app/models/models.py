@@ -11,7 +11,8 @@ class model(object):
             "fileName"  : "string",
             "fileId"    : "string",
             "activity"  : "int",
-            "gridFs_id" : "string"
+            "gridFs_id" : "string",
+            "meta_data" : "file_metadata"
         }
 
 
