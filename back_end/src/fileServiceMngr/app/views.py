@@ -3,10 +3,10 @@ import json
 import service
 import os
 from config import config
-import logging
 import consumer
 import threading
-import time
+
+import logging
 import logging.handlers
 
 
@@ -68,6 +68,7 @@ def internal_error(exception):
 class ThreadedTask(threading.Thread):
     def __init__(self, ):
         threading.Thread.__init__(self)
+
     def run(self):
         queue_manager = consumer.RabbitMQManager()
         queue_manager.chan.basic_qos(prefetch_count=1)

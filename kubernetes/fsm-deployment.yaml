@@ -34,12 +34,14 @@ spec:
         env:
         - name: IN_CONTAINER_FLAG
           value: "1"
-        image: fsm
-        imagePullPolicy: ""
+        image: diarmuidk/wacc:fsm
+        imagePullPolicy: Always
         name: fsm
         ports:
         - containerPort: 4500
         resources: {}
+      imagePullSecrets:
+        - name: regcred
       restartPolicy: Always
       serviceAccountName: ""
       volumes: null

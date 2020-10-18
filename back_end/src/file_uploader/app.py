@@ -34,6 +34,8 @@ if INSIDE_CONTAINER:
 else:
     FILE_TEMP_UPLOAD_PATH = os.path.abspath(pathlib.Path().absolute()) + '/'
 
+if not os.path.exists(FILE_TEMP_UPLOAD_PATH):
+    os.makedirs(FILE_TEMP_UPLOAD_PATH)
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
@@ -55,7 +57,7 @@ if INSIDE_CONTAINER:
                             "port": "5672",
                             "connection_timeout_s": 1200,
                             "idle_connection_timeout_s": 1800,
-                            "connection_retry_s": 3,
+                            "connection_retry_s": 5,
                             "queue_name": "file_uploads_queue"}
 
     user_rabbitmq_config = {"user": "guest",
@@ -64,7 +66,7 @@ if INSIDE_CONTAINER:
                             "port": "5672",
                             "connection_timeout_s": 1200,
                             "idle_connection_timeout_s": 1800,
-                            "connection_retry_s": 3,
+                            "connection_retry_s": 5,
                             "queue_name": "user_notification_queue"}
 
     admin_rabbitmq_config = {"user": "guest",
@@ -73,7 +75,7 @@ if INSIDE_CONTAINER:
                              "port": "5672",
                              "connection_timeout_s": 1200,
                              "idle_connection_timeout_s": 1800,
-                             "connection_retry_s": 3,
+                             "connection_retry_s": 5,
                              "queue_name": "admin_notification_queue"}
 else:
     index_cache_config = {"host": "127.0.0.1",
@@ -88,7 +90,7 @@ else:
                             "port": "5672",
                             "connection_timeout_s": 1200,
                             "idle_connection_timeout_s": 1800,
-                            "connection_retry_s": 3,
+                            "connection_retry_s": 5,
                             "queue_name": "file_uploads_queue"}
 
     user_rabbitmq_config = {"user": "guest",
@@ -97,7 +99,7 @@ else:
                             "port": "5672",
                             "connection_timeout_s": 1200,
                             "idle_connection_timeout_s": 1800,
-                            "connection_retry_s": 3,
+                            "connection_retry_s": 5,
                             "queue_name": "user_notification_queue"}
 
     admin_rabbitmq_config = {"user": "guest",
@@ -106,7 +108,7 @@ else:
                              "port": "5672",
                              "connection_timeout_s": 1200,
                              "idle_connection_timeout_s": 1800,
-                             "connection_retry_s": 3,
+                             "connection_retry_s": 5,
                              "queue_name": "admin_notification_queue"}
 
 
@@ -157,7 +159,7 @@ class UploadFile(Resource):
             return output_json({"msg": ERROR_FILE_NOT_PROVIDED}, 400)
 
         file_name = utils.secure_filename(data_file.filename)
-        file_path = FILE_TEMP_UPLOAD_PATH+file_name
+        file_path = FILE_TEMP_UPLOAD_PATH + file_name
         data_file.save(file_path)
 
         result = self.svc.send_file_for_upload(

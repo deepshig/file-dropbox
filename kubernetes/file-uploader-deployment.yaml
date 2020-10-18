@@ -35,7 +35,7 @@ spec:
         - name: IN_CONTAINER_FLAG
           value: "1"
         image: diarmuidk/wacc:file-uploader
-        imagePullPolicy: ""
+        imagePullPolicy: Always
         name: file-uploader
         ports:
         - containerPort: 3500

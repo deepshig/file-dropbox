@@ -25,8 +25,8 @@ class Dashboard extends Component {
             file: '',
         };
         this.handleSubmit = this.handleSubmit.bind(this);
-        // this.uploadListen = this.uploadListen.bind(this);
-        // this.uploadListen();
+        // this.getHistory = this.getHistory.bind(this);
+        // this.getHistory();
     }
     uploadListen(){
         store.dispatch(receiveSocketMessage("admin", {'data':'none'}));

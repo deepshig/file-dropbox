@@ -32,7 +32,7 @@ spec:
         - name: IN_CONTAINER_FLAG
           value: "1"
         image: diarmuidk/wacc:socket-gateway
-        imagePullPolicy: ""
+        imagePullPolicy: Always
         name: socket-gateway
         ports:
         - containerPort: 5000

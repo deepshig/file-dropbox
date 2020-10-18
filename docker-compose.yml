@@ -49,7 +49,7 @@ services:
     - docker_network
 
   auth:
-    image: auth-service
+    image: diarmuidk/wacc:auth-service
     build: back_end/src/auth
     ports:
       - 4000:4000
@@ -64,7 +64,7 @@ services:
     command: ["./wait-for-it.sh", "postgresdb:5432/auth_db", "--", "python", "./app.py"]
 
   socket-gateway:
-    image: socket-gateway
+    image: diarmuidk/wacc:socket-gateway
     build: back_end/src/gateway
     ports:
     - 5000:5000
@@ -74,11 +74,12 @@ services:
       IN_CONTAINER_FLAG: 1
     volumes:
       - ./gateway-store:/src/tmp
+      - ./logs:/logs
     command: [ "python", "./gateway.py" ]
 
 
   file-uploader:
-    image: file-uploader
+    image: diarmuidk/wacc:file-uploader
     build: back_end/src/file_uploader
     ports:
       - 3500:3500
@@ -91,7 +92,7 @@ services:
     command: [ "./wait-for-it.sh", "rabbitmq:5672", "--", "python", "./app.py" ]
 
   front-end:
-    image: front-end
+    image: diarmuidk/wacc:front-end
     build:
       context: front_end
       dockerfile: Dockerfile.prod
@@ -129,7 +130,7 @@ services:
 #      - docker_network
 
   fsm:
-    image: file-service-manager
+    image: diarmuidk/wacc:file-service-manager
     build: ./back_end/src/fileServiceMngr/app
     container_name: fsm
     depends_on:

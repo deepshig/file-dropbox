@@ -1,3 +1,4 @@
+from __future__ import print_function
 from flask import Flask, request
 from flask_socketio import SocketIO, emit, join_room, leave_room, ConnectionRefusedError
 from flask_cors import CORS
@@ -15,6 +16,9 @@ from config import config
 from rabbitmq import RabbitMQManager
 # import etcd
 
+import logging
+import logging.handlers
+
 
 app = Flask(__name__)
 
@@ -29,6 +33,10 @@ socket = SocketIO(app, cors_allowed_origins="*")
 file_path = os.path.abspath(pathlib.Path().absolute()) + '/tmp/'
 
 print(config["rabbitmq_config"])
+
+
+def eprint(*args, **kwargs):
+    print(*args, file=sys.stderr, **kwargs)
 
 
 def send_message(event, msg):
@@ -169,22 +177,35 @@ def complete_upload(file_id, username, user_id):
         data = json.load(f)
         data = json.dumps(data)
         # data = pickle.dump()
-        print(data)
+        eprint(data)
+        eprint(type(data))
     with open(file_path + file_id, 'rb') as f:
+        eprint("sending")
         if INSIDE_CONTAINER:
-            resp = requests.post('http://file-uploader:3500/file/upload', files={'file': f, 'user_id': user_id, 'user_name': username, 'meta': data})
+            resp = requests.post('http://file-uploader:3500/file/upload', files={'file': f, 'user_id': user_id, 'user_name': username, 'metadata': data})
         else:
-            resp = requests.post('http://127.0.0.1:3500/file/upload', files={'file': f, 'user_id': user_id, 'user_name': username, 'meta': data})
+            resp = requests.post('http://127.0.0.1:3500/file/upload', files={'file': f, 'user_id': user_id, 'user_name': username, 'metadata': data})
         # resp.status_code = 201
-        print(resp.content)
+        eprint(resp.content)
         if resp.status_code == 201:
         # status_code = 201
         # print(status_code)
         # if status_code == 201:
             emit('complete-upload', {'data': True})
         else:
-            print(resp)
+            eprint(resp)
             emit('complete-upload', {'data': False})
+
+@socket.on('get-history')
+def getHistory(data, headers):
+    print(data['user_id'])
+    if INSIDE_CONTAINER:
+        resp = requests.get('http://fsm:4500/client/history/' + data['user_id'])
+    else:
+        resp = requests.get('http://127.0.0.1:4500/client/history/' + data['user_id'])
+
+    emit('get-history', {'data': resp.content.decode("utf-8")})
+    print(resp.content)
 
 
 class threads(threading.Thread):
@@ -214,13 +235,20 @@ class RBMQThread(threading.Thread):
         resp = self.queue_manager.receive_msg(ch, method, props, body)
         print(resp)
         my_json = resp.decode('utf8').replace("'", '"')
-        print(my_json)
-        socket.emit('admin', {'data': my_json})
+        logging.info(my_json)
+        socket.emit('admin', {'data': my_json}) # TODO: recieve then process, then ack
         # send_message('admin', resp)
 
 
 if __name__ == '__main__':
     port = 5000
+    logger = logging.getLogger()
+    fh = logging.handlers.RotatingFileHandler(filename=config["logging"]["file_path"], maxBytes=10240, backupCount=5)
+    # fh.setLevel(logging.DEBUG)#no matter what level I set here
+    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    fh.setFormatter(formatter)
+    logger.addHandler(fh)
+    logger.setLevel(logging.INFO)
     # if INSIDE_CONTAINER:
     #     client = etcd.Client(host='etcd', port=2379)
     #

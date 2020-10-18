@@ -7,6 +7,7 @@ WORKDIR /src
 # copy the dependencies file to the working directory
 #COPY requirements.txt .
 COPY . .
+COPY logs/logFile-gateway.txt ./logs/
 
 # install dependencies
 RUN pip install -r requirements.txt

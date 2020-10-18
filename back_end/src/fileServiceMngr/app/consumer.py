@@ -17,7 +17,6 @@ INSIDE_CONTAINER = os.environ.get('IN_CONTAINER_FLAG', False)
 serv = service.service()
 
 
-
 class RabbitMQManager:
     def __init__(self):
         # self.connection_url = self.__get_connection_url()
@@ -47,8 +46,8 @@ class RabbitMQManager:
                 retry_delay=config["rabbitmq_config"]["connection_retry_s"])
 
             connection = pika.BlockingConnection(params)
-        except pika.exceptions as err:
-            error_str = "Error while connecting to rabbitmq : " + str(err)
+        except Exception as err:
+            error_str = "Error while creating queue : " + str(err)
             sys.exit(error_str)
         else:
             return connection

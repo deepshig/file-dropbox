@@ -52,11 +52,9 @@ class RabbitMQManager:
             chan = self.connection.channel()
             chan.basic_publish(exchange='', routing_key=self.queue_name,
                                body=message_body, properties=pika.BasicProperties(delivery_mode=2))
-        except pika.exceptions as err:
-            err_str = "Error while publishing message to queue=" + \
-                self.queue_name + " : " + str(err)
-            return {"message_published": False,
-                    "error": err_str}
+        except Exception as err:
+            error_str = "Error while creating queue : " + str(err)
+            sys.exit(error_str)
         else:
             return {"message_published": True}
         finally:

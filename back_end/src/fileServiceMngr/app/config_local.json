@@ -1,6 +1,6 @@
 {
     "db": {
-      "url" : "mongodb://127.0.0.1:27017/",
+      "url" : "mongodb://mongodb:27017/",
       "name" :"fileServiceMngr",
       "gridFS_name":"files",
       "user" :"",
@@ -20,7 +20,10 @@
       "password": "guest",
       "host": "rabbitmq",
       "port": 5672,
-      "queue_name": "file_uploads_queue"
+      "queue_name": "file_uploads_queue",
+      "connection_timeout_s": 1200,
+      "idle_connection_timeout_s": 1800,
+      "connection_retry_s": 5
     },
     "index_cache_config":{
       "host":"redis",
