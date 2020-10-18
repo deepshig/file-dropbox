@@ -56,7 +56,8 @@ class RabbitMQManager:
     def receive_msg(self, ch, method, properties, body):
         msg_json = body.decode('utf-8')
         msg = json.loads(msg_json)
-        # print(msg)
+        logging.info("Obj received from rabbitMq")
+        logging.info(msg)
         key = msg["file_cache_key"]
         file_contents = serv.redis_client.get(key)
         # print(file_contents)
@@ -71,6 +72,8 @@ class RabbitMQManager:
                 config["aws"]["upload_file_key"]+"/"+str(msg["file_name"])))
             ob_id = serv.gridfs_client.insert(file_contents["value"], msg["file_name"])
             req_obj = utils.create_mongoDb_insert_obj(msg,ob_id)
+            logging.info("Dict to be stored in MongoDb")
+            logging.info(req_obj)
             inserted_id = serv.mongo_client.create(req_obj)
             logging.info("File Uploaded Successfully")
             headers, data = utils.create_fileUpload_request(
