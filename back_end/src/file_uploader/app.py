@@ -165,8 +165,8 @@ class UploadFile(Resource):
         result = self.svc.send_file_for_upload(
             file_path, user_id, user_name, metadata)
         if result["success"]:
-            resp = output_json(
-                {"msg": index_cache.STATUS_FILE_CACHED}, 201)
+            resp = output_json({"msg": index_cache.STATUS_FILE_CACHED,
+                                "file_id": result["file_name"]}, 201)
 
         elif result["error"] == file_cache.ERROR_EMPTY_FILE or result["error"] == file_cache.ERROR_FILE_NOT_FOUND:
             resp = output_json({"msg": result["error_msg"]}, 400)
