@@ -34,7 +34,13 @@ class FileUploader:
             file_name, file_cache_key, user_id, user_name, metadata)
         if not result["message_published"]:
             result["success"] = False
-            result["error_msg"] = result["error"]
+            result["error_msg"] = "Error while publishing file upload event to queue : " + result["error"]
+            return result
+
+        result = self.__publish_client_notification_queue_event(
+            file_name, user_id, user_name, index_cache.STATUS_FILE_CACHED)
+        if not result["message_published"]:
+            result["success"] = False
             return result
 
         return {"success": True,

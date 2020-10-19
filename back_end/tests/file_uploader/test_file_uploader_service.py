@@ -90,7 +90,7 @@ def test_send_file_for_upload(mocker):
     assert result["error_msg"] == "Error while creating file index on the cache : some_error_in_indexing"
 
     """
-    failure : error while publishing event to rabbitmq
+    failure : error while publishing file upload event to rabbitmq
     """
     def mock_file_cache_store(obj, file_path, file_name):
         return {"success": True}
@@ -115,7 +115,7 @@ def test_send_file_for_upload(mocker):
     result = svc.send_file_for_upload(
         "/random/file/path", user_id, user_name, metadata_str)
     assert result["success"] == False
-    assert result["error_msg"] == "something failing"
+    assert result["error_msg"] == "Error while publishing file upload event to queue : something failing"
 
     """
     success
@@ -136,8 +136,10 @@ def test_send_file_for_upload(mocker):
     file_cache = FileCache(test_redis_config)
     index_cache = IndexCache(test_redis_config)
     file_queue_manager = RabbitMQManager(test_file_rabbitmq_config)
+    user_queue_manager = RabbitMQManager(test_user_rabbitmq_config)
+    admin_queue_manager = RabbitMQManager(test_admin_rabbitmq_config)
     svc = file_uploader_service.FileUploader(
-        file_cache, file_queue_manager, None, None, index_cache)
+        file_cache, file_queue_manager, user_queue_manager, admin_queue_manager, index_cache)
 
     result = svc.send_file_for_upload(
         "/random/file/path", user_id, user_name, metadata_str)
