@@ -1,5 +1,6 @@
 import pika
 import sys
+import logging
 
 
 class RabbitMQManager:
@@ -22,8 +23,11 @@ class RabbitMQManager:
                 retry_delay=rabbitmq_config["connection_retry_s"])
 
             connection = pika.BlockingConnection(params)
+            logging.info(
+                "[FileUploader][RabbitMQManager] : Connected to RabbitMQ")
         except Exception as err:
             error_str = "Error while connecting to rabbitmq : " + str(err)
+            logging.info("[FileUploader][RabbitMQManager] : " + error_str)
             sys.exit(error_str)
         else:
             return connection

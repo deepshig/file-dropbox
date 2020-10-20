@@ -381,7 +381,7 @@ def test_handle_failed_upload(mocker):
 
     result = svc.handle_failed_upload(file_name, user_id, user_name)
     assert result["success"] == False
-    assert result["error"] == "something failing"
+    assert result["error"] == "Error while retrying file upload : Error while publishing to file upload queue : something failing"
 
     """
     success

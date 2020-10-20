@@ -92,6 +92,8 @@ class FileUploader:
 
         if not result["message_published"]:
             result["success"] = False
+            result["error"] = "Error while retrying file upload : Error while publishing to file upload queue : " + \
+                result["error"]
             return result
 
         result["success"] = True

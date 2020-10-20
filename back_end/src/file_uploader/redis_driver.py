@@ -1,6 +1,7 @@
 import redis
 from redis import RedisError
 import sys
+import logging
 
 ERROR_KEY_NOT_FOUND = "Key not found in redis"
 
@@ -15,8 +16,10 @@ class RedisDriver:
                                                 port=redis_config["port"],
                                                 encoding="utf-8",
                                                 decode_responses=True)
+            logging.info("[FileUploader][RedisDriver] : Connected to Redis")
         except RedisError as err:
             error_str = "Error while connecting to redis : " + str(err)
+            logging.error("[FileUploader][RedisDriver] : " + error_str)
             sys.exit(error_str)
 
     def set(self, key, value):
