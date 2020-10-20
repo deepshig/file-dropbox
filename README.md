@@ -13,3 +13,10 @@ The file size(s) being sent are 100’s of Kbs to 10’s of Mbs. Although sendin
 React App currently getting a JWT token generated from a static endpoint working only for 'test' user
 
 https://zgadzaj.com/development/docker/docker-compose/containers/rabbitmq
+
+```bash
+use kompose convert
+cp files folder
+cd folder
+kubectl apply -R -f .
+```

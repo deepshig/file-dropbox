@@ -1,0 +1,31 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-wacc
+  annotations:
+    # use the shared ingress-nginx
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  rules:
+    - http:
+        paths:
+        - path: /
+          backend:
+            serviceName: front-end
+            servicePort: 80
+        - path: /auth
+          backend:
+            serviceName: auth
+            servicePort: 4000
+        - path: /socket.io
+          backend:
+            serviceName: socket-gateway
+            servicePort: 5000
+        - path: /postgres
+          backend:
+            serviceName: adminer
+            servicePort: 8080
+        - path: /rabbitmq
+          backend:
+            serviceName: rabbitmq
+            servicePort: 15672

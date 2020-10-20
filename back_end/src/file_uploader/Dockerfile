@@ -15,6 +15,8 @@ RUN pip install -r requirements.txt
 COPY wait-for-it.sh .
 RUN chmod +x wait-for-it.sh
 COPY app.py .
+COPY tmp .
+COPY logs/log_file.txt ./logs/
 COPY . ./src/file_uploader
 
 # command to run on container start

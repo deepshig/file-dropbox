@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {Component} from 'react'
 import {
   CBadge,
   CCard,
@@ -10,6 +10,8 @@ import {
 } from '@coreui/react'
 
 import usersData from './users/UsersData'
+import store from "../_helpers/store";
+import {receiveSocketMessage, sendSocketMessage} from "../_actions";
 
 const getBadge = status => {
   switch (status) {
@@ -22,8 +24,23 @@ const getBadge = status => {
 }
 const fields = ['name','registered', 'role', 'status']
 
-const History = () => {
-  return (
+class History extends Component {
+  constructor(props){
+    super(props);
+    this._isMounted = false;
+    this.state = {
+      payload: store.getState().socketReducer.payload,
+      socketStatus: "On",
+    };
+    this.getHistory = this.getHistory.bind(this);
+    this.getHistory();
+  }
+  getHistory(){
+    store.dispatch(sendSocketMessage("get-history", {'user_id': store.getState().authentication.user_id}));
+  };
+
+  render () {
+    return(
     <>
       <CRow>
         <CCol>
@@ -32,33 +49,34 @@ const History = () => {
               History
             </CCardHeader>
             <CCardBody>
-            <CDataTable
-              items={usersData}
-              fields={fields}
-              hover
-              striped
-              bordered
-              size="sm"
-              itemsPerPage={15}
-              pagination
-              scopedSlots = {{
-                'status':
-                  (item)=>(
-                    <td>
-                      <CBadge color={getBadge(item.status)}>
-                        {item.status}
-                      </CBadge>
-                    </td>
-                  )
-              }}
-            />
+              <CDataTable
+                  items={usersData}
+                  fields={fields}
+                  hover
+                  striped
+                  bordered
+                  size="sm"
+                  itemsPerPage={15}
+                  pagination
+                  scopedSlots={{
+                    'status':
+                        (item) => (
+                            <td>
+                              <CBadge color={getBadge(item.status)}>
+                                {item.status}
+                              </CBadge>
+                            </td>
+                        )
+                  }}
+              />
             </CCardBody>
           </CCard>
         </CCol>
       </CRow>
 
     </>
-  )
+    )
+  }
 }
 
 export default History

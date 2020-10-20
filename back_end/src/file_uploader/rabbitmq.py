@@ -1,5 +1,7 @@
 import pika
 import sys
+from src.file_uploader import logger
+# import logger
 
 
 class RabbitMQManager:
@@ -22,8 +24,10 @@ class RabbitMQManager:
                 retry_delay=rabbitmq_config["connection_retry_s"])
 
             connection = pika.BlockingConnection(params)
-        except pika.exceptions as err:
+            logger.log_rabbitmq_connection_success()
+        except Exception as err:
             error_str = "Error while connecting to rabbitmq : " + str(err)
+            logger.log_rabbitmq_connection_error(error_str)
             sys.exit(error_str)
         else:
             return connection
@@ -32,7 +36,7 @@ class RabbitMQManager:
         try:
             chan = self.connection.channel()
             chan.queue_declare(queue=self.queue_name, durable=True)
-        except pika.exceptions as err:
+        except Exception as err:
             error_str = "Error while creating queue : " + str(err)
             sys.exit(error_str)
         else:
@@ -50,8 +54,8 @@ class RabbitMQManager:
             chan = self.connection.channel()
             chan.basic_publish(exchange='', routing_key=self.queue_name,
                                body=message_body, properties=pika.BasicProperties(delivery_mode=2))
-        except pika.exceptions as err:
-            err_str = "Error while publishing message to queue=" + \
+        except Exception as err:
+            err_str = "Error while publishing message to queue : " + \
                 self.queue_name + " : " + str(err)
             return {"message_published": False,
                     "error": err_str}

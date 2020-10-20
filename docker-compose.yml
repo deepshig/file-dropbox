@@ -24,19 +24,19 @@ services:
     networks:
     - docker_network
 
-  postgresdb-test:
-      image: postgres
-      restart: always
-      ports:
-      - 5433:5432
-      environment:
-        POSTGRES_PASSWORD: postgres
-        POSTGRES_USER: postgres
-        POSTGRES_DB: user_auth_test
-      volumes:
-      - ./postgres-test:/var/lib/postgresql/data
-      networks:
-      - docker_network
+#  postgresdb-test:
+#      image: postgres
+#      restart: always
+#      ports:
+#      - 5433:5432
+#      environment:
+#        POSTGRES_PASSWORD: postgres
+#        POSTGRES_USER: postgres
+#        POSTGRES_DB: user_auth_test
+#      volumes:
+#      - ./postgres-test:/var/lib/postgresql/data
+#      networks:
+#      - docker_network
 
   adminer:
     image: adminer
@@ -49,12 +49,11 @@ services:
     - docker_network
 
   auth:
+    image: diarmuidk/wacc:auth-service
     build: back_end/src/auth
     ports:
       - 4000:4000
     depends_on:
-      - postgresdb
-    links:
       - postgresdb
     environment:
       DATABASE_HOST: postgresdb
@@ -65,6 +64,7 @@ services:
     command: ["./wait-for-it.sh", "postgresdb:5432/auth_db", "--", "python", "./app.py"]
 
   socket-gateway:
+    image: diarmuidk/wacc:socket-gateway
     build: back_end/src/gateway
     ports:
     - 5000:5000
@@ -74,13 +74,15 @@ services:
       IN_CONTAINER_FLAG: 1
     volumes:
       - ./gateway-store:/src/tmp
+      - ./logs:/logs
+    command: [ "python", "./gateway.py" ]
+
 
   file-uploader:
+    image: diarmuidk/wacc:file-uploader
     build: back_end/src/file_uploader
     ports:
       - 3500:3500
-    links:
-      - redis
     networks:
       - docker_network
     environment:
@@ -89,9 +91,8 @@ services:
       - ./uploader-store:/src/tmp
     command: [ "./wait-for-it.sh", "rabbitmq:5672", "--", "python", "./app.py" ]
 
-
-
   front-end:
+    image: diarmuidk/wacc:front-end
     build:
       context: front_end
       dockerfile: Dockerfile.prod
@@ -115,23 +116,23 @@ services:
     networks:
     - docker_network
 
-  etcd:
-    image: 'bitnami/etcd:latest'
-    environment:
-      - ALLOW_NONE_AUTHENTICATION=yes
-      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd:2379
-    volumes:
-      - ./etcd/etcd.conf.yml:/opt/bitnami/etcd/conf/etcd.conf.yml
-    ports:
-      - 2379:2379
-      - 2380:2380
-    networks:
-      - docker_network
+#  etcd:
+#    image: 'bitnami/etcd:latest'
+#    environment:
+#      - ALLOW_NONE_AUTHENTICATION=yes
+#      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd:2379
+#    volumes:
+#      - ./back_end/etcd/etcd.conf.yml:/opt/bitnami/etcd/conf/etcd.conf.yml
+#    ports:
+#      - 2379:2379
+#      - 2380:2380
+#    networks:
+#      - docker_network
+
   fsm:
-    build: ./back_end/fileServiceMngr/app
+    image: diarmuidk/wacc:file-service-manager
+    build: ./back_end/src/fileServiceMngr/app
     container_name: fsm
-    links:
-      - mongodb
     depends_on:
       - mongodb
       - rabbitmq
@@ -179,12 +180,10 @@ services:
   logstash:
     image: docker.elastic.co/logstash/logstash:7.6.2
     container_name: logstash
-    links:
-      - elasticsearch
     volumes:
       - .:/etc/logstash
       - ./logs:/logs
-    command: logstash -f /etc/logstash/back_end/fileServiceMngr/app/logstash.conf
+    command: logstash -f /etc/logstash/back_end/src/fileServiceMngr/app/logstash.conf
     ports:
        - 9600:9600
     depends_on:
