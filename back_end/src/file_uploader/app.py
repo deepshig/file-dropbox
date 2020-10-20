@@ -143,19 +143,12 @@ class UploadFile(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('file', type=datastructures.FileStorage, location='files',
                             help=ERROR_FILE_NOT_PROVIDED)
-        # parser.add_argument('user_id', required=True, type=str,
-        #                     help=ERROR_USER_ID_NOT_PROVIDED)
-        # parser.add_argument('user_name', required=True, type=str,
-        #                     help=ERROR_USER_NAME_NOT_PROVIDED)
-        # parser.add_argument('metadata', required=True,
-        #                     type=str, help=ERROR_FILE_METADATA_NOT_PROVIDED)
-
         parser.add_argument('user_id', required=True, type=str,
-                            help=ERROR_USER_ID_NOT_PROVIDED, location='files')
+                            help=ERROR_USER_ID_NOT_PROVIDED)
         parser.add_argument('user_name', required=True, type=str,
-                            help=ERROR_USER_NAME_NOT_PROVIDED, location='files')
-        parser.add_argument('metadata', required=True, type=str,
-                            help=ERROR_FILE_METADATA_NOT_PROVIDED, location='files')
+                            help=ERROR_USER_NAME_NOT_PROVIDED)
+        parser.add_argument('metadata', required=True,
+                            type=str, help=ERROR_FILE_METADATA_NOT_PROVIDED)
 
         args = parser.parse_args()
         data_file, metadata = args['file'], args['metadata']

@@ -182,9 +182,9 @@ def complete_upload(file_id, username, user_id):
     with open(file_path + file_id, 'rb') as f:
         eprint("sending")
         if INSIDE_CONTAINER:
-            resp = requests.post('http://file-uploader:3500/file/upload', files={'file': f, 'user_id': user_id, 'user_name': username, 'metadata': data})
+            resp = requests.post('http://file-uploader:3500/file/upload', files={'file': f}, data={'user_id': user_id, 'user_name': username, 'metadata': data})
         else:
-            resp = requests.post('http://127.0.0.1:3500/file/upload', files={'file': f, 'user_id': user_id, 'user_name': username, 'metadata': data})
+            resp = requests.post('http://127.0.0.1:3500/file/upload', files={'file': f}, data={'user_id': user_id, 'user_name': username, 'metadata': data})
         # resp.status_code = 201
         eprint(resp.content)
         if resp.status_code == 201:

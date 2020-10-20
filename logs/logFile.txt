@@ -20,3 +20,17 @@
 2020-10-18 15:13:01,772 - INFO - Stack terminated due to ConnectionClosedByBroker: (320) "CONNECTION_FORCED - broker forced connection closure with reason 'shutdown'"
 2020-10-18 15:13:01,776 - INFO - Closing transport socket and unlinking: state=3; <socket.socket fd=12, family=AddressFamily.AF_INET, type=2049, proto=6, laddr=('172.18.0.7', 42964)>
 2020-10-18 15:13:01,788 - ERROR - Unexpected connection close detected: ConnectionClosedByBroker: (320) "CONNECTION_FORCED - broker forced connection closure with reason 'shutdown'"
+2020-10-20 13:54:46,801 - INFO - RabbitMq thread started app starting
+2020-10-20 13:54:46,805 - INFO - Pika version 1.1.0 connecting to ('172.18.0.5', 5672)
+2020-10-20 13:54:46,820 - ERROR - Socket failed to connect: <socket.socket fd=11, family=AddressFamily.AF_INET, type=2049, proto=6, laddr=('172.18.0.11', 49866)>; error=111 (Connection refused)
+2020-10-20 13:54:46,823 - ERROR - TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.18.0.5', 5672))
+2020-10-20 13:54:46,822 - INFO -  * Running on http://0.0.0.0:4500/ (Press CTRL+C to quit)
+2020-10-20 13:54:46,834 - ERROR - AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')
+2020-10-20 13:54:46,853 - ERROR - AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None.
+2020-10-20 13:54:46,855 - ERROR - AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None
+2020-10-20 13:54:46,857 - ERROR - Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None
+2020-10-20 13:54:46,870 - ERROR - Error in _create_connection().
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/site-packages/pika/adapters/blocking_connection.py", line 450, in _create_connection
+    raise self._reap_last_connection_workflow_error(error)
+pika.exceptions.AMQPConnectionError
