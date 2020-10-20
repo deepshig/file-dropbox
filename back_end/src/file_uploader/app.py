@@ -4,18 +4,18 @@ from flask_cors import CORS
 from werkzeug import datastructures, utils
 import os
 import pathlib
-import logging
-import logging.handlers
 from src.file_uploader import file_uploader_service
 from src.file_uploader import file_cache
 from src.file_uploader import index_cache
 from src.file_uploader import rabbitmq
 from src.file_uploader import redis_driver
+from src.file_uploader import logger
 # import file_uploader_service
 # import file_cache
 # import index_cache
 # import rabbitmq
 # import redis_driver
+# import logger
 
 INSIDE_CONTAINER = os.environ.get('IN_CONTAINER_FLAG', False)
 
@@ -129,23 +129,9 @@ def init(index_cache_config, file_cache_config, file_rabbitmq_config, user_rabbi
     return svc
 
 
-def setup_logger(log_file_path):
-    logger = logging.getLogger()
-    file_handler = logging.handlers.RotatingFileHandler(
-        filename=log_file_path, maxBytes=10240, backupCount=5)
-
-    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-
-    file_handler.setFormatter(formatter)
-    logger.addHandler(file_handler)
-
-    logger.setLevel(logging.INFO)
-    return
-
-
 class Ping(Resource):
     def get(self):
-        logging.debug("[File Uploader][Ping] Received Ping")
+        logger.log_ping()
         return output_json({"ping": "pong"}, 200)
 
 
@@ -175,12 +161,11 @@ class UploadFile(Resource):
         data_file, metadata = args['file'], args['metadata']
         user_id, user_name = args['user_id'], args['user_name']
 
-        logging.info("[File Uploader][FileUploadHandler] Received Request from user_id = " +
-                     user_id + " and user_name = " + user_name)
+        logger.log_upload_req_received(user_id, user_name)
 
         if data_file is None or data_file.filename == '':
-            logging.error("[File Uploader][FileUploadHandler] Bad Request : File not provided from user_id = " +
-                          user_id + " and user_name = " + user_name)
+            logger.log_upload_bad_request(
+                user_id, user_name, ERROR_FILE_NOT_PROVIDED)
             return output_json({"msg": ERROR_FILE_NOT_PROVIDED}, 400)
 
         file_name = utils.secure_filename(data_file.filename)
@@ -190,19 +175,18 @@ class UploadFile(Resource):
         result = self.svc.send_file_for_upload(
             file_path, user_id, user_name, metadata)
         if result["success"]:
-            logging.info("[File Uploader][FileUploadHandler] 201 Created : Success for user_id = " +
-                         user_id + " and user_name = " + user_name)
+            logger.log_upload_success(user_id, user_name)
             resp = output_json({"msg": index_cache.STATUS_FILE_CACHED,
                                 "file_id": result["file_name"]}, 201)
 
         elif result["error"] == file_cache.ERROR_EMPTY_FILE or result["error"] == file_cache.ERROR_FILE_NOT_FOUND:
-            logging.error("[File Uploader][FileUploadHandler] Bad Request : File not provided from user_id = " +
-                          user_id + " and user_name = " + user_name + " : " + result["error_msg"])
+            logger.log_upload_bad_request(
+                user_id, user_name, result["error_msg"])
             resp = output_json({"msg": result["error_msg"]}, 400)
 
         else:
-            logging.error("[File Uploader][FileUploadHandler] Internal Server Error : File not provided from user_id = " +
-                          user_id + " and user_name = " + user_name + " : error =" + result["error_msg"])
+            logger.log_upload_internal_server_error(
+                user_id, user_name, result["error_msg"])
             resp = output_json({"msg": ERROR_INTERNAL_SERVER}, 500)
 
         os.remove(file_path)
@@ -229,42 +213,42 @@ class UpdateFileStatus(Resource):
         file_status, file_name = args["file_status"], args["file_name"]
         user_id, user_name = args["user_id"], args["user_name"]
 
-        logging.info("[File Uploader][UpdateFileStatusHandler] Received Request for user_id = " +
-                     user_id + " and user_name = " + user_name + " : file_id = " + file_name + " file_status = " + file_status)
+        logger.log_status_update_req_received(
+            user_id, user_name, file_name, file_status)
 
         if file_status not in accepted_file_status:
-            logging.error("[File Uploader][UpdateFileStatusHandler] Bad Request : Invalid File Status : for user_id = " +
-                          user_id + " and user_name = " + user_name + " : file_id = " + file_name + " file_status = " + file_status)
+            logger.log_status_update_bad_request(
+                user_id, user_name, file_name, file_status, ERROR_INVALID_FILE_STATUS)
             return output_json({"msg": ERROR_INVALID_FILE_STATUS}, 400)
 
         if file_status == accepted_file_status[0]:
             result = svc.delete_uploaded_file(file_name, user_id, user_name)
             if not result["success"]:
                 if result["error"] == redis_driver.ERROR_KEY_NOT_FOUND:
-                    logging.error("[File Uploader][UpdateFileStatusHandler] Bad Request : File does not exist : for user_id = " +
-                                  user_id + " and user_name = " + user_name + " : file_id = " + file_name + " file_status = " + file_status)
+                    logger.log_status_update_bad_request(
+                        user_id, user_name, file_name, file_status, ERROR_FILE_DOES_NOT_EXIST)
                     return output_json(
                         {"msg": ERROR_FILE_DOES_NOT_EXIST}, 400)
                 else:
-                    logging.error("[File Uploader][UpdateFileStatusHandler] Internal Server Error : for user_id = " +
-                                  user_id + " and user_name = " + user_name + " : file_id = " + file_name + " file_status = " + file_status + " : error = " + result["error_msg"])
+                    logger.log_status_update_internal_server_error(
+                        user_id, user_name, file_name, file_status, result["error_msg"])
                     return output_json({"msg": ERROR_INTERNAL_SERVER}, 500)
 
         elif file_status == accepted_file_status[1]:
             result = svc.handle_failed_upload(file_name, user_id, user_name)
             if not result["success"]:
                 if result["error"] == index_cache.ERROR_MAX_ATTEMPTS_REACHED:
-                    logging.warn("[File Uploader][UpdateFileStatusHandler] File upload retried maximum number of times : for user_id = " +
-                                 user_id + " and user_name = " + user_name + " : file_id = " + file_name + " file_status = " + file_status)
+                    logger.log_status_update_max_retries(
+                        user_id, user_name, file_name, file_status)
                     return output_json(
                         {"msg": ERROR_MAX_ATTEMPTS_FOR_FILE_UPLOAD_REACHED}, 200)
                 else:
-                    logging.error("[File Uploader][UpdateFileStatusHandler] Internal Server Error : for user_id = " +
-                                  user_id + " and user_name = " + user_name + " : file_id = " + file_name + " file_status = " + file_status + " : error = " + result["error"])
+                    logger.log_status_update_internal_server_error(
+                        user_id, user_name, file_name, file_status, result["error"])
                     return output_json({"msg": ERROR_INTERNAL_SERVER}, 500)
 
-        logging.info("[File Uploader][UpdateFileStatusHandler] Success for user_id = " +
-                     user_id + " and user_name = " + user_name + " : file_id = " + file_name + " file_status = " + file_status)
+        logger.log_status_update_success(
+            user_id, user_name, file_name, file_status)
         return output_json({"msg": "success"}, 200)
 
 
@@ -278,8 +262,8 @@ api.add_resource(UpdateFileStatus, '/file/update/status',
                  resource_class_kwargs={"svc": svc})
 
 if __name__ == '__main__':
-    setup_logger(LOG_FILE_PATH)
+    logger.setup(LOG_FILE_PATH)
 
-    logging.info("[File Uploader] Starting server")
+    logger.log_server_start()
     app.run(debug=True, use_debugger=False, use_reloader=False,
             passthrough_errors=True, host='0.0.0.0', port=3500)
