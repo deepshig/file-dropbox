@@ -29,6 +29,10 @@ class MongoDatabase(object):
      def find(self, clientId, cursor=False):  # find all from db
          try:
                found = self.db["fileInfo"].find({ "clientId": str(clientId) })
+               logging.info("Client Id")
+               logging.info(clientId)
+               logging.info("Client history response from MongoDb")
+               logging.info(found)
                found = list(found)
                for i in range(len(found)):  # to serialize object id need to convert string
                     if "_id" in found[i]:

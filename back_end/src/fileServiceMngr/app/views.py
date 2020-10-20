@@ -20,6 +20,8 @@ serv = service.service()
 def getClientHistory(client_id) -> str:
     logging.info('ClientHistory API')
     try:
+        logging.info("Client Id")
+        logging.info(client_id)
         clientHstry = serv.mongo_client.find(client_id)
         logging.info("MongoDb - Got client History")
         return jsonify(clientHstry)
