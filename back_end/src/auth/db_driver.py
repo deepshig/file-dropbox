@@ -1,6 +1,8 @@
 import sys
 import psycopg2
 from psycopg2 import Error
+from src.auth import logger
+# import logger
 
 
 class DBDriver:
@@ -14,9 +16,12 @@ class DBDriver:
                                                host=db_config["host"],
                                                port=db_config["port"],
                                                database=db_config["db_name"])
+            logger.log_db_connection_success()
+
         except psycopg2.Error as err:
             error_str = "Error while connecing to Authentication DB : " + \
                 str(err)
+            logger.log_db_connection_error(error_str)
             sys.exit(error_str)
 
     def shutdown(self):
