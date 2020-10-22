@@ -48,18 +48,24 @@ class Login extends Component {
         UID: this.state.UID,
       })
     }).then((response) => {
-        if(response.status===400){
-            store.dispatch(setLoginfail());
-            return "";
+            if (response.ok) {
+                return response.json()
+            } else {
+                throw new Error("Login")
+            }
         }
-        else {
+    ).then((response) => {
+        console.log(jwt(response['jwt'])['user_id']);
+        store.dispatch(setLogin(this.state.UID, jwt(response['jwt'])['access_token'], jwt(response['jwt'])['user_id']));
+        store.dispatch(createSocket())
+    }).catch((error) => {
+        store.dispatch(setLoginfail());
+        console.log(error)
+    })
 
-            response.json().then((response) => {console.log(jwt(response['jwt'])['user_id']); store.dispatch(setLogin(this.state.UID, jwt(response['jwt'])['access_token'], jwt(response['jwt'])['user_id'])); store.dispatch(createSocket())})
-            // response.json().then((response) => {store.dispatch(console.log(jwt(response['jwt'])))})
-        }
-        })
         // .then((response) => console.log(jwt(response['jwt'])['access_token'])) // TODO: pass token
         .then(this.props.history.push('/login'))
+
   }
   render()
   {

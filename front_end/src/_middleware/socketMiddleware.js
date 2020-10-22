@@ -20,6 +20,10 @@ export default function socketMiddleware(newSock) {
                 socket.on(action.event, action.payload);
                 break;
             }
+            case socketConstants.SOCKET_MESSAGE_STOP: {
+                socket.off(action.event);
+                break;
+            }
             case socketConstants.SOCKET_DISCONNECT: {
                 socket.disconnect();
                 break;

@@ -70,6 +70,12 @@ export const storeSocketMessage = (message) => {
         payload: message,
     }
 };
+export const stopSocketMessage = (ev) => {
+    return{
+        type: socketConstants.SOCKET_MESSAGE_STOP,
+        event: ev
+    }
+};
 export const uploadSocketFile = (file) => {
     return{
         type: socketConstants.SOCKET_UPLOAD,

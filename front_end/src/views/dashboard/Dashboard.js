@@ -12,7 +12,13 @@ import {
 
 } from '@coreui/react';
 import CIcon from '@coreui/icons-react'
-import {sendSocketMessage, receiveSocketMessage, uploadSocketFile} from "../../_actions";
+import {
+    sendSocketMessage,
+    receiveSocketMessage,
+    uploadSocketFile,
+    stopSocketMessage,
+    storeSocketMessage
+} from "../../_actions";
 
 
 class Dashboard extends Component {
@@ -51,6 +57,7 @@ class Dashboard extends Component {
     }
     handleListen = () => {
         // store.dispatch(receiveSocketMessage("test", {'data':'none'}));
+        store.dispatch(stopSocketMessage("admin"));
         store.dispatch(receiveSocketMessage("admin", {'data':'none'}));
 
     };

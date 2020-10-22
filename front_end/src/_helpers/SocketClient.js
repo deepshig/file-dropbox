@@ -45,6 +45,8 @@ export default class socketAPI {
                 return resolve();
             });
 
+        }).catch(e =>{
+            console.log(e)
         });
     }
 
@@ -54,6 +56,8 @@ export default class socketAPI {
                 this.socket = null;
                 resolve();
             });
+        }).catch(e =>{
+            console.log(e)
         });
     }
 
@@ -71,6 +75,8 @@ export default class socketAPI {
 
                 return resolve();
             });
+        }).catch(e =>{
+            console.log(e)
         });
     }
 
@@ -83,6 +89,23 @@ export default class socketAPI {
                 store.dispatch(storeSocketMessage(response['data'])); console.log(response['data'])});
                 // console.log(response['data'])});
             return resolve();
+        }).catch(e =>{
+            console.log(e)
+        });
+    }
+
+    off(event) {
+        // No promise is needed here, but we're expecting one in the middleware.
+        return new Promise((resolve, reject) => {
+            if (!this.socket) return reject('No socket connection.');
+
+            console.log("Stopping");
+
+            this.socket.off(event);
+            // console.log(response['data'])});
+            return resolve();
+        }).catch(e =>{
+            console.log(e)
         });
     }
 
@@ -101,7 +124,6 @@ export default class socketAPI {
         }
         if (this.done) {
             this.socket.on('complete-upload', response => {
-                console.log(response['data']);
                 if (response['data'] === true){
                     store.dispatch(successSocketFile());
                 }
@@ -147,6 +169,8 @@ export default class socketAPI {
             });
             this.socket.emit('start-transfer', file.name, file.size);
 
+        }).catch(e =>{
+            console.log(e)
         });
     }
 
