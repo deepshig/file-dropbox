@@ -24,7 +24,8 @@
     "connection_timeout_s": 1200,
     "idle_connection_timeout_s": 1800,
     "connection_retry_s": 15,
-    "connection_retry_attempts": 5
+    "connection_retry_attempts": 5,
+
   },
   "index_cache_config": {
     "host": "redis",

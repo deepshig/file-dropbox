@@ -85,7 +85,7 @@ class Client(threading.Thread):
 
 
 if __name__ == "__main__":
-    numClients = 3
+    numClients = 5
     host = '127.0.0.1'
     chunk_size = 64 * 1024
     frequency = [1, 3]
