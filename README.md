@@ -130,7 +130,7 @@ The project uses the following technological stack:
 * We can view PostgreSQL using Adminer Dashboard on http://localhost:8080/, where we can login with `[System/Server/Username/Password/Database]` as`[PostgreSQl/postgresdb/postgres/postgres/user_auth]`
 * We can access the redis on localhost port `6379` using `redis-cli -p 6379`. We can run redis monitor using the command `redis-cli -p 6379 monitor`
 * We can access application logs in Kibana using http://localhost:5601/
-* We have set up a portainer instance to be able to monitor the high level status of all the containers. We can access the Web UI for the same on http://localhost:10001/ while the portainer container is running.
+* We have set up a portainer instance to be able to monitor the high level status of all the containers. We can access the Web UI for the same on http://localhost:10001/ while the portainer container is running. Use `[Username/Password]` as `[admin/admin123]`.
 
 
 ## Changelog
