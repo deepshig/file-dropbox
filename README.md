@@ -106,15 +106,16 @@ Here, we use GridFS as permanent File Storage and MongoDB for storing the file i
 
 The project uses the following technological stack:
 
-* Python 3.8
-* Redis
-* RabbitMQ
-* PostgreSQL
-* GridFS
-* MongoDB
-* Kibana
-* Docker
-* Kubernetes
+* [Python 3.8](https://docs.python.org/3/whatsnew/3.8.html) : We chose Python as our working language because it provides easy to use and readily available libraries for all the other dependencies, with detailed documentation.
+* [Redis](https://redis.io/) : We chose Redis to serve as in-memory cache store for caching file, as well as its associated indexing details.
+* [RabbitMQ](https://www.rabbitmq.com/) : We need to have asynchronous communication between file uploader service and file service manager once the file is cached. Also, file uplaoder service needs to notify the socket gateway about file status. We chose event queuing mechanism provided by RabbitmQ for this. We have used management plugin because it provides web UI for monitoring.
+* [PostgreSQL](https://www.postgresql.org/docs/12/index.html) : We used PostgreSQL to maintain the user authentication data in authentication service. It is a relational database with indexing over `user_id` and `user_name`. Thus, we chose PostgreSQL.
+* [GridFS](https://docs.mongodb.com/manual/core/gridfs/) : We chose this as a permananent storage for our files. It divides the file into chunks, and stores each of them separately. This gives us better scalability when larger files is considered.
+* [MongoDB](https://www.mongodb.com/) : MongoDB is used as a file indexing store in File Service Manager. We chose this because it provides an option for high availability.
+* [Elastic Search](https://www.elastic.co/) : We use this to dump application logs and display them on a Kibana dashboard.
+* [Kibana](https://www.elastic.co/kibana) : We use Kibana as a monitoring engine for application logs.
+* [Docker](https://www.docker.com/) : In order to maintain the uniformity of deployment, we use docker as deployment engine.
+* [Kubernetes](https://kubernetes.io/) : We use Kubernetes to deploy the application on [Google Cloud Project](https://cloud.google.com/)
 
 ## Running the program
 
