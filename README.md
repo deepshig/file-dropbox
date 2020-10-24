@@ -144,15 +144,3 @@ The project uses the following technological stack:
 * Next start the following services: adminer, auth, elastic-search, file-uploader, front-end, fsm, kibana, socket-gateway using:
 `kubectl apply -f .\adminer-deployment.yaml,.\adminer-service.yaml,.\auth-deployment.yaml,.\auth-service.yaml,.\elasticsearch-deployment.yaml,.\elasticsearch-service.yaml,.\file-uploader-deployment.yaml,.\file-uploader-service.yaml,.\front-end-deployment.yaml,.\front-end-service.yaml,.\fsm-deployment.yaml,.\fsm-service.yaml,.\kibana-deployment.yaml,.\kibana-service.yaml,.\socket-gateway-deployment.yaml,.\socket-gateway-service.yaml`
 
-
-## Changelog
-React App currently getting a JWT token generated from a static endpoint working only for 'test' user
-
-https://zgadzaj.com/development/docker/docker-compose/containers/rabbitmq
-
-```bash
-use kompose convert
-cp files folder
-cd folder
-kubectl apply -R -f .
-```
