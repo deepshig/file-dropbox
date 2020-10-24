@@ -235,8 +235,13 @@ class RBMQThread(threading.Thread):
         resp = self.queue_manager.receive_msg(ch, method, props, body)
         print(resp)
         my_json = resp.decode('utf8').replace("'", '"')
-        logging.info(my_json)
-        socket.emit('admin', {'data': my_json}) # TODO: recieve then process, then ack
+        data = json.loads(my_json)
+        s = json.dumps(data, indent=4, sort_keys=True)
+        d = json.loads(s)
+        print(d)
+        print(type(d))
+        logging.info(d)
+        socket.emit('admin', {'data': d}) # TODO: recieve then process, then ack
         # send_message('admin', resp)
 
 

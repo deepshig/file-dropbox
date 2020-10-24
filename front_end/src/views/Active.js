@@ -23,7 +23,7 @@ const getBadge = status => {
   }
 }
 const fields = ['name','registered', 'role', 'status']
-const fields1 = ['id','file_name', 'status', 'user_id', "user_name", "event_timestamp"]
+const fields1 = ["user_name", 'user_id', 'id','file_name', 'status', "event_timestamp"]
 
 
 class Active extends Component {
@@ -43,8 +43,9 @@ class Active extends Component {
     startSubscribe(){
         this.unsubscribe = store.subscribe(()=>{
             const payload = store.getState().socketReducer.payload;
-            if (payload !== this.state.payload && payload !== ""){
-                this._isMounted && this.setState({data: this.state.data.concat(payload)});
+            if (payload !== this.state.payload && (payload !== "" || payload !== undefined)){
+                console.log(JSON.parse(JSON.stringify(payload)));
+                this._isMounted && this.setState({data: this.state.data.concat(JSON.parse(JSON.stringify(payload)))});
             }
         });
     }
@@ -64,119 +65,151 @@ class Active extends Component {
         return (
             <>
                 {this.state.payload}
+
                 <CRow>
-                    <CCol xs="12" lg="6">
+                    <CCol>
                         <CCard>
                             <CCardHeader>
-                                Node 1
+                                Active Uploads
                             </CCardHeader>
                             <CCardBody>
                                 <CDataTable
                                     items={this.state.data}
                                     fields={fields1}
-                                    itemsPerPage={5}
+                                    hover
+                                    striped
+                                    bordered
+                                    size="sm"
+                                    itemsPerPage={10}
                                     pagination
-                                    scopedSlots={{
+                                    scopedSlots = {{
                                         'status':
-                                            (item) => (
+                                            (item)=>(
                                                 <td>
                                                     <CBadge color={getBadge(item.status)}>
                                                         {item.status}
                                                     </CBadge>
                                                 </td>
                                             )
-
-                                    }}
-                                />
-                            </CCardBody>
-                        </CCard>
-                    </CCol>
-
-                    <CCol xs="12" lg="6">
-                        <CCard>
-                            <CCardHeader>
-                                Node 2
-                            </CCardHeader>
-                            <CCardBody>
-                                <CDataTable
-                                    items={usersData}
-                                    fields={fields}
-                                    itemsPerPage={5}
-                                    pagination
-                                    scopedSlots={{
-                                        'status':
-                                            (item) => (
-                                                <td>
-                                                    <CBadge color={getBadge(item.status)}>
-                                                        {item.status}
-                                                    </CBadge>
-                                                </td>
-                                            )
-
                                     }}
                                 />
                             </CCardBody>
                         </CCard>
                     </CCol>
                 </CRow>
+                {/*<CRow>*/}
+                {/*    <CCol xs="12" lg="6">*/}
+                {/*        <CCard>*/}
+                {/*            <CCardHeader>*/}
+                {/*                Node 1*/}
+                {/*            </CCardHeader>*/}
+                {/*            <CCardBody>*/}
+                {/*                <CDataTable*/}
+                {/*                    items={this.state.data}*/}
+                {/*                    fields={fields1}*/}
+                {/*                    itemsPerPage={5}*/}
+                {/*                    pagination*/}
+                {/*                    scopedSlots={{*/}
+                {/*                        'status':*/}
+                {/*                            (item) => (*/}
+                {/*                                <td>*/}
+                {/*                                    <CBadge color={getBadge(item.status)}>*/}
+                {/*                                        {item.status}*/}
+                {/*                                    </CBadge>*/}
+                {/*                                </td>*/}
+                {/*                            )*/}
 
-                <CRow>
+                {/*                    }}*/}
+                {/*                />*/}
+                {/*            </CCardBody>*/}
+                {/*        </CCard>*/}
+                {/*    </CCol>*/}
 
-                    <CCol xs="12" lg="6">
-                        <CCard>
-                            <CCardHeader>
-                                Node 3
-                            </CCardHeader>
-                            <CCardBody>
-                                <CDataTable
-                                    items={usersData}
-                                    fields={fields}
-                                    itemsPerPage={5}
-                                    pagination
-                                    scopedSlots={{
-                                        'status':
-                                            (item) => (
-                                                <td>
-                                                    <CBadge color={getBadge(item.status)}>
-                                                        {item.status}
-                                                    </CBadge>
-                                                </td>
-                                            )
+                {/*    <CCol xs="12" lg="6">*/}
+                {/*        <CCard>*/}
+                {/*            <CCardHeader>*/}
+                {/*                Node 2*/}
+                {/*            </CCardHeader>*/}
+                {/*            <CCardBody>*/}
+                {/*                <CDataTable*/}
+                {/*                    items={usersData}*/}
+                {/*                    fields={fields}*/}
+                {/*                    itemsPerPage={5}*/}
+                {/*                    pagination*/}
+                {/*                    scopedSlots={{*/}
+                {/*                        'status':*/}
+                {/*                            (item) => (*/}
+                {/*                                <td>*/}
+                {/*                                    <CBadge color={getBadge(item.status)}>*/}
+                {/*                                        {item.status}*/}
+                {/*                                    </CBadge>*/}
+                {/*                                </td>*/}
+                {/*                            )*/}
 
-                                    }}
-                                />
-                            </CCardBody>
-                        </CCard>
-                    </CCol>
+                {/*                    }}*/}
+                {/*                />*/}
+                {/*            </CCardBody>*/}
+                {/*        </CCard>*/}
+                {/*    </CCol>*/}
+                {/*</CRow>*/}
 
-                    <CCol xs="12" lg="6">
-                        <CCard>
-                            <CCardHeader>
-                                Node 4
-                            </CCardHeader>
-                            <CCardBody>
-                                <CDataTable
-                                    items={usersData}
-                                    fields={fields}
-                                    itemsPerPage={5}
-                                    pagination
-                                    scopedSlots={{
-                                        'status':
-                                            (item) => (
-                                                <td>
-                                                    <CBadge color={getBadge(item.status)}>
-                                                        {item.status}
-                                                    </CBadge>
-                                                </td>
-                                            )
+                {/*<CRow>*/}
 
-                                    }}
-                                />
-                            </CCardBody>
-                        </CCard>
-                    </CCol>
+                {/*    <CCol xs="12" lg="6">*/}
+                {/*        <CCard>*/}
+                {/*            <CCardHeader>*/}
+                {/*                Node 3*/}
+                {/*            </CCardHeader>*/}
+                {/*            <CCardBody>*/}
+                {/*                <CDataTable*/}
+                {/*                    items={usersData}*/}
+                {/*                    fields={fields}*/}
+                {/*                    itemsPerPage={5}*/}
+                {/*                    pagination*/}
+                {/*                    scopedSlots={{*/}
+                {/*                        'status':*/}
+                {/*                            (item) => (*/}
+                {/*                                <td>*/}
+                {/*                                    <CBadge color={getBadge(item.status)}>*/}
+                {/*                                        {item.status}*/}
+                {/*                                    </CBadge>*/}
+                {/*                                </td>*/}
+                {/*                            )*/}
 
-                </CRow>
+                {/*                    }}*/}
+                {/*                />*/}
+                {/*            </CCardBody>*/}
+                {/*        </CCard>*/}
+                {/*    </CCol>*/}
+
+                {/*    <CCol xs="12" lg="6">*/}
+                {/*        <CCard>*/}
+                {/*            <CCardHeader>*/}
+                {/*                Node 4*/}
+                {/*            </CCardHeader>*/}
+                {/*            <CCardBody>*/}
+                {/*                <CDataTable*/}
+                {/*                    items={usersData}*/}
+                {/*                    fields={fields}*/}
+                {/*                    itemsPerPage={5}*/}
+                {/*                    pagination*/}
+                {/*                    scopedSlots={{*/}
+                {/*                        'status':*/}
+                {/*                            (item) => (*/}
+                {/*                                <td>*/}
+                {/*                                    <CBadge color={getBadge(item.status)}>*/}
+                {/*                                        {item.status}*/}
+                {/*                                    </CBadge>*/}
+                {/*                                </td>*/}
+                {/*                            )*/}
+
+                {/*                    }}*/}
+                {/*                />*/}
+                {/*            </CCardBody>*/}
+                {/*        </CCard>*/}
+                {/*    </CCol>*/}
+
+                {/*</CRow>*/}
 
             </>
         )
