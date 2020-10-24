@@ -125,10 +125,17 @@ class Ping(Resource):
 
 class UploadFile(Resource):
     def __init__(self, file_cacher, file_queue_manager, user_queue_manager, admin_queue_manager, index_cacher):
-        self.svc = file_uploader_service.FileUploader(
-            file_cacher, file_queue_manager, user_queue_manager, admin_queue_manager, index_cacher)
+        self.file_cacher = file_cacher
+        self.file_queue_manager = file_queue_manager
+        self.user_queue_manager = user_queue_manager
+        self.admin_queue_manager = admin_queue_manager
+        self.index_cacher = index_cacher
+        return
 
     def post(self):
+        self.svc = file_uploader_service.FileUploader(
+            self.file_cacher, self.file_queue_manager, self.user_queue_manager, self.admin_queue_manager, self.index_cacher)
+
         parser = reqparse.RequestParser()
         parser.add_argument('file', type=datastructures.FileStorage, location='files',
                             help=ERROR_FILE_NOT_PROVIDED)
@@ -177,10 +184,17 @@ class UploadFile(Resource):
 
 class UpdateFileStatus(Resource):
     def __init__(self, file_cacher, file_queue_manager, user_queue_manager, admin_queue_manager, index_cacher):
-        self.svc = file_uploader_service.FileUploader(
-            file_cacher, file_queue_manager, user_queue_manager, admin_queue_manager, index_cacher)
+        self.file_cacher = file_cacher
+        self.file_queue_manager = file_queue_manager
+        self.user_queue_manager = user_queue_manager
+        self.admin_queue_manager = admin_queue_manager
+        self.index_cacher = index_cacher
+        return
 
     def put(self):
+        self.svc = file_uploader_service.FileUploader(
+            self.file_cacher, self.file_queue_manager, self.user_queue_manager, self.admin_queue_manager, self.index_cacher)
+
         parser = reqparse.RequestParser()
         parser.add_argument('file_status', required=True, type=str,
                             help=ERROR_FILE_STATUS_NOT_PROVIDED)
