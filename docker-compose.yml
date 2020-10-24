@@ -130,7 +130,7 @@ services:
 #      - docker_network
 
   fsm:
-    image: diarmuidk/wacc:file-service-manager
+    image: diarmuidk/wacc:fsm
     build: ./back_end/src/fileServiceMngr/app
     container_name: fsm
     depends_on:

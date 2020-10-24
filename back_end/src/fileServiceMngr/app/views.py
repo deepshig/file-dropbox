@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, make_response
+from flask import Flask, request, jsonify, make_response, Response
 import json
 import service
 import os
@@ -23,8 +23,9 @@ def getClientHistory(client_id) -> str:
         logging.info('Main-Client History')
         logging.info(clientHstry)
         logging.info(type(clientHstry))
-        logging.info("MongoDb - Got client History")
-        return make_response(jsonify(clientHstry))
+        logging.info("MongoDb - Got client Historya")
+
+        return Response(json.dumps(clientHstry,indent=4, sort_keys=True, default=str))
     except Exception as e:
         logging.error("MongoDb - Got error on fetching data from MongoDb")
     return False

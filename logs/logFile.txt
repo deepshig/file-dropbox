@@ -1,4 +1,0 @@
-2020-10-24 01:28:00,995 - INFO - [{'_id': '5f93831cb299057de2e3e57f', 'clientName': ['Jon Doe'], 'clientId': ['88'], 'activity': ['1'], 'fileId': ['12'], 'fileName': 'weights/questions.pdf'}]
-2020-10-24 01:28:01,029 - INFO - MongoDB - Got Client History
-2020-10-24 01:28:01,033 - INFO - MongoDb - Got client History
-2020-10-24 01:28:01,038 - INFO - 172.18.0.1 - - [24/Oct/2020 01:28:01] "[37mGET /client/history/88 HTTP/1.1[0m" 200 -
