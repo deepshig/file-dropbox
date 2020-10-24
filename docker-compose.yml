@@ -191,6 +191,17 @@ services:
     networks:
     - docker_network
 
+  portainer:
+    image: portainer/portainer
+    container_name: portainer
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./portainer-data:/data
+    # Enable you to access potainers web interface from your host machine
+    # using http://localhost:10001
+    ports:
+      - "10001:9000"
+
 networks:
   docker_network:
     driver: bridge
