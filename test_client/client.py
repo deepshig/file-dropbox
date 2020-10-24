@@ -11,6 +11,7 @@ import socketio
 
 global host
 global chunk_size
+global frequency
 
 
 class Client(threading.Thread):
@@ -78,15 +79,16 @@ class Client(threading.Thread):
             print(str(self.id) + ": Connected")
             while True:
                 self.socket.emit('start-transfer', data=(self.f.name, self.f.tell()))
-                time.sleep(random.randint(3, 6))
+                time.sleep(random.randint(frequency[0], frequency[1]))
         else:
             print("Error with Login")
 
 
 if __name__ == "__main__":
-    numClients = 3
+    numClients = 2
     host = '127.0.0.1'
     chunk_size = 64 * 1024
+    frequency = [3, 6]
 
     # print(jwt.decode(resp['jwt'], verify=False))
 

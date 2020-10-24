@@ -179,8 +179,11 @@ def complete_upload(file_id, username, user_id):
         # data = pickle.dump()
         eprint(data)
         eprint(type(data))
+    print(os.path.isfile(file_path + file_id))
+
     with open(file_path + file_id, 'rb') as f:
         eprint("sending")
+        print(f.read(4))
         if INSIDE_CONTAINER:
             resp = requests.post('http://file-uploader:3500/file/upload', files={'file': f}, data={'user_id': user_id, 'user_name': username, 'metadata': data})
         else:
@@ -188,9 +191,6 @@ def complete_upload(file_id, username, user_id):
         # resp.status_code = 201
         eprint(resp.content)
         if resp.status_code == 201:
-        # status_code = 201
-        # print(status_code)
-        # if status_code == 201:
             emit('complete-upload', {'data': True})
         else:
             eprint(resp)
