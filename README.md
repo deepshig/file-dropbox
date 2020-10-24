@@ -119,6 +119,18 @@ The project uses the following technological stack:
 
 ## Running the program
 
+* To run the tests : `cd back_end/tests && py.test -v && cd ../../`
+* To run the application locally : `docker-compose up`
+* To run in detached mode : `docker-compose up -d`
+* To see the logs of a specific, container, first find the container name by running `docker ps -a`, then run : `docker container logs <container_name>`
+* To clean up : `docker-compose down -v --rmi all --remove-orphans`
+* We can run separate container by : `docker-compose up <container_name>` where `container_name` is one of the service names from the docker-compose.yml.
+* We can access the web-client on http://localhost:3000. Here, we can create a user, login, logout, and upload file.
+* While the containers are running, we can monitor the queue on the dashboard http://localhost:15672/ with `[Username/Password]` as `[guest/guest]`.
+* We can view PostgreSQL using Adminer Dashboard on http://localhost:8080/, where we can login with `[System/Server/Username/Password/Database]` as`[PostgreSQl/postgresdb/postgres/postgres/user_auth]`
+* We can access the redis on localhost port `6379` using `redis-cli -p 6379`. We can run redis monitor using the command `redis-cli -p 6379 monitor`
+* We can access application logs in Kibana using http://localhost:5601/
+* We have set up a portainer instance to be able to monitor the high level status of all the containers. We can access the Web UI for the same on http://localhost:10001/ while the portainer container is running.
 
 
 ## Changelog
