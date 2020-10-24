@@ -44,7 +44,7 @@ def log_upload_bad_request(user_id, user_name, error_msg):
 
 
 def log_upload_internal_server_error(user_id, user_name, error_msg):
-    logging.error("[File Uploader][FileUploadHandler] 500 Internal Server Error : File not provided from user_id = " +
+    logging.error("[File Uploader][FileUploadHandler] 500 Internal Server Error : from user_id = " +
                   user_id + " and user_name = " + user_name + " : error =" + error_msg)
     return
 
