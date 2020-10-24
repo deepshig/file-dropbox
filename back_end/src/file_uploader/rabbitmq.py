@@ -21,7 +21,8 @@ class RabbitMQManager:
                 credentials=credentials,
                 heartbeat=rabbitmq_config["connection_timeout_s"],
                 blocked_connection_timeout=rabbitmq_config["idle_connection_timeout_s"],
-                retry_delay=rabbitmq_config["connection_retry_s"])
+                retry_delay=rabbitmq_config["connection_retry_s"],
+                connection_attempts=rabbitmq_config["connection_retry_attempts"])
 
             connection = pika.BlockingConnection(params)
             logger.log_rabbitmq_connection_success()

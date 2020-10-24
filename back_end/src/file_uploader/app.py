@@ -62,7 +62,8 @@ if INSIDE_CONTAINER:
                             "port": "5672",
                             "connection_timeout_s": 1200,
                             "idle_connection_timeout_s": 1800,
-                            "connection_retry_s": 5,
+                            "connection_retry_s": 15,
+                            "connection_retry_attempts": 5,
                             "queue_name": "file_uploads_queue"}
 
     user_rabbitmq_config = {"user": "guest",
@@ -71,7 +72,8 @@ if INSIDE_CONTAINER:
                             "port": "5672",
                             "connection_timeout_s": 1200,
                             "idle_connection_timeout_s": 1800,
-                            "connection_retry_s": 5,
+                            "connection_retry_s": 15,
+                            "connection_retry_attempts": 5,
                             "queue_name": "user_notification_queue"}
 
     admin_rabbitmq_config = {"user": "guest",
@@ -80,7 +82,8 @@ if INSIDE_CONTAINER:
                              "port": "5672",
                              "connection_timeout_s": 1200,
                              "idle_connection_timeout_s": 1800,
-                             "connection_retry_s": 5,
+                             "connection_retry_s": 15,
+                             "connection_retry_attempts": 5,
                              "queue_name": "admin_notification_queue"}
 else:
     index_cache_config = {"host": "127.0.0.1",
@@ -96,6 +99,7 @@ else:
                             "connection_timeout_s": 1200,
                             "idle_connection_timeout_s": 1800,
                             "connection_retry_s": 5,
+                            "connection_retry_attempts": 5,
                             "queue_name": "file_uploads_queue"}
 
     user_rabbitmq_config = {"user": "guest",
@@ -105,6 +109,7 @@ else:
                             "connection_timeout_s": 1200,
                             "idle_connection_timeout_s": 1800,
                             "connection_retry_s": 5,
+                            "connection_retry_attempts": 5,
                             "queue_name": "user_notification_queue"}
 
     admin_rabbitmq_config = {"user": "guest",
@@ -114,6 +119,7 @@ else:
                              "connection_timeout_s": 1200,
                              "idle_connection_timeout_s": 1800,
                              "connection_retry_s": 5,
+                             "connection_retry_attempts": 5,
                              "queue_name": "admin_notification_queue"}
 
 

@@ -1,32 +1,33 @@
 {
-    "db": {
-      "url" : "mongodb://mongodb:27017/",
-      "name" :"fileServiceMngr",
-      "gridFS_name":"files",
-      "user" :"",
-      "password" :""
-    },
-    "aws" : {
-       "access_key": "AKIA5UVQCCOP2IPAQU5J",
-       "secret_access_key": "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",
-       "upload_file_bucket":"weightsbucket",
-       "upload_file_key":"weights"
-    },
-    "logging":{
-      "file_path":"logs/logFile.txt"
-    },
-    "rabbitmq_config":{
-      "user": "guest",
-      "password": "guest",
-      "host": "rabbitmq",
-      "port": 5672,
-      "queue_name": "file_uploads_queue",
-      "connection_timeout_s": 1200,
-      "idle_connection_timeout_s": 1800,
-      "connection_retry_s": 5
-    },
-    "index_cache_config":{
-      "host":"redis",
-      "port": 6379
-    }
+  "db": {
+    "url": "mongodb://mongodb:27017/",
+    "name": "fileServiceMngr",
+    "gridFS_name": "files",
+    "user": "",
+    "password": ""
+  },
+  "aws": {
+    "access_key": "AKIA5UVQCCOP2IPAQU5J",
+    "secret_access_key": "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",
+    "upload_file_bucket": "weightsbucket",
+    "upload_file_key": "weights"
+  },
+  "logging": {
+    "file_path": "logs/logFile.txt"
+  },
+  "rabbitmq_config": {
+    "user": "guest",
+    "password": "guest",
+    "host": "rabbitmq",
+    "port": 5672,
+    "queue_name": "file_uploads_queue",
+    "connection_timeout_s": 1200,
+    "idle_connection_timeout_s": 1800,
+    "connection_retry_s": 15,
+    "connection_retry_attempts": 5
+  },
+  "index_cache_config": {
+    "host": "redis",
+    "port": 6379
+  }
 }
