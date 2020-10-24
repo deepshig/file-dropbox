@@ -205,7 +205,8 @@ class UpdateFileStatus(Resource):
             return output_json({"msg": ERROR_INVALID_FILE_STATUS}, 400)
 
         if file_status == accepted_file_status[0]:
-            result = svc.delete_uploaded_file(file_name, user_id, user_name)
+            result = self.svc.delete_uploaded_file(
+                file_name, user_id, user_name)
             if not result["success"]:
                 if result["error"] == redis_driver.ERROR_KEY_NOT_FOUND:
                     logger.log_status_update_bad_request(
@@ -218,7 +219,8 @@ class UpdateFileStatus(Resource):
                     return output_json({"msg": ERROR_INTERNAL_SERVER}, 500)
 
         elif file_status == accepted_file_status[1]:
-            result = svc.handle_failed_upload(file_name, user_id, user_name)
+            result = self.svc.handle_failed_upload(
+                file_name, user_id, user_name)
             if not result["success"]:
                 if result["error"] == index_cache.ERROR_MAX_ATTEMPTS_REACHED:
                     logger.log_status_update_max_retries(
