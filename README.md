@@ -106,18 +106,31 @@ Here, we use GridFS as permanent File Storage and MongoDB for storing the file i
 
 The project uses the following technological stack:
 
-* Python 3.8
-* Redis
-* RabbitMQ
-* PostgreSQL
-* GridFS
-* MongoDB
-* Kibana
-* Docker
-* Kubernetes
+* [Python 3.8](https://docs.python.org/3/whatsnew/3.8.html) : We chose Python as our working language because it provides easy to use and readily available libraries for all the other dependencies, with detailed documentation.
+* [Redis](https://redis.io/) : We chose Redis to serve as in-memory cache store for caching file, as well as its associated indexing details.
+* [RabbitMQ](https://www.rabbitmq.com/) : We need to have asynchronous communication between file uploader service and file service manager once the file is cached. Also, file uplaoder service needs to notify the socket gateway about file status. We chose event queuing mechanism provided by RabbitmQ for this. We have used management plugin because it provides web UI for monitoring.
+* [PostgreSQL](https://www.postgresql.org/docs/12/index.html) : We used PostgreSQL to maintain the user authentication data in authentication service. It is a relational database with indexing over `user_id` and `user_name`. Thus, we chose PostgreSQL.
+* [GridFS](https://docs.mongodb.com/manual/core/gridfs/) : We chose this as a permananent storage for our files. It divides the file into chunks, and stores each of them separately. This gives us better scalability when larger files is considered.
+* [MongoDB](https://www.mongodb.com/) : MongoDB is used as a file indexing store in File Service Manager. We chose this because it provides an option for high availability.
+* [Elastic Search](https://www.elastic.co/) : We use this to dump application logs and display them on a Kibana dashboard.
+* [Kibana](https://www.elastic.co/kibana) : We use Kibana as a monitoring engine for application logs.
+* [Docker](https://www.docker.com/) : In order to maintain the uniformity of deployment, we use docker as deployment engine.
+* [Kubernetes](https://kubernetes.io/) : We use Kubernetes to deploy the application on [Google Cloud Project](https://cloud.google.com/)
 
 ## Running the program
 
+* To run the tests : `cd back_end/tests && py.test -v && cd ../../`
+* To run the application locally : `docker-compose up`
+* To run in detached mode : `docker-compose up -d`
+* To see the logs of a specific, container, first find the container name by running `docker ps -a`, then run : `docker container logs <container_name>`
+* To clean up : `docker-compose down -v --rmi all --remove-orphans`
+* We can run separate container by : `docker-compose up <container_name>` where `container_name` is one of the service names from the docker-compose.yml.
+* We can access the web-client on http://localhost:3000. Here, we can create a user, login, logout, and upload file.
+* While the containers are running, we can monitor the queue on the dashboard http://localhost:15672/ with `[Username/Password]` as `[guest/guest]`.
+* We can view PostgreSQL using Adminer Dashboard on http://localhost:8080/, where we can login with `[System/Server/Username/Password/Database]` as`[PostgreSQl/postgresdb/postgres/postgres/user_auth]`
+* We can access the redis on localhost port `6379` using `redis-cli -p 6379`. We can run redis monitor using the command `redis-cli -p 6379 monitor`
+* We can access application logs in Kibana using http://localhost:5601/
+* We have set up a portainer instance to be able to monitor the high level status of all the containers. We can access the Web UI for the same on http://localhost:10001/ while the portainer container is running.
 
 
 ## Changelog
