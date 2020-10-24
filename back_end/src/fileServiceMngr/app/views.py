@@ -19,6 +19,9 @@ def getClientHistory(client_id) -> str:
         logging.info("Client Id")
         logging.info(client_id)
         clientHstry = serv.mongo_client.find(client_id)
+        logging.info('Main-Client History')
+        logging.info(clientHstry)
+        logging.info(type(clientHstry))
         logging.info("MongoDb - Got client History")
         return make_response(jsonify(clientHstry))
     except Exception as e:
