@@ -20,7 +20,7 @@ def getClientHistory(client_id) -> str:
         logging.info(client_id)
         clientHstry = serv.mongo_client.find(client_id)
         logging.info("MongoDb - Got client History")
-        return jsonify(clientHstry)
+        return make_response(jsonify(clientHstry))
     except Exception as e:
         logging.error("MongoDb - Got error on fetching data from MongoDb")
     return False
