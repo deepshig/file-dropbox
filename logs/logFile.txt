@@ -1,4 +1,35 @@
-2020-10-24 01:28:00,995 - INFO - [{'_id': '5f93831cb299057de2e3e57f', 'clientName': ['Jon Doe'], 'clientId': ['88'], 'activity': ['1'], 'fileId': ['12'], 'fileName': 'weights/questions.pdf'}]
-2020-10-24 01:28:01,029 - INFO - MongoDB - Got Client History
-2020-10-24 01:28:01,033 - INFO - MongoDb - Got client History
-2020-10-24 01:28:01,038 - INFO - 172.18.0.1 - - [24/Oct/2020 01:28:01] "[37mGET /client/history/88 HTTP/1.1[0m" 200 -
+2020-10-24 11:22:28,319 - INFO - {'id': 'd61c4874-ad9a-4b0c-9671-d9f2da771b52', 'file_name': 'a9329398-5dbc-44ed-b8ac-741393d6314b', 'file_cache_key': 'file:a9329398-5dbc-44ed-b8ac-741393d6314b', 'file_metadata': '{"filename": "out.npy", "size": 4128}', 'user_id': 'cef28c5d-041f-482f-b306-039adf84333d', 'user_name': 'client2', 'event_timestamp': 1603538548.299274}
+2020-10-24 11:22:28,496 - INFO - MongoDB GridFs - Inserted to the MongoDB GridFs
+2020-10-24 11:22:28,497 - INFO - Dict to be stored in MongoDb
+2020-10-24 11:22:28,498 - INFO - {'clientName': 'client2', 'clientId': 'cef28c5d-041f-482f-b306-039adf84333d', 'filename': 'a9329398-5dbc-44ed-b8ac-741393d6314b', 'activity': 1, 'created': datetime.datetime(2020, 10, 24, 11, 22, 28, 497584), 'file_metadata': '{"filename": "out.npy", "size": 4128}', 'gridFs_id': ObjectId('5f940e746062e1d86f45f22d')}
+2020-10-24 11:22:28,499 - INFO - {'clientName': 'client2', 'clientId': 'cef28c5d-041f-482f-b306-039adf84333d', 'filename': 'a9329398-5dbc-44ed-b8ac-741393d6314b', 'activity': 1, 'created': datetime.datetime(2020, 10, 24, 11, 22, 28, 497584), 'file_metadata': '{"filename": "out.npy", "size": 4128}', 'gridFs_id': ObjectId('5f940e746062e1d86f45f22d')}
+2020-10-24 11:22:28,501 - INFO - MongoDB - Inserted to the MongoDB
+2020-10-24 11:22:28,503 - INFO - File Uploaded Successfully
+2020-10-24 11:22:28,541 - INFO - Consumer Task Completed
+2020-10-24 11:22:28,585 - INFO - Obj received from rabbitMq
+2020-10-24 11:22:28,586 - INFO - {'id': '8c4e53ac-a746-4d41-b761-9f9e383800ad', 'file_name': '0e0933bd-d7c4-42bd-8e8b-5f42e542bfd8', 'file_cache_key': 'file:0e0933bd-d7c4-42bd-8e8b-5f42e542bfd8', 'file_metadata': '{"filename": "out.npy", "size": 4128}', 'user_id': '63de0173-21f1-4823-ac3a-ef2be3fb1b28', 'user_name': 'client0', 'event_timestamp': 1603538548.3250413}
+2020-10-24 11:22:28,593 - INFO - MongoDB GridFs - Inserted to the MongoDB GridFs
+2020-10-24 11:22:28,594 - INFO - Dict to be stored in MongoDb
+2020-10-24 11:22:28,594 - INFO - {'clientName': 'client0', 'clientId': '63de0173-21f1-4823-ac3a-ef2be3fb1b28', 'filename': '0e0933bd-d7c4-42bd-8e8b-5f42e542bfd8', 'activity': 1, 'created': datetime.datetime(2020, 10, 24, 11, 22, 28, 594031), 'file_metadata': '{"filename": "out.npy", "size": 4128}', 'gridFs_id': ObjectId('5f940e746062e1d86f45f230')}
+2020-10-24 11:22:28,595 - INFO - {'clientName': 'client0', 'clientId': '63de0173-21f1-4823-ac3a-ef2be3fb1b28', 'filename': '0e0933bd-d7c4-42bd-8e8b-5f42e542bfd8', 'activity': 1, 'created': datetime.datetime(2020, 10, 24, 11, 22, 28, 594031), 'file_metadata': '{"filename": "out.npy", "size": 4128}', 'gridFs_id': ObjectId('5f940e746062e1d86f45f230')}
+2020-10-24 11:22:28,601 - INFO - MongoDB - Inserted to the MongoDB
+2020-10-24 11:22:28,603 - INFO - File Uploaded Successfully
+2020-10-24 11:22:28,651 - INFO - Consumer Task Completed
+2020-10-24 11:22:33,963 - INFO - Obj received from rabbitMq
+2020-10-24 11:22:33,969 - INFO - {'id': 'cf554e49-5490-4a2c-b18c-bca16c62da8e', 'file_name': '992008d3-7bec-44fa-943f-11ce81017566', 'file_cache_key': 'file:992008d3-7bec-44fa-943f-11ce81017566', 'file_metadata': '{"filename": "out.npy", "size": 4127}', 'user_id': '2b622c6c-5abf-4c06-a19b-c4fcae64e926', 'user_name': 'client1', 'event_timestamp': 1603538553.9574478}
+2020-10-24 11:22:33,985 - INFO - MongoDB GridFs - Inserted to the MongoDB GridFs
+2020-10-24 11:22:33,992 - INFO - Dict to be stored in MongoDb
+2020-10-24 11:22:33,994 - INFO - {'clientName': 'client1', 'clientId': '2b622c6c-5abf-4c06-a19b-c4fcae64e926', 'filename': '992008d3-7bec-44fa-943f-11ce81017566', 'activity': 1, 'created': datetime.datetime(2020, 10, 24, 11, 22, 33, 992049), 'file_metadata': '{"filename": "out.npy", "size": 4127}', 'gridFs_id': ObjectId('5f940e796062e1d86f45f233')}
+2020-10-24 11:22:34,002 - INFO - {'clientName': 'client1', 'clientId': '2b622c6c-5abf-4c06-a19b-c4fcae64e926', 'filename': '992008d3-7bec-44fa-943f-11ce81017566', 'activity': 1, 'created': datetime.datetime(2020, 10, 24, 11, 22, 33, 992049), 'file_metadata': '{"filename": "out.npy", "size": 4127}', 'gridFs_id': ObjectId('5f940e796062e1d86f45f233')}
+2020-10-24 11:22:34,008 - INFO - MongoDB - Inserted to the MongoDB
+2020-10-24 11:22:34,013 - INFO - File Uploaded Successfully
+2020-10-24 11:22:34,073 - INFO - Consumer Task Completed
+2020-10-24 11:22:34,113 - INFO - Obj received from rabbitMq
+2020-10-24 11:22:34,116 - INFO - {'id': '7c68ed3d-3ee4-4019-bda7-df6f9d2bf88f', 'file_name': 'd1752f9a-699c-4f56-810b-b7752bf9b9b8', 'file_cache_key': 'file:d1752f9a-699c-4f56-810b-b7752bf9b9b8', 'file_metadata': '{"filename": "out.npy", "size": 4127}', 'user_id': 'cef28c5d-041f-482f-b306-039adf84333d', 'user_name': 'client2', 'event_timestamp': 1603538554.1046326}
+2020-10-24 11:22:34,129 - INFO - MongoDB GridFs - Inserted to the MongoDB GridFs
+2020-10-24 11:22:34,133 - INFO - Dict to be stored in MongoDb
+2020-10-24 11:22:34,134 - INFO - {'clientName': 'client2', 'clientId': 'cef28c5d-041f-482f-b306-039adf84333d', 'filename': 'd1752f9a-699c-4f56-810b-b7752bf9b9b8', 'activity': 1, 'created': datetime.datetime(2020, 10, 24, 11, 22, 34, 132533), 'file_metadata': '{"filename": "out.npy", "size": 4127}', 'gridFs_id': ObjectId('5f940e7a6062e1d86f45f236')}
+2020-10-24 11:22:34,139 - INFO - {'clientName': 'client2', 'clientId': 'cef28c5d-041f-482f-b306-039adf84333d', 'filename': 'd1752f9a-699c-4f56-810b-b7752bf9b9b8', 'activity': 1, 'created': datetime.datetime(2020, 10, 24, 11, 22, 34, 132533), 'file_metadata': '{"filename": "out.npy", "size": 4127}', 'gridFs_id': ObjectId('5f940e7a6062e1d86f45f236')}
+2020-10-24 11:22:34,157 - INFO - MongoDB - Inserted to the MongoDB
+2020-10-24 11:22:34,158 - INFO - File Uploaded Successfully
+2020-10-24 11:22:34,241 - INFO - Consumer Task Completed

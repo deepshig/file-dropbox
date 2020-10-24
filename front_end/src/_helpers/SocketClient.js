@@ -162,7 +162,6 @@ export default class socketAPI {
             this.done = false;
 
             this.socket.on('start-transfer', response => {
-                console.log(response['id']);
                 let file_id = response['id'];
                 this.readFileChunk(file_id, file, offset)
                 this.socket.off('start-transfer');
