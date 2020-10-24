@@ -117,18 +117,6 @@ else:
                              "queue_name": "admin_notification_queue"}
 
 
-def init(index_cache_config, file_cache_config, file_rabbitmq_config, user_rabbitmq_config, admin_rabbitmq_config):
-    index_cacher = index_cache.IndexCache(index_cache_config)
-    file_cacher = file_cache.FileCache(file_cache_config)
-    file_queue_manager = rabbitmq.RabbitMQManager(file_rabbitmq_config)
-    user_queue_manager = rabbitmq.RabbitMQManager(user_rabbitmq_config)
-    admin_queue_manager = rabbitmq.RabbitMQManager(admin_rabbitmq_config)
-
-    svc = file_uploader_service.FileUploader(
-        file_cacher, file_queue_manager, user_queue_manager, admin_queue_manager, index_cacher)
-    return svc
-
-
 class Ping(Resource):
     def get(self):
         logger.log_ping()
@@ -136,8 +124,9 @@ class Ping(Resource):
 
 
 class UploadFile(Resource):
-    def __init__(self, svc):
-        self.svc = svc
+    def __init__(self, file_cacher, file_queue_manager, user_queue_manager, admin_queue_manager, index_cacher):
+        self.svc = file_uploader_service.FileUploader(
+            file_cacher, file_queue_manager, user_queue_manager, admin_queue_manager, index_cacher)
 
     def post(self):
         parser = reqparse.RequestParser()
@@ -187,8 +176,9 @@ class UploadFile(Resource):
 
 
 class UpdateFileStatus(Resource):
-    def __init__(self, svc):
-        self.svc = svc
+    def __init__(self, file_cacher, file_queue_manager, user_queue_manager, admin_queue_manager, index_cacher):
+        self.svc = file_uploader_service.FileUploader(
+            file_cacher, file_queue_manager, user_queue_manager, admin_queue_manager, index_cacher)
 
     def put(self):
         parser = reqparse.RequestParser()
@@ -245,14 +235,25 @@ class UpdateFileStatus(Resource):
         return output_json({"msg": "success"}, 200)
 
 
-svc = init(index_cache_config, file_cache_config,
-           file_rabbitmq_config, user_rabbitmq_config, admin_rabbitmq_config)
+index_cacher = index_cache.IndexCache(index_cache_config)
+file_cacher = file_cache.FileCache(file_cache_config)
+file_queue_manager = rabbitmq.RabbitMQManager(file_rabbitmq_config)
+user_queue_manager = rabbitmq.RabbitMQManager(user_rabbitmq_config)
+admin_queue_manager = rabbitmq.RabbitMQManager(admin_rabbitmq_config)
 
 api.add_resource(Ping, '/ping')
 api.add_resource(UploadFile, '/file/upload',
-                 resource_class_kwargs={"svc": svc})
+                 resource_class_kwargs={"file_cacher": file_cacher,
+                                        "file_queue_manager": file_queue_manager,
+                                        "user_queue_manager": user_queue_manager,
+                                        "admin_queue_manager": admin_queue_manager,
+                                        "index_cacher": index_cacher})
 api.add_resource(UpdateFileStatus, '/file/update/status',
-                 resource_class_kwargs={"svc": svc})
+                 resource_class_kwargs={"file_cacher": file_cacher,
+                                        "file_queue_manager": file_queue_manager,
+                                        "user_queue_manager": user_queue_manager,
+                                        "admin_queue_manager": admin_queue_manager,
+                                        "index_cacher": index_cacher})
 
 if __name__ == '__main__':
     logger.setup(LOG_FILE_PATH)
