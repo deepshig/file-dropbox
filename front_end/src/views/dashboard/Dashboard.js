@@ -47,12 +47,14 @@ class Dashboard extends Component {
     }
 
     componentDidMount(){
+        store.dispatch(storeSocketMessage(""));
         this._isMounted = true;
         this._isMounted && this.startSubscribe();
 
     } // TODO: Not remounting and subscribing on refresh...
     componentWillUnmount(){
         this.unsubscribe();
+        store.dispatch(storeSocketMessage(""));
         this._isMounted = false;
     }
     handleListen = () => {

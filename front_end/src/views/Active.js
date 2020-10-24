@@ -57,6 +57,7 @@ class Active extends Component {
     }
     componentWillUnmount() {
         this.unsubscribe();
+        store.dispatch(storeSocketMessage(""));
         this._isMounted = false;
         store.dispatch(stopSocketMessage("admin"));
     }
@@ -64,8 +65,6 @@ class Active extends Component {
     render() {
         return (
             <>
-                {this.state.payload}
-
                 <CRow>
                     <CCol>
                         <CCard>

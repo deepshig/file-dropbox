@@ -85,10 +85,10 @@ class Client(threading.Thread):
 
 
 if __name__ == "__main__":
-    numClients = 2
+    numClients = 3
     host = '127.0.0.1'
     chunk_size = 64 * 1024
-    frequency = [3, 6]
+    frequency = [1, 3]
 
     # print(jwt.decode(resp['jwt'], verify=False))
 
