@@ -1,4 +1,4 @@
-2020-10-22 21:25:13,918 - INFO - {'clientName': 'hello', 'clientId': '821e1fa7-141a-4556-8ce1-a1753416d8aa', 'filename': '5627b382-edb6-4bdf-a4f4-0cb5dbea9c78', 'activity': 1, 'created': datetime.datetime(2020, 10, 22, 21, 25, 13, 857978), 'file_metadata': '{"filename": "out.npy", "size": 4128}', 'gridFs_id': ObjectId('5f91f8b92af49ee641ac8392')}
-2020-10-22 21:25:14,071 - INFO - MongoDB - Inserted to the MongoDB
-2020-10-22 21:25:14,072 - INFO - File Uploaded Successfully
-2020-10-22 21:25:14,119 - INFO - Consumer Task Completed
+2020-10-24 01:28:00,995 - INFO - [{'_id': '5f93831cb299057de2e3e57f', 'clientName': ['Jon Doe'], 'clientId': ['88'], 'activity': ['1'], 'fileId': ['12'], 'fileName': 'weights/questions.pdf'}]
+2020-10-24 01:28:01,029 - INFO - MongoDB - Got Client History
+2020-10-24 01:28:01,033 - INFO - MongoDb - Got client History
+2020-10-24 01:28:01,038 - INFO - 172.18.0.1 - - [24/Oct/2020 01:28:01] "[37mGET /client/history/88 HTTP/1.1[0m" 200 -

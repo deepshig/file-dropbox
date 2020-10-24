@@ -62,13 +62,6 @@ class RabbitMQManager:
         # print(file_contents)
         file = io.BytesIO(bytes(file_contents["value"]))
         try:
-            serv.aws_client.upload_fileobj(file, config["aws"]["upload_file_bucket"], str(
-                config["aws"]["upload_file_key"]+"/"+str(msg["file_name"])))
-            logging.info("AWS S3 - Upload successful")
-            # print(msg["file_name"])
-            url = '%s/%s/%s' % (serv.aws_client.meta.endpoint_url,
-                                config["aws"]["upload_file_bucket"],  str(
-                config["aws"]["upload_file_key"]+"/"+str(msg["file_name"])))
             ob_id = serv.gridfs_client.insert(file_contents["value"], msg["file_name"])
             req_obj = utils.create_mongoDb_insert_obj(msg,ob_id)
             logging.info("Dict to be stored in MongoDb")
@@ -83,13 +76,13 @@ class RabbitMQManager:
             else:
                 response = requests.put(
                     'http://localhost:3500/file/update/status', headers=headers, data=data)
-
             if response:
                 logging.info("Consumer Task Completed")
             else:
                 logging.error("Consumer Task Failed")
         except Exception as e:
             logging.error("AWS S3- Upload fail")
+            logging.error(e)
             headers, data = utils.create_fileUpload_request(
                 "upload_failed", msg["file_name"], msg['user_id'],msg['user_name'])
             if INSIDE_CONTAINER:
