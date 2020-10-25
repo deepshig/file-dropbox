@@ -119,14 +119,17 @@ Here, we use GridFS as permanent File Storage and MongoDB for storing the file i
 The project uses the following technological stack:
 
 * [Python 3.8](https://docs.python.org/3/whatsnew/3.8.html) : We chose Python as our working language because it provides easy to use and readily available libraries for all the other dependencies, with detailed documentation.
+* [React JS Redux State Management](https://react-redux.js.org/) : We use this for developing the web client.
 * [Redis](https://redis.io/) : We chose Redis to serve as in-memory cache store for caching file, as well as its associated indexing details.
 * [RabbitMQ](https://www.rabbitmq.com/) : We need to have asynchronous communication between file uploader service and file service manager once the file is cached. Also, file uplaoder service needs to notify the socket gateway about file status. We chose event queuing mechanism provided by RabbitmQ for this. We have used management plugin because it provides web UI for monitoring.
 * [PostgreSQL](https://www.postgresql.org/docs/12/index.html) : We used PostgreSQL to maintain the user authentication data in authentication service. It is a relational database with indexing over `user_id` and `user_name`. Thus, we chose PostgreSQL.
 * [GridFS](https://docs.mongodb.com/manual/core/gridfs/) : We chose this as a permananent storage for our files. It divides the file into chunks, and stores each of them separately. This gives us better scalability when larger files is considered.
 * [MongoDB](https://www.mongodb.com/) : MongoDB is used as a file indexing store in File Service Manager. We chose this because it provides an option for high availability.
+* [Web Sockets](https://en.wikipedia.org/wiki/WebSocket#:~:text=WebSocket%20is%20a%20computer%20communications,being%20standardized%20by%20the%20W3C.) : We use this for asynchronous communication between backend and web client.
 * [Elastic Search](https://www.elastic.co/) : We use this to dump application logs and display them on a Kibana dashboard.
 * [Kibana](https://www.elastic.co/kibana) : We use Kibana as a monitoring engine for application logs.
 * [Docker](https://www.docker.com/) : In order to maintain the uniformity of deployment, we use docker as deployment engine.
+* [Portainer](https://www.portainer.io/) : We provision a portainer dashboard to be able to monitor the health of infrastructure when running the system locally.
 * [Kubernetes](https://kubernetes.io/) : We use Kubernetes to deploy the application on [Google Cloud Project](https://cloud.google.com/)
 
 ## Running the program
@@ -144,7 +147,8 @@ The project uses the following technological stack:
 * We can access application logs in Kibana using http://localhost:5601/
 * We have set up a portainer instance to be able to monitor the high level status of all the containers. We can access the Web UI for the same on http://localhost:10001/ while the portainer container is running. Use `[Username/Password]` as `[admin/admin123]`.
 
-#### Kubernetes
+### Kubernetes
+
 * To run the system in kubernetes a node cluster pool of minimum 5 nodes (without replicas) is required `gcloud container clusters resize project --node-pool default-pool --num-nodes 5`
 * Run the following commands from the `kubernetes/` directory
 * An Nginx Ingress instance is required on the cluster `kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.40.2/deploy/static/provider/cloud/deploy.yaml`
