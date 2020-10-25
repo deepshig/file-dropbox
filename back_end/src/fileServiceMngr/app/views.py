@@ -14,6 +14,7 @@ serv = service.service()
 
 
 
+
 @app.route('/file/<filename>',methods=['GET'])
 def getFile(filename) ->str:
     logging.info("Download File API")
@@ -21,7 +22,7 @@ def getFile(filename) ->str:
         logging.info("File Id")
         logging.info(filename)
         file_content = serv.gridfs_client.getFile(filename)
-        file_metadata = serv.mongo_client.getMetaData(filename)
+        # file_metadata = serv.mongo_client.getMetaData(filename)
         response = make_response(file_content)
         logging.info("Response created")
         logging.info(response)
