@@ -1,5 +1,5 @@
-from src.file_uploader import redis_driver
 import json
+from src.file_uploader import redis_driver
 # import redis_driver
 
 STATUS_FILE_CACHED = "File stored in cache"

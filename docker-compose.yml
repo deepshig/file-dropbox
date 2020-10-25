@@ -130,7 +130,7 @@ services:
 #      - docker_network
 
   fsm:
-    image: diarmuidk/wacc:file-service-manager
+    image: diarmuidk/wacc:fsm
     build: ./back_end/src/fileServiceMngr/app
     container_name: fsm
     depends_on:
@@ -190,6 +190,17 @@ services:
       - elasticsearch
     networks:
     - docker_network
+
+  portainer:
+    image: portainer/portainer
+    container_name: portainer
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./portainer-data:/data
+    # Enable you to access potainers web interface from your host machine
+    # using http://localhost:10001
+    ports:
+      - "10001:9000"
 
 networks:
   docker_network:

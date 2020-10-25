@@ -1,17 +1,18 @@
 import React, {Component} from 'react'
 import {
-  CBadge,
+  CBadge, CButton,
   CCard,
   CCardBody,
   CCardHeader,
   CCol,
-  CDataTable,
+  CDataTable, CForm, CInput, CInputGroup,
   CRow
 } from '@coreui/react'
 
 import usersData from './users/UsersData'
 import store from "../_helpers/store";
-import {receiveSocketMessage, sendSocketMessage} from "../_actions";
+import {receiveSocketMessage, sendSocketMessage, stopSocketMessage, storeSocketMessage} from "../_actions";
+import {Link} from "react-router-dom";
 
 const getBadge = status => {
   switch (status) {
@@ -22,26 +23,68 @@ const getBadge = status => {
     default: return 'primary'
   }
 }
-const fields = ['name','registered', 'role', 'status']
+const fields = ['clientName', 'clientId', 'filename', 'activity', 'created', 'file_metadata']
 
 class History extends Component {
   constructor(props){
     super(props);
     this._isMounted = false;
     this.state = {
-      payload: store.getState().socketReducer.payload,
+      user_id: store.getState().authentication.user_id,
+      payload: "",
       socketStatus: "On",
+      data: [],
     };
     this.getHistory = this.getHistory.bind(this);
     this.getHistory();
   }
+  startSubscribe(){
+    this.unsubscribe = store.subscribe(()=>{
+      const payload = store.getState().socketReducer.payload;
+      if (payload !== this.state.payload && (payload !== "" || payload !== undefined)){
+        console.log(payload[0]);
+
+        this._isMounted && this.setState({data: JSON.parse(JSON.stringify(payload))});
+        console.log(this.state.data);
+      }
+    });
+  }
+  componentDidMount() {
+    store.dispatch(storeSocketMessage(""));
+    this._isMounted = true;
+    this._isMounted && this.startSubscribe();
+    store.dispatch(receiveSocketMessage("get-history", {'user_id': this.state.user_id}));
+  }
+  componentWillUnmount() {
+    this.unsubscribe();
+    store.dispatch(storeSocketMessage(""));
+    this._isMounted = false;
+    store.dispatch(stopSocketMessage("get-history"));
+  }
   getHistory(){
-    store.dispatch(sendSocketMessage("get-history", {'user_id': store.getState().authentication.user_id}));
+    store.dispatch(sendSocketMessage("get-history", {'user_id': this.state.user_id}));
   };
+  updateInputValue(evt){
+    this.setState({ user_id: evt.target.value });
+  }
 
   render () {
     return(
     <>
+      <CRow>
+        <CCol>
+          <h3>UserID:</h3>
+        </CCol>
+      </CRow>
+      <CRow style={{padding: "5px"}}>
+        <CCol>
+          <CInput value={this.state.UID} onChange={evt => this.updateInputValue(evt)} type="text"/>
+        </CCol>
+        <CCol>
+          <CButton onClick={() => this.getHistory()} color="primary" className="px-4">Get history</CButton>
+        </CCol>
+      </CRow>
+
       <CRow>
         <CCol>
           <CCard>
@@ -50,7 +93,7 @@ class History extends Component {
             </CCardHeader>
             <CCardBody>
               <CDataTable
-                  items={usersData}
+                  items={this.state.data}
                   fields={fields}
                   hover
                   striped
@@ -59,11 +102,11 @@ class History extends Component {
                   itemsPerPage={15}
                   pagination
                   scopedSlots={{
-                    'status':
+                    'activity':
                         (item) => (
                             <td>
-                              <CBadge color={getBadge(item.status)}>
-                                {item.status}
+                              <CBadge color={getBadge(item.filename)}>
+                                {"Download"}
                               </CBadge>
                             </td>
                         )

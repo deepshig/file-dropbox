@@ -179,8 +179,11 @@ def complete_upload(file_id, username, user_id):
         # data = pickle.dump()
         eprint(data)
         eprint(type(data))
+    print(os.path.isfile(file_path + file_id))
+
     with open(file_path + file_id, 'rb') as f:
         eprint("sending")
+        print(f.read(4))
         if INSIDE_CONTAINER:
             resp = requests.post('http://file-uploader:3500/file/upload', files={'file': f}, data={'user_id': user_id, 'user_name': username, 'metadata': data})
         else:
@@ -188,9 +191,6 @@ def complete_upload(file_id, username, user_id):
         # resp.status_code = 201
         eprint(resp.content)
         if resp.status_code == 201:
-        # status_code = 201
-        # print(status_code)
-        # if status_code == 201:
             emit('complete-upload', {'data': True})
         else:
             eprint(resp)
@@ -204,9 +204,22 @@ def getHistory(data, headers):
     else:
         resp = requests.get('http://127.0.0.1:4500/client/history/' + data['user_id'])
 
-    emit('get-history', {'data': resp.content.decode("utf-8")})
-    print(resp.content)
+    my_json = resp.content.decode('utf8').replace("'", '"')
+    data = json.loads(my_json)
+    s = json.dumps(data, indent=4, sort_keys=True)
+    d = json.loads(s)
+    logging.info(d)
+    emit('get-history', {'data': d})
 
+@socket.on('download-file')
+def getHistory(data):
+    print(data['file_id'])
+    if INSIDE_CONTAINER:
+        resp = requests.get('http://fsm:4500/client/download/' + data['file_id'])
+    else:
+        resp = requests.get('http://127.0.0.1:4500/client/download/' + data['file_id'])
+
+    emit('download-file', {'data': resp})
 
 class threads(threading.Thread):
     def __init__(self):

@@ -6,22 +6,24 @@ from src.file_uploader import logger
 
 class RabbitMQManager:
     def __init__(self, rabbitmq_config):
-        self.connection = self.__get_connection(rabbitmq_config)
-        self.queue_name = rabbitmq_config["queue_name"]
+        self.config = rabbitmq_config
+        self.connection = self.__get_connection()
+        self.queue_name = self.config["queue_name"]
         self.__init_queue()
 
-    def __get_connection(self, rabbitmq_config):
+    def __get_connection(self):
         try:
             credentials = pika.credentials.PlainCredentials(
-                username=rabbitmq_config["user"], password=rabbitmq_config["password"])
+                username=self.config["user"], password=self.config["password"])
 
             params = pika.connection.ConnectionParameters(
-                host=rabbitmq_config["host"],
-                port=rabbitmq_config["port"],
+                host=self.config["host"],
+                port=self.config["port"],
                 credentials=credentials,
-                heartbeat=rabbitmq_config["connection_timeout_s"],
-                blocked_connection_timeout=rabbitmq_config["idle_connection_timeout_s"],
-                retry_delay=rabbitmq_config["connection_retry_s"])
+                heartbeat=self.config["connection_timeout_s"],
+                blocked_connection_timeout=self.config["idle_connection_timeout_s"],
+                retry_delay=self.config["connection_retry_s"],
+                connection_attempts=self.config["connection_retry_attempts"])
 
             connection = pika.BlockingConnection(params)
             logger.log_rabbitmq_connection_success()
@@ -51,6 +53,10 @@ class RabbitMQManager:
     def publish(self, message_body):
         chan = None
         try:
+            if not self.connection or self.connection.is_closed:
+                self.connection = self.__get_connection()
+                self.__init_queue()
+
             chan = self.connection.channel()
             chan.basic_publish(exchange='', routing_key=self.queue_name,
                                body=message_body, properties=pika.BasicProperties(delivery_mode=2))

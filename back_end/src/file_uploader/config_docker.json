@@ -1,0 +1,44 @@
+{
+    "index_cache_config": {
+        "host": "redis",
+        "port": 6379
+    },
+    "file_cache_config": {
+        "host": "redis",
+        "port": 6379
+    },
+    "file_rabbitmq_config": {
+        "user": "guest",
+        "password": "guest",
+        "host": "rabbitmq",
+        "port": "5672",
+        "connection_timeout_s": 1200,
+        "idle_connection_timeout_s": 1800,
+        "connection_retry_s": 15,
+        "connection_retry_attempts": 5,
+        "queue_name": "file_uploads_queue"
+    },
+    "user_rabbitmq_config": {
+        "user": "guest",
+        "password": "guest",
+        "host": "rabbitmq",
+        "port": "5672",
+        "connection_timeout_s": 1200,
+        "idle_connection_timeout_s": 1800,
+        "connection_retry_s": 15,
+        "connection_retry_attempts": 5,
+        "queue_name": "user_notification_queue"
+    },
+    "admin_rabbitmq_config": {
+        "user": "guest",
+        "password": "guest",
+        "host": "rabbitmq",
+        "port": "5672",
+        "connection_timeout_s": 1200,
+        "idle_connection_timeout_s": 1800,
+        "connection_retry_s": 15,
+        "connection_retry_attempts": 5,
+        "queue_name": "admin_notification_queue"
+    },
+    "log_file_path": "logs/log_file.txt"
+}

@@ -10,12 +10,14 @@ from src.file_uploader import index_cache
 from src.file_uploader import rabbitmq
 from src.file_uploader import redis_driver
 from src.file_uploader import logger
+from src.file_uploader.config import config
 # import file_uploader_service
 # import file_cache
 # import index_cache
 # import rabbitmq
 # import redis_driver
 # import logger
+# from config import config
 
 INSIDE_CONTAINER = os.environ.get('IN_CONTAINER_FLAG', False)
 
@@ -32,101 +34,11 @@ ERROR_INTERNAL_SERVER = "Internal Server Error"
 
 accepted_file_status = ["uploaded_successfully", "upload_failed"]
 
-LOG_FILE_PATH = "logs/log_file.txt"
-
-if INSIDE_CONTAINER:
-    FILE_TEMP_UPLOAD_PATH = "tmp/"
-else:
-    FILE_TEMP_UPLOAD_PATH = os.path.abspath(pathlib.Path().absolute()) + '/'
-
-if not os.path.exists(FILE_TEMP_UPLOAD_PATH):
-    os.makedirs(FILE_TEMP_UPLOAD_PATH)
-
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
 
 api = Api(app)
 CORS(app, supports_credentials=True)
-
-
-if INSIDE_CONTAINER:
-    index_cache_config = {"host": "redis",
-                          "port": 6379}
-
-    file_cache_config = {"host": "redis",
-                         "port": 6379}
-
-    file_rabbitmq_config = {"user": "guest",
-                            "password": "guest",
-                            "host": "rabbitmq",
-                            "port": "5672",
-                            "connection_timeout_s": 1200,
-                            "idle_connection_timeout_s": 1800,
-                            "connection_retry_s": 5,
-                            "queue_name": "file_uploads_queue"}
-
-    user_rabbitmq_config = {"user": "guest",
-                            "password": "guest",
-                            "host": "rabbitmq",
-                            "port": "5672",
-                            "connection_timeout_s": 1200,
-                            "idle_connection_timeout_s": 1800,
-                            "connection_retry_s": 5,
-                            "queue_name": "user_notification_queue"}
-
-    admin_rabbitmq_config = {"user": "guest",
-                             "password": "guest",
-                             "host": "rabbitmq",
-                             "port": "5672",
-                             "connection_timeout_s": 1200,
-                             "idle_connection_timeout_s": 1800,
-                             "connection_retry_s": 5,
-                             "queue_name": "admin_notification_queue"}
-else:
-    index_cache_config = {"host": "127.0.0.1",
-                          "port": 6379}
-
-    file_cache_config = {"host": "127.0.0.1",
-                         "port": 6379}
-
-    file_rabbitmq_config = {"user": "guest",
-                            "password": "guest",
-                            "host": "127.0.0.1",
-                            "port": "5672",
-                            "connection_timeout_s": 1200,
-                            "idle_connection_timeout_s": 1800,
-                            "connection_retry_s": 5,
-                            "queue_name": "file_uploads_queue"}
-
-    user_rabbitmq_config = {"user": "guest",
-                            "password": "guest",
-                            "host": "127.0.0.1",
-                            "port": "5672",
-                            "connection_timeout_s": 1200,
-                            "idle_connection_timeout_s": 1800,
-                            "connection_retry_s": 5,
-                            "queue_name": "user_notification_queue"}
-
-    admin_rabbitmq_config = {"user": "guest",
-                             "password": "guest",
-                             "host": "127.0.0.1",
-                             "port": "5672",
-                             "connection_timeout_s": 1200,
-                             "idle_connection_timeout_s": 1800,
-                             "connection_retry_s": 5,
-                             "queue_name": "admin_notification_queue"}
-
-
-def init(index_cache_config, file_cache_config, file_rabbitmq_config, user_rabbitmq_config, admin_rabbitmq_config):
-    index_cacher = index_cache.IndexCache(index_cache_config)
-    file_cacher = file_cache.FileCache(file_cache_config)
-    file_queue_manager = rabbitmq.RabbitMQManager(file_rabbitmq_config)
-    user_queue_manager = rabbitmq.RabbitMQManager(user_rabbitmq_config)
-    admin_queue_manager = rabbitmq.RabbitMQManager(admin_rabbitmq_config)
-
-    svc = file_uploader_service.FileUploader(
-        file_cacher, file_queue_manager, user_queue_manager, admin_queue_manager, index_cacher)
-    return svc
 
 
 class Ping(Resource):
@@ -136,10 +48,18 @@ class Ping(Resource):
 
 
 class UploadFile(Resource):
-    def __init__(self, svc):
-        self.svc = svc
+    def __init__(self, file_cacher, file_queue_manager, user_queue_manager, admin_queue_manager, index_cacher):
+        self.file_cacher = file_cacher
+        self.file_queue_manager = file_queue_manager
+        self.user_queue_manager = user_queue_manager
+        self.admin_queue_manager = admin_queue_manager
+        self.index_cacher = index_cacher
+        return
 
     def post(self):
+        self.svc = file_uploader_service.FileUploader(
+            self.file_cacher, self.file_queue_manager, self.user_queue_manager, self.admin_queue_manager, self.index_cacher)
+
         parser = reqparse.RequestParser()
         parser.add_argument('file', type=datastructures.FileStorage, location='files',
                             help=ERROR_FILE_NOT_PROVIDED)
@@ -162,7 +82,7 @@ class UploadFile(Resource):
             return output_json({"msg": ERROR_FILE_NOT_PROVIDED}, 400)
 
         file_name = utils.secure_filename(data_file.filename)
-        file_path = FILE_TEMP_UPLOAD_PATH + file_name
+        file_path = config["file_temp_upload_path"] + file_name
         data_file.save(file_path)
 
         result = self.svc.send_file_for_upload(
@@ -187,10 +107,18 @@ class UploadFile(Resource):
 
 
 class UpdateFileStatus(Resource):
-    def __init__(self, svc):
-        self.svc = svc
+    def __init__(self, file_cacher, file_queue_manager, user_queue_manager, admin_queue_manager, index_cacher):
+        self.file_cacher = file_cacher
+        self.file_queue_manager = file_queue_manager
+        self.user_queue_manager = user_queue_manager
+        self.admin_queue_manager = admin_queue_manager
+        self.index_cacher = index_cacher
+        return
 
     def put(self):
+        self.svc = file_uploader_service.FileUploader(
+            self.file_cacher, self.file_queue_manager, self.user_queue_manager, self.admin_queue_manager, self.index_cacher)
+
         parser = reqparse.RequestParser()
         parser.add_argument('file_status', required=True, type=str,
                             help=ERROR_FILE_STATUS_NOT_PROVIDED)
@@ -215,7 +143,8 @@ class UpdateFileStatus(Resource):
             return output_json({"msg": ERROR_INVALID_FILE_STATUS}, 400)
 
         if file_status == accepted_file_status[0]:
-            result = svc.delete_uploaded_file(file_name, user_id, user_name)
+            result = self.svc.delete_uploaded_file(
+                file_name, user_id, user_name)
             if not result["success"]:
                 if result["error"] == redis_driver.ERROR_KEY_NOT_FOUND:
                     logger.log_status_update_bad_request(
@@ -228,7 +157,8 @@ class UpdateFileStatus(Resource):
                     return output_json({"msg": ERROR_INTERNAL_SERVER}, 500)
 
         elif file_status == accepted_file_status[1]:
-            result = svc.handle_failed_upload(file_name, user_id, user_name)
+            result = self.svc.handle_failed_upload(
+                file_name, user_id, user_name)
             if not result["success"]:
                 if result["error"] == index_cache.ERROR_MAX_ATTEMPTS_REACHED:
                     logger.log_status_update_max_retries(
@@ -245,17 +175,28 @@ class UpdateFileStatus(Resource):
         return output_json({"msg": "success"}, 200)
 
 
-svc = init(index_cache_config, file_cache_config,
-           file_rabbitmq_config, user_rabbitmq_config, admin_rabbitmq_config)
+index_cacher = index_cache.IndexCache(config["index_cache_config"])
+file_cacher = file_cache.FileCache(config["file_cache_config"])
+file_queue_manager = rabbitmq.RabbitMQManager(config["file_rabbitmq_config"])
+user_queue_manager = rabbitmq.RabbitMQManager(config["user_rabbitmq_config"])
+admin_queue_manager = rabbitmq.RabbitMQManager(config["admin_rabbitmq_config"])
 
 api.add_resource(Ping, '/ping')
 api.add_resource(UploadFile, '/file/upload',
-                 resource_class_kwargs={"svc": svc})
+                 resource_class_kwargs={"file_cacher": file_cacher,
+                                        "file_queue_manager": file_queue_manager,
+                                        "user_queue_manager": user_queue_manager,
+                                        "admin_queue_manager": admin_queue_manager,
+                                        "index_cacher": index_cacher})
 api.add_resource(UpdateFileStatus, '/file/update/status',
-                 resource_class_kwargs={"svc": svc})
+                 resource_class_kwargs={"file_cacher": file_cacher,
+                                        "file_queue_manager": file_queue_manager,
+                                        "user_queue_manager": user_queue_manager,
+                                        "admin_queue_manager": admin_queue_manager,
+                                        "index_cacher": index_cacher})
 
 if __name__ == '__main__':
-    logger.setup(LOG_FILE_PATH)
+    logger.setup(config["log_file_path"])
 
     logger.log_server_start()
     app.run(debug=True, use_debugger=False, use_reloader=False,

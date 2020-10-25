@@ -106,28 +106,41 @@ Here, we use GridFS as permanent File Storage and MongoDB for storing the file i
 
 The project uses the following technological stack:
 
-* Python 3.8
-* Redis
-* RabbitMQ
-* PostgreSQL
-* GridFS
-* MongoDB
-* Kibana
-* Docker
-* Kubernetes
+* [Python 3.8](https://docs.python.org/3/whatsnew/3.8.html) : We chose Python as our working language because it provides easy to use and readily available libraries for all the other dependencies, with detailed documentation.
+* [Redis](https://redis.io/) : We chose Redis to serve as in-memory cache store for caching file, as well as its associated indexing details.
+* [RabbitMQ](https://www.rabbitmq.com/) : We need to have asynchronous communication between file uploader service and file service manager once the file is cached. Also, file uplaoder service needs to notify the socket gateway about file status. We chose event queuing mechanism provided by RabbitmQ for this. We have used management plugin because it provides web UI for monitoring.
+* [PostgreSQL](https://www.postgresql.org/docs/12/index.html) : We used PostgreSQL to maintain the user authentication data in authentication service. It is a relational database with indexing over `user_id` and `user_name`. Thus, we chose PostgreSQL.
+* [GridFS](https://docs.mongodb.com/manual/core/gridfs/) : We chose this as a permananent storage for our files. It divides the file into chunks, and stores each of them separately. This gives us better scalability when larger files is considered.
+* [MongoDB](https://www.mongodb.com/) : MongoDB is used as a file indexing store in File Service Manager. We chose this because it provides an option for high availability.
+* [Elastic Search](https://www.elastic.co/) : We use this to dump application logs and display them on a Kibana dashboard.
+* [Kibana](https://www.elastic.co/kibana) : We use Kibana as a monitoring engine for application logs.
+* [Docker](https://www.docker.com/) : In order to maintain the uniformity of deployment, we use docker as deployment engine.
+* [Kubernetes](https://kubernetes.io/) : We use Kubernetes to deploy the application on [Google Cloud Project](https://cloud.google.com/)
 
 ## Running the program
 
+* To run the tests : `cd back_end/tests && py.test -v && cd ../../`
+* To run the application locally : `docker-compose up` (Note: in some instance rabbitmq may be delayed in startup: fsm, file_uploader, and socket-gateway may need restarts)
+* To run in detached mode : `docker-compose up -d`
+* To see the logs of a specific, container, first find the container name by running `docker ps -a`, then run : `docker container logs <container_name>`
+* To clean up : `docker-compose down -v --rmi all --remove-orphans`
+* We can run separate container by : `docker-compose up <container_name>` where `container_name` is one of the service names from the docker-compose.yml.
+* We can access the web-client on http://localhost:3000. Here, we can create a user, login, logout, and upload file.
+* While the containers are running, we can monitor the RabbitMQ queue on the dashboard http://localhost:15672/ with `[Username/Password]` as `[guest/guest]`.
+* We can view PostgreSQL using Adminer Dashboard on http://localhost:8080/, where we can login with `[System/Server/Username/Password/Database]` as`[PostgreSQl/postgresdb/postgres/postgres/user_auth]`
+* We can access the redis on localhost port `6379` using `redis-cli -p 6379`. We can run redis monitor using the command `redis-cli -p 6379 monitor`
+* We can access application logs in Kibana using http://localhost:5601/
+* We have set up a portainer instance to be able to monitor the high level status of all the containers. We can access the Web UI for the same on http://localhost:10001/ while the portainer container is running. Use `[Username/Password]` as `[admin/admin123]`.
 
+#### Kubernetes
+* To run the system in kubernetes a node cluster pool of minimum 5 nodes (without replicas) is required `gcloud container clusters resize project --node-pool default-pool --num-nodes 5`
+* Run the following commands from the `kubernetes/` directory
+* An Nginx Ingress instance is required on the cluster `kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.40.2/deploy/static/provider/cloud/deploy.yaml`
+* Now start the Nginx Load balancer `kubectl apply -f .\nginx-ingress.yaml`
+* Note the host IP for the Nginx loadbalancer will need to be configured in `front_end/.env`for new deployments. This change will need to be built and pushed to docker hub. `cd front-end`, `docker build . -t diarmuidk/wacc:front-end`, `docker push diarmuidk/wacc:front-end`
+* Once the previous steps are complete start the following database deployments: logstash, mongodb, postgresdb, rabbitmq, redis using the following command
+`kubectl apply -f .\logstash-deployment.yaml,.\logstash-service.yaml,.\mongodb-deployment.yaml,.\mongodb-service.yaml,.\postgresdb-deployment.yaml,.\postgresdb-service.yaml,.\rabbitmq-deployment.yaml,.\rabbitmq-service.yaml,.\redis-deployment.yaml,.\redis-service.yaml`
 
-## Changelog
-React App currently getting a JWT token generated from a static endpoint working only for 'test' user
+* Next start the following services: adminer, auth, elastic-search, file-uploader, front-end, fsm, kibana, socket-gateway using:
+`kubectl apply -f .\adminer-deployment.yaml,.\adminer-service.yaml,.\auth-deployment.yaml,.\auth-service.yaml,.\elasticsearch-deployment.yaml,.\elasticsearch-service.yaml,.\file-uploader-deployment.yaml,.\file-uploader-service.yaml,.\front-end-deployment.yaml,.\front-end-service.yaml,.\fsm-deployment.yaml,.\fsm-service.yaml,.\kibana-deployment.yaml,.\kibana-service.yaml,.\socket-gateway-deployment.yaml,.\socket-gateway-service.yaml`
 
-https://zgadzaj.com/development/docker/docker-compose/containers/rabbitmq
-
-```bash
-use kompose convert
-cp files folder
-cd folder
-kubectl apply -R -f .
-```
