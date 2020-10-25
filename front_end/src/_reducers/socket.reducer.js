@@ -39,6 +39,7 @@ export function socketReducer(state = initialState, action) {
         case socketConstants.SOCKET_MESSAGE_STORE:
             return{
                 ...state,
+                event: action.event,
                 payload: action.payload
             };
         case socketConstants.SOCKET_UPLOAD_SUCCESS:

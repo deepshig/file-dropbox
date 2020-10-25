@@ -30,42 +30,54 @@ class History extends Component {
     super(props);
     this._isMounted = false;
     this.state = {
+      event: "get-history",
       user_id: store.getState().authentication.user_id,
       payload: "",
       socketStatus: "On",
       data: [],
     };
     this.getHistory = this.getHistory.bind(this);
+    this.downloadFile = this.downloadFile.bind(this);
     this.getHistory();
   }
-  startSubscribe(){
+  startSubscribe(ev){
     this.unsubscribe = store.subscribe(()=>{
       const payload = store.getState().socketReducer.payload;
-      if (payload !== this.state.payload && (payload !== "" || payload !== undefined)){
-        console.log(payload[0]);
+      const event = store.getState().socketReducer.event;
+      if (event === ev) {
+        if (payload !== this.state.payload && (payload !== "" || payload !== undefined)) {
+          console.log(payload);
 
-        this._isMounted && this.setState({data: JSON.parse(JSON.stringify(payload))});
-        console.log(this.state.data);
+          if(event === this.state.event) {
+            this._isMounted && this.setState({data: JSON.parse(JSON.stringify(payload))});
+            console.log(this.state.data);
+          }
+        }
       }
     });
   }
   componentDidMount() {
-    store.dispatch(storeSocketMessage(""));
+    store.dispatch(storeSocketMessage("", ""));
     this._isMounted = true;
-    this._isMounted && this.startSubscribe();
-    store.dispatch(receiveSocketMessage("get-history", {'user_id': this.state.user_id}));
+    this._isMounted && this.startSubscribe(this.state.event);
+    this._isMounted && this.startSubscribe("download-file");
+    store.dispatch(receiveSocketMessage(this.state.event, {'user_id': this.state.user_id}));
   }
   componentWillUnmount() {
     this.unsubscribe();
-    store.dispatch(storeSocketMessage(""));
+    store.dispatch(storeSocketMessage("", ""));
     this._isMounted = false;
-    store.dispatch(stopSocketMessage("get-history"));
+    store.dispatch(stopSocketMessage(this.state.event));
   }
   getHistory(){
-    store.dispatch(sendSocketMessage("get-history", {'user_id': this.state.user_id}));
+    store.dispatch(sendSocketMessage(this.state.event, {'user_id': this.state.user_id}));
   };
   updateInputValue(evt){
     this.setState({ user_id: evt.target.value });
+  }
+  downloadFile(file_id){
+    store.dispatch(sendSocketMessage("download-file", {'file_id': file_id}));
+
   }
 
   render () {
@@ -105,7 +117,7 @@ class History extends Component {
                     'activity':
                         (item) => (
                             <td>
-                              <CBadge color={getBadge(item.filename)}>
+                              <CBadge color={getBadge(item.filename)} onClick={() => this.downloadFile(item.filename)}>
                                 {"Download"}
                               </CBadge>
                             </td>

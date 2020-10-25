@@ -7,6 +7,7 @@ import threading
 import time
 import json
 import uuid
+import base64
 from datetime import datetime
 import os
 import pika
@@ -211,15 +212,22 @@ def getHistory(data, headers):
     logging.info(d)
     emit('get-history', {'data': d})
 
+
 @socket.on('download-file')
-def getHistory(data):
+def download_file(data, headers):
     print(data['file_id'])
     if INSIDE_CONTAINER:
-        resp = requests.get('http://fsm:4500/client/download/' + data['file_id'])
+        resp = requests.get('http://fsm:4500/file/' + data['file_id'])
     else:
-        resp = requests.get('http://127.0.0.1:4500/client/download/' + data['file_id'])
+        resp = requests.get('http://127.0.0.1:4500/file/' + data['file_id'])
 
-    emit('download-file', {'data': resp})
+    print(resp.content)
+    out_file = file_path + str(uuid.uuid4())
+    with open(out_file, "wb") as out:
+        out.write(resp.content)
+
+    emit('download-file', {'data': resp.content})
+
 
 class threads(threading.Thread):
     def __init__(self):

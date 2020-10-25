@@ -37,6 +37,9 @@ spec:
         image: diarmuidk/wacc:fsm
         imagePullPolicy: Always
         name: fsm
+        volumeMounts:
+          - mountPath: "~/logs"
+            name: mypd
         ports:
         - containerPort: 4500
         resources: {}
@@ -44,5 +47,8 @@ spec:
         - name: regcred
       restartPolicy: Always
       serviceAccountName: ""
-      volumes: null
+      volumes:
+        - name: mypd
+          persistentVolumeClaim:
+            claimName: pvc
 status: {}

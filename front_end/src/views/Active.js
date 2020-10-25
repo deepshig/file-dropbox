@@ -31,6 +31,7 @@ class Active extends Component {
         super(props);
         this._isMounted = false;
         this.state = {
+            event: "admin",
             payload: "",
             socketStatus: "On",
             data: [
@@ -43,23 +44,26 @@ class Active extends Component {
     startSubscribe(){
         this.unsubscribe = store.subscribe(()=>{
             const payload = store.getState().socketReducer.payload;
-            if (payload !== this.state.payload && (payload !== "" || payload !== undefined)){
-                console.log(JSON.parse(JSON.stringify(payload)));
-                this._isMounted && this.setState({data: [JSON.parse(JSON.stringify(payload))].concat(this.state.data)});
+            const event = store.getState().socketReducer.event;
+            if (event === this.state.event) {
+                if (payload !== this.state.payload && (payload !== "" || payload !== undefined)) {
+                    console.log(JSON.parse(JSON.stringify(payload)));
+                    this._isMounted && this.setState({data: [JSON.parse(JSON.stringify(payload))].concat(this.state.data)});
+                }
             }
         });
     }
     componentDidMount() {
-        store.dispatch(storeSocketMessage(""));
+        store.dispatch(storeSocketMessage("",""));
         this._isMounted = true;
         this._isMounted && this.startSubscribe();
-        store.dispatch(receiveSocketMessage("admin", {'user_id': store.getState().authentication.user_id}));
+        store.dispatch(receiveSocketMessage(this.state.event, {'user_id': store.getState().authentication.user_id}));
     }
     componentWillUnmount() {
         this.unsubscribe();
-        store.dispatch(storeSocketMessage(""));
+        store.dispatch(storeSocketMessage("",""));
         this._isMounted = false;
-        store.dispatch(stopSocketMessage("admin"));
+        store.dispatch(stopSocketMessage(this.state.event));
     }
 
     render() {

@@ -64,9 +64,10 @@ export const receiveSocketMessage = (ev, message) => {
         payload: message,
     }
 };
-export const storeSocketMessage = (message) => {
+export const storeSocketMessage = (ev, message) => {
     return{
         type: socketConstants.SOCKET_MESSAGE_STORE,
+        event: ev,
         payload: message,
     }
 };

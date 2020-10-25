@@ -70,7 +70,7 @@ export default class socketAPI {
                     Authorization: "Bearer " + store.getState().authentication.token
                 }
             }, response => {
-                this.socket.on(event, response => store.dispatch(storeSocketMessage(response['data'])));
+                this.socket.on(event, response => store.dispatch(storeSocketMessage(event, response['data'])));
                 console.log(store.getState().socketReducer.payload);
 
                 return resolve();
@@ -86,7 +86,7 @@ export default class socketAPI {
             if (!this.socket) return reject('No socket connection.');
 
             this.socket.on(event, (response) =>{
-                store.dispatch(storeSocketMessage(response['data'])); console.log(response['data'])});
+                store.dispatch(storeSocketMessage(event, response['data'])); console.log(response['data'])});
                 // console.log(response['data'])});
             return resolve();
         }).catch(e =>{
