@@ -30,6 +30,7 @@ class GridFsDatabase(object):
         try:
             f_id = self.db.fileStorage.files.find_one({"filename": filename}, {"_id": 1})
             file_content = self.fs.get(f_id['_id']).read()
+            file_content = file_content.decode('utf-8')
             logging.info("MongoDB GridFs - Read the file contents")
         except Exception as e:
             logging.error("MongoDB GridFs - Unable to read file stored in MongoDB GridFs")

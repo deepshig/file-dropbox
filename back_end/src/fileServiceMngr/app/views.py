@@ -23,7 +23,7 @@ def getFile(filename) ->str:
         logging.info(filename)
         file_content = serv.gridfs_client.getFile(filename)
         # file_metadata = serv.mongo_client.getMetaData(filename)
-        response = make_response(file_content)
+        response = make_response(eval(file_content))
         logging.info("Response created")
         logging.info(response)
         response.headers['Content-Type'] = 'application/octet-stream'
