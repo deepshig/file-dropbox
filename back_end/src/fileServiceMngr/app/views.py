@@ -10,8 +10,30 @@ import logging.handlers
 import datetime
 from bson import ObjectId
 app = Flask(__name__)
-
 serv = service.service()
+
+
+
+@app.route('/file/<filename>',methods=['GET'])
+def getFile(filename) ->str:
+    logging.info("Download File API")
+    try:
+        logging.info("File Id")
+        logging.info(filename)
+        file_content = serv.gridfs_client.getFile(filename)
+        file_metadata = serv.mongo_client.getMetaData(filename)
+        response = make_response(file_content)
+        logging.info("Response created")
+        logging.info(response)
+        response.headers['Content-Type'] = 'application/octet-stream'
+        response.headers["Content-Disposition"] = "attachment; fileId={}".format(filename)
+        logging.info("File Download API - sending the file")
+        return response
+    except Exception as e:
+        logging.error("File Download API- Error in file Download")
+        logging.error(e)
+
+
 
 @app.route('/client/history/<client_id>', methods=['GET'])
 def getClientHistory(client_id) -> str:
@@ -24,8 +46,7 @@ def getClientHistory(client_id) -> str:
         logging.info(clientHstry)
         logging.info(type(clientHstry))
         logging.info("MongoDb - Got client Historya")
-
-        return Response(json.dumps(clientHstry,indent=4, sort_keys=True, default=str))
+        return json.dumps(clientHstry,indent=4, sort_keys=True, default=str)
     except Exception as e:
         logging.error("MongoDb - Got error on fetching data from MongoDb")
     return False

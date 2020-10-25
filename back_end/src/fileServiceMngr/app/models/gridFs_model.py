@@ -9,5 +9,6 @@ class model(object):
         res = self.db.insert(file_content, filename)
         return  res
 
-    def search(self, filename): # find all
+    def getFile(self, filename): # find all
         return self.db.getFileContents(filename)
+

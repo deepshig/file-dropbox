@@ -15,8 +15,6 @@ class model(object):
             "meta_data" : "file_metadata"
         }
 
-
-
     def create(self, req):
         res = self.db.insert(req)
         return  res
@@ -24,10 +22,11 @@ class model(object):
     def find(self, clientId): # find all
         return self.db.find(clientId)
 
-    def find_by_id(self, id):
-        return self.db.find_by_id(id, self.collection_name)
+    def search_on_field(self,field,value):
+        return self.db.searchOnField(field,value)
 
-    # TODO
+    def get(self, filename):
+        return self.db.getFileContents(filename)
 
     def update(self, id, todo):
         self.validator.validate(todo, self.fields, self.update_required_fields, self.update_optional_fields)
