@@ -60,11 +60,16 @@ class RabbitMQManager:
         logging.info(msg)
         key = msg["file_cache_key"]
         file_contents = serv.redis_client.get(key)
+        logging.info(file_contents)
+        if not file_contents['success']:
+            logging.error(file_contents['error'])
+
         # print(file_contents)
-        file = io.BytesIO(bytes(file_contents["value"]))
+        # file = io.BytesIO(bytes(file_contents["value"]))
         try:
             ob_id = serv.gridfs_client.insert(
                 file_contents["value"], msg["file_name"])
+            logging.info("File insert GridFS")
             req_obj = utils.create_mongoDb_insert_obj(msg, ob_id)
             logging.info("Dict to be stored in MongoDb")
             logging.info(req_obj)
@@ -83,7 +88,6 @@ class RabbitMQManager:
             else:
                 logging.error("Consumer Task Failed")
         except Exception as e:
-            logging.error("AWS S3- Upload fail")
             logging.error(e)
             headers, data = utils.create_fileUpload_request(
                 "upload_failed", msg["file_name"], msg['user_id'], msg['user_name'])

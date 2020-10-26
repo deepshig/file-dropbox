@@ -10,4 +10,6 @@ COPY sentinel-entrypoint.sh /usr/local/bin/
 
 RUN chmod +x /usr/local/bin/sentinel-entrypoint.sh
 
-ENTRYPOINT ["/usr/local/bin/sentinel-entrypoint.sh"]
+WORKDIR /usr/local/bin
+
+ENTRYPOINT ["sentinel-entrypoint.sh"]

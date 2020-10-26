@@ -155,8 +155,10 @@ spec:
         - name: SENTINEL_QUORUM
           value: "2"
         image: diarmuidk/wacc:sentinels
-        imagePullPolicy: Always
+        imagePullPolicy: ""
         name: sentinel-1
+        ports:
+        - containerPort: 26379
         resources: {}
       restartPolicy: Always
       serviceAccountName: ""
@@ -198,8 +200,10 @@ spec:
         - name: SENTINEL_QUORUM
           value: "2"
         image: diarmuidk/wacc:sentinels
-        imagePullPolicy: Always
+        imagePullPolicy: ""
         name: sentinel-2
+        ports:
+        - containerPort: 26379
         resources: {}
       restartPolicy: Always
       serviceAccountName: ""
@@ -241,8 +245,10 @@ spec:
         - name: SENTINEL_QUORUM
           value: "2"
         image: diarmuidk/wacc:sentinels
-        imagePullPolicy: Always
+        imagePullPolicy: ""
         name: sentinel-3
+        ports:
+        - containerPort: 26379
         resources: {}
       restartPolicy: Always
       serviceAccountName: ""

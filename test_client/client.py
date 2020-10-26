@@ -88,7 +88,7 @@ class Client(threading.Thread):
 
 
 if __name__ == "__main__":
-    numClients = 3
+    numClients = 5
     # host = '127.0.0.1'
     # port = ':4000'
     # socket_port = ':5000'
@@ -96,7 +96,7 @@ if __name__ == "__main__":
     socket_port = ''
     host = '34.78.126.194'
     chunk_size = 64 * 1024
-    frequency = [1, 2]
+    frequency = [2, 5]
 
     # print(jwt.decode(resp['jwt'], verify=False))
 

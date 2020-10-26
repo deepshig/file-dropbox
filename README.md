@@ -157,7 +157,7 @@ The project uses the following technological stack:
 * Now start the Nginx Load balancer `kubectl apply -f .\nginx-ingress.yaml`
 * Note the host IP for the Nginx loadbalancer will need to be configured in `front_end/.env`for new deployments. This change will need to be built and pushed to docker hub. `cd front-end`, `docker build . -f .\Dockerfile.prod -t diarmuidk/wacc:front-end`, `docker push diarmuidk/wacc:front-end`
 * Once the previous steps are complete start the following database deployments: logstash, mongodb, postgresdb, rabbitmq, redis using the following command
-`kubectl apply -f .\logstash-deployment.yaml,.\logstash-service.yaml,.\mongodb-deployment.yaml,.\mongodb-service.yaml,.\postgresdb-deployment.yaml,.\postgresdb-service.yaml,.\rabbitmq-deployment.yaml,.\rabbitmq-service.yaml,.\redis-deployment.yaml,.\redis-service.yaml`
+`kubectl apply -f .\logstash-deployment.yaml,.\logstash-service.yaml,.\mongodb-deployment.yaml,.\mongodb-service.yaml,.\postgresdb-deployment.yaml,.\postgresdb-service.yaml,.\rabbitmq-deployment.yaml,.\rabbitmq-service.yaml,.\redis-deployment.yaml,.\redis-service.yaml,.\portainer-deployment.yaml,.\portainer-service.yaml`
 
 * Next start the following services: adminer, auth, elastic-search, file-uploader, front-end, fsm, kibana, socket-gateway using:
 `kubectl apply -f .\adminer-deployment.yaml,.\adminer-service.yaml,.\auth-deployment.yaml,.\auth-service.yaml,.\elasticsearch-deployment.yaml,.\elasticsearch-service.yaml,.\file-uploader-deployment.yaml,.\file-uploader-service.yaml,.\front-end-deployment.yaml,.\front-end-service.yaml,.\fsm-deployment.yaml,.\fsm-service.yaml,.\kibana-deployment.yaml,.\kibana-service.yaml,.\socket-gateway-deployment.yaml,.\socket-gateway-service.yaml`
