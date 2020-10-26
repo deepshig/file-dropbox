@@ -18,6 +18,8 @@ COPY app.py .
 COPY tmp .
 COPY logs/log_file.txt ./logs/
 COPY . ./src/file_uploader
+COPY config_docker.json .
+COPY config_local.json .
 
 # command to run on container start
 #CMD [ "python", "./app.py" ]

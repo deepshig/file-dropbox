@@ -12,7 +12,13 @@ import {
 
 } from '@coreui/react';
 import CIcon from '@coreui/icons-react'
-import {sendSocketMessage, receiveSocketMessage, uploadSocketFile} from "../../_actions";
+import {
+    sendSocketMessage,
+    receiveSocketMessage,
+    uploadSocketFile,
+    stopSocketMessage,
+    storeSocketMessage
+} from "../../_actions";
 
 
 class Dashboard extends Component {
@@ -41,16 +47,19 @@ class Dashboard extends Component {
     }
 
     componentDidMount(){
+        store.dispatch(storeSocketMessage(""));
         this._isMounted = true;
         this._isMounted && this.startSubscribe();
 
     } // TODO: Not remounting and subscribing on refresh...
     componentWillUnmount(){
         this.unsubscribe();
+        store.dispatch(storeSocketMessage(""));
         this._isMounted = false;
     }
     handleListen = () => {
         // store.dispatch(receiveSocketMessage("test", {'data':'none'}));
+        store.dispatch(stopSocketMessage("admin"));
         store.dispatch(receiveSocketMessage("admin", {'data':'none'}));
 
     };
@@ -82,26 +91,26 @@ class Dashboard extends Component {
         return (
 
             <>
-                <React.Fragment>
-                    <CCol xs="12" sm="6" style={{padding: "5px"}}>
-                    <CRow className="align-items-center" style={{padding: "5px"}}>
-                        {/*<CCol col="6" sm="4" md="2" xl className="mb-3 mb-xl-0">Connection: </CCol>*/}
-                        <CCol>
-                            <h1>Socket Testing: {this.state.payload}</h1>
-                        </CCol>
-                    </CRow>
-                    <CRow>
-                        <CCol>
-                        {/*<div onClick={this.handleEmit}> Start/Stop</div>*/}
-                        <CButton onClick={this.handleListen} color="info" size="md" block>Listen</CButton>
-                        </CCol>
-                        {/*<div onClick={this.handleListen}> Listen</div>*/}
-                    </CRow>
-                    </CCol>
-                    <CCol xs="12" sm="6">
-                    </CCol>
+                {/*<React.Fragment>*/}
+                {/*    <CCol xs="12" sm="6" style={{padding: "5px"}}>*/}
+                {/*    <CRow className="align-items-center" style={{padding: "5px"}}>*/}
+                {/*        /!*<CCol col="6" sm="4" md="2" xl className="mb-3 mb-xl-0">Connection: </CCol>*!/*/}
+                {/*        <CCol>*/}
+                {/*            <h1>Socket Testing: {this.state.payload}</h1>*/}
+                {/*        </CCol>*/}
+                {/*    </CRow>*/}
+                {/*    <CRow>*/}
+                {/*        <CCol>*/}
+                {/*        /!*<div onClick={this.handleEmit}> Start/Stop</div>*!/*/}
+                {/*        <CButton onClick={this.handleListen} color="info" size="md" block>Listen</CButton>*/}
+                {/*        </CCol>*/}
+                {/*        /!*<div onClick={this.handleListen}> Listen</div>*!/*/}
+                {/*    </CRow>*/}
+                {/*    </CCol>*/}
+                {/*    <CCol xs="12" sm="6">*/}
+                {/*    </CCol>*/}
 
-                </React.Fragment>
+                {/*</React.Fragment>*/}
 
                 <CCard>
                     <CCardBody>

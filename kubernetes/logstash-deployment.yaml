@@ -32,10 +32,16 @@ spec:
         image: docker.elastic.co/logstash/logstash:7.6.2
         imagePullPolicy: ""
         name: logstash
+        volumeMounts:
+          - mountPath: "~/logs"
+            name: mypd
         ports:
         - containerPort: 9600
         resources: {}
       restartPolicy: Always
       serviceAccountName: ""
-      volumes: null
+      volumes:
+        - name: mypd
+          persistentVolumeClaim:
+            claimName: pvc
 status: {}

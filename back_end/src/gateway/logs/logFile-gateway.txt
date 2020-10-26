@@ -1,0 +1,2 @@
+2020-10-25 15:26:08,109 - INFO - 127.0.0.1 - - [25/Oct/2020 15:26:08] "[37mGET /socket.io/?access_token=eab5fef7-6a27-42ed-97c2-1cafa049e530&user_id=821e1fa7-141a-4556-8ce1-a1753416d8aa&EIO=3&transport=polling&t=NLW9kK9&sid=0a560570633048688a7317a157bf92f0 HTTP/1.1[0m" 200 -
+2020-10-25 15:26:13,117 - INFO - 127.0.0.1 - - [25/Oct/2020 15:26:13] "[37mGET /socket.io/?access_token=eab5fef7-6a27-42ed-97c2-1cafa049e530&user_id=821e1fa7-141a-4556-8ce1-a1753416d8aa&EIO=3&transport=polling&t=NLW9lZV&sid=0a560570633048688a7317a157bf92f0 HTTP/1.1[0m" 200 -

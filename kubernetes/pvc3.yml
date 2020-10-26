@@ -1,0 +1,12 @@
+# pvc3.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc3
+spec:
+  accessModes:
+    - ReadWriteOnce
+    - ReadOnlyMany
+  resources:
+    requests:
+      storage: 1Gi

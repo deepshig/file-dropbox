@@ -43,7 +43,8 @@ class RabbitMQManager:
                 credentials=credentials,
                 heartbeat=config["rabbitmq_config"]["connection_timeout_s"],
                 blocked_connection_timeout=config["rabbitmq_config"]["idle_connection_timeout_s"],
-                retry_delay=config["rabbitmq_config"]["connection_retry_s"])
+                retry_delay=config["rabbitmq_config"]["connection_retry_s"],
+                connection_attempts=config["rabbitmq_config"]["connection_retry_attempts"])
 
             connection = pika.BlockingConnection(params)
         except Exception as err:
@@ -62,36 +63,30 @@ class RabbitMQManager:
         # print(file_contents)
         file = io.BytesIO(bytes(file_contents["value"]))
         try:
-            serv.aws_client.upload_fileobj(file, config["aws"]["upload_file_bucket"], str(
-                config["aws"]["upload_file_key"]+"/"+str(msg["file_name"])))
-            logging.info("AWS S3 - Upload successful")
-            # print(msg["file_name"])
-            url = '%s/%s/%s' % (serv.aws_client.meta.endpoint_url,
-                                config["aws"]["upload_file_bucket"],  str(
-                config["aws"]["upload_file_key"]+"/"+str(msg["file_name"])))
-            ob_id = serv.gridfs_client.insert(file_contents["value"], msg["file_name"])
-            req_obj = utils.create_mongoDb_insert_obj(msg,ob_id)
+            ob_id = serv.gridfs_client.insert(
+                file_contents["value"], msg["file_name"])
+            req_obj = utils.create_mongoDb_insert_obj(msg, ob_id)
             logging.info("Dict to be stored in MongoDb")
             logging.info(req_obj)
             inserted_id = serv.mongo_client.create(req_obj)
             logging.info("File Uploaded Successfully")
             headers, data = utils.create_fileUpload_request(
-                "uploaded_successfully", msg["file_name"], msg['user_id'],msg['user_name'])
+                "uploaded_successfully", msg["file_name"], msg['user_id'], msg['user_name'])
             if INSIDE_CONTAINER:
                 response = requests.put(
                     'http://file-uploader:3500/file/update/status', headers=headers, data=data)
             else:
                 response = requests.put(
                     'http://localhost:3500/file/update/status', headers=headers, data=data)
-
             if response:
                 logging.info("Consumer Task Completed")
             else:
                 logging.error("Consumer Task Failed")
         except Exception as e:
             logging.error("AWS S3- Upload fail")
+            logging.error(e)
             headers, data = utils.create_fileUpload_request(
-                "upload_failed", msg["file_name"], msg['user_id'],msg['user_name'])
+                "upload_failed", msg["file_name"], msg['user_id'], msg['user_name'])
             if INSIDE_CONTAINER:
                 response = requests.put(
                     'http://file-uploader:3500/file/update/status', headers=headers, data=data)
