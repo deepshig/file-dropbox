@@ -16,6 +16,11 @@ export const setLogin = (UID, token, user_id) => {
         token: token
     }
 };
+export const Logout = () => {
+    return{
+        type: userConstants.LOGOUT,
+    }
+};
 export const callRegister = (UID) => {
     return{
         type: userConstants.REGISTER_REQUEST,

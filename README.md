@@ -149,11 +149,12 @@ The project uses the following technological stack:
 
 ### Kubernetes
 
-* To run the system in kubernetes a node cluster pool of minimum 5 nodes (without replicas) is required `gcloud container clusters resize project --node-pool default-pool --num-nodes 5`
+* To run the system in kubernetes a node cluster pool of minimum 4 nodes (without replicas) is required `gcloud container node-pools create default-pool --cluster=project --machine-type=n2-standard-2  --num-nodes=4`
+* 
 * Run the following commands from the `kubernetes/` directory
-* An Nginx Ingress instance is required on the cluster `kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.40.2/deploy/static/provider/cloud/deploy.yaml`
+* An Nginx Ingress instance is required on the cluster `kubectl apply -f .\nginx-deploy.yaml` _Important: Wait until the endpoints have been assigned before continuing_
 * Now start the Nginx Load balancer `kubectl apply -f .\nginx-ingress.yaml`
-* Note the host IP for the Nginx loadbalancer will need to be configured in `front_end/.env`for new deployments. This change will need to be built and pushed to docker hub. `cd front-end`, `docker build . -t diarmuidk/wacc:front-end`, `docker push diarmuidk/wacc:front-end`
+* Note the host IP for the Nginx loadbalancer will need to be configured in `front_end/.env`for new deployments. This change will need to be built and pushed to docker hub. `cd front-end`, `docker build . -f .\Dockerfile.prod -t diarmuidk/wacc:front-end`, `docker push diarmuidk/wacc:front-end`
 * Once the previous steps are complete start the following database deployments: logstash, mongodb, postgresdb, rabbitmq, redis using the following command
 `kubectl apply -f .\logstash-deployment.yaml,.\logstash-service.yaml,.\mongodb-deployment.yaml,.\mongodb-service.yaml,.\postgresdb-deployment.yaml,.\postgresdb-service.yaml,.\rabbitmq-deployment.yaml,.\rabbitmq-service.yaml,.\redis-deployment.yaml,.\redis-service.yaml`
 

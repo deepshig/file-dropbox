@@ -200,7 +200,7 @@ services:
     # Enable you to access potainers web interface from your host machine
     # using http://localhost:10001
     ports:
-      - "10001:9000"
+      - 10001:9000
 
 networks:
   docker_network:

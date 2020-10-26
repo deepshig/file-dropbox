@@ -39,6 +39,7 @@ spec:
         resources: {}
       imagePullSecrets:
         - name: regcred
+
       restartPolicy: Always
       serviceAccountName: ""
       volumes: null
