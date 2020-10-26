@@ -51,7 +51,9 @@ export default class socketAPI {
     }
 
     disconnect() {
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
+            if (!this.socket) return reject('No socket connection.');
+
             this.socket.disconnect(() => {
                 this.socket = null;
                 resolve();
@@ -71,7 +73,7 @@ export default class socketAPI {
                 }
             }, response => {
                 this.socket.on(event, response => store.dispatch(storeSocketMessage(event, response['data'])));
-                console.log(store.getState().socketReducer.payload);
+                // console.log(store.getState().socketReducer.payload);
 
                 return resolve();
             });
@@ -86,7 +88,7 @@ export default class socketAPI {
             if (!this.socket) return reject('No socket connection.');
 
             this.socket.on(event, (response) =>{
-                store.dispatch(storeSocketMessage(event, response['data'])); console.log(response['data'])});
+                store.dispatch(storeSocketMessage(event, response['data']))});
                 // console.log(response['data'])});
             return resolve();
         }).catch(e =>{
@@ -98,8 +100,6 @@ export default class socketAPI {
         // No promise is needed here, but we're expecting one in the middleware.
         return new Promise((resolve, reject) => {
             if (!this.socket) return reject('No socket connection.');
-
-            console.log("Stopping");
 
             this.socket.off(event);
             // console.log(response['data'])});
@@ -129,7 +129,6 @@ export default class socketAPI {
                 }
             });
             this.socket.emit('complete-upload', file_id, store.getState().authentication.user, store.getState().authentication.user_id, response => {
-                console.log("hi");
             });
         }
     }

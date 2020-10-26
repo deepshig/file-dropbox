@@ -4,3 +4,4 @@ flask-socketio
 requests
 python-etcd
 pika
+flask_jwt_extended

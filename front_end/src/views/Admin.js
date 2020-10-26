@@ -38,6 +38,16 @@ const Admin = () => {
                 <CCol></CCol>
                 <CCol></CCol>
             </CRow>
+            <CRow className="align-items-center" style={{padding: '5px'}}>
+                <CCol col="12" xl className="mb-3 mb-xl-0">
+                    Portainer
+                </CCol>
+                <CCol col="6" sm="4" md="2" xl className="mb-3 mb-xl-0">
+                    <a target="_blank" href={"http://" + process.env.REACT_APP_HOST_IP + process.env.REACT_APP_PORTAINER_PORT + "/portainer/"}><CButton block color="primary">Panel</CButton></a>
+                </CCol>
+                <CCol></CCol>
+                <CCol></CCol>
+            </CRow>
         </CCardBody>
       </CCard>
 

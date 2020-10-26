@@ -250,7 +250,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./portainer-data:/data
     ports:
-      - "10001:9000"
+      - 10001:9000
 
 networks:
   docker_network:

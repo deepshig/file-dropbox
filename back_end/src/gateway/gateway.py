@@ -9,10 +9,12 @@ import json
 import uuid
 import base64
 from datetime import datetime
+import jwt
 import os
 import pika
 import pathlib
 import sys
+
 from config import config
 from rabbitmq import RabbitMQManager
 # import etcd
@@ -32,6 +34,7 @@ INSIDE_CONTAINER = os.environ.get('IN_CONTAINER_FLAG', False)
 CORS(app, supports_credentials=True)
 socket = SocketIO(app, cors_allowed_origins="*")
 file_path = os.path.abspath(pathlib.Path().absolute()) + '/tmp/'
+
 
 print(config["rabbitmq_config"])
 
@@ -69,15 +72,15 @@ def connect():
     if request.args.get('access_token') is not None:
         token = request.args.get('access_token')
         user_id = request.args.get('user_id')
-    elif request.headers['access_token'] is not None:
-        token = request.headers['access_token']
-        user_id = request.headers['user_id']
+    elif request.headers['Authorization'] is not None:
+        token = request.headers['Authorization']
+        contents = jwt.decode(token, verify=False)
+        user_id = contents['user_id']
+        token = contents['access_token']
     if INSIDE_CONTAINER:
-        resp = requests.get("http://auth:4000/auth/validate", data={'user_id': user_id, 'access_token': str(token)})
+        resp = requests.get("http://auth:4000/auth/validate", data={'user_id': user_id, 'access_token': token})
     else:
-        resp = requests.get("http://127.0.0.1:4000/auth/validate", data={'user_id': user_id, 'access_token': str(token)})
-
-    print(resp.status_code)
+        resp = requests.get("http://127.0.0.1:4000/auth/validate", data={'user_id': user_id, 'access_token': token})
 
     if not resp.status_code == 200:
         raise ConnectionRefusedError('unauthorized!')
@@ -122,7 +125,7 @@ def start_transfer(filename, size):
     :return: emit('start-transfer', {'id': id})
     """
 
-    print("starting")
+    # print("starting")
     _, ext = os.path.splitext(filename)
     if ext in ['.exe', '.bin', '.js', '.sh', '.py', '.php']:
         return False  # reject the upload
@@ -172,19 +175,19 @@ def complete_upload(file_id, username, user_id):
     """
     print(file_id)
     # file_id = file_id.split('tmp/')[1]
-    print("Complete")
-    print(user_id)
+    # print("Complete")
+    # print(user_id)
     with open(file_path + file_id + '.json', 'rb') as f:
         data = json.load(f)
         data = json.dumps(data)
         # data = pickle.dump()
         eprint(data)
         eprint(type(data))
-    print(os.path.isfile(file_path + file_id))
+    # print(os.path.isfile(file_path + file_id))
 
     with open(file_path + file_id, 'rb') as f:
-        eprint("sending")
-        print(f.read(4))
+        # eprint("sending")
+        # print(f.read(4))
         if INSIDE_CONTAINER:
             resp = requests.post('http://file-uploader:3500/file/upload', files={'file': f}, data={'user_id': user_id, 'user_name': username, 'metadata': data})
         else:

@@ -1,4 +1,4 @@
-import React, {Component, lazy} from 'react';
+import React, {Component, lazy, useState} from 'react';
 import store from '../../_helpers/store'
 import {
     CButton,
@@ -8,7 +8,18 @@ import {
     CCardHeader,
     CCol,
     CRow,
-    CForm, CFormGroup, CLabel, CInput, CFormText, CSelect, CInputFile
+    CForm,
+    CFormGroup,
+    CLabel,
+    CInput,
+    CFormText,
+    CSelect,
+    CInputFile,
+    CToast,
+    CToastHeader,
+    CToastBody,
+    CToaster,
+    CModalHeader, CModalTitle, CModalBody, CModalFooter, CModal
 
 } from '@coreui/react';
 import CIcon from '@coreui/icons-react'
@@ -21,11 +32,13 @@ import {
 } from "../../_actions";
 
 
+
 class Dashboard extends Component {
     constructor(props){
         super(props);
         this._isMounted = false;
         this.state = {
+            modal: store.getState().socketReducer.fileUpload,
             payload: store.getState().socketReducer.payload,
             socketStatus: "On",
             file: '',
@@ -35,7 +48,13 @@ class Dashboard extends Component {
         // this.getHistory();
     }
     uploadListen(){
-        store.dispatch(receiveSocketMessage("admin", {'data':'none'}));
+        store.dispatch(receiveSocketMessage("complete-upload"));
+        this.unsubscribeFile = store.subscribe(()=>{
+            const fileUpload = store.getState().socketReducer.fileUpload;
+            if (fileUpload !== this.state.fileUpload){
+                this._isMounted && this.setState({fileUpload});
+            }
+        });
     };
     startSubscribe(){
         this.unsubscribe = store.subscribe(()=>{
@@ -50,10 +69,13 @@ class Dashboard extends Component {
         store.dispatch(storeSocketMessage(""));
         this._isMounted = true;
         this._isMounted && this.startSubscribe();
+        this._isMounted && this.uploadListen();
+
 
     } // TODO: Not remounting and subscribing on refresh...
     componentWillUnmount(){
         this.unsubscribe();
+        this.unsubscribeFile();
         store.dispatch(storeSocketMessage(""));
         this._isMounted = false;
     }
@@ -79,7 +101,7 @@ class Dashboard extends Component {
         // TODO: add multli file support:
         // https://github.com/miguelgrinberg/socketio-examples/blob/master/uploads/static/uploads/main.js
 
-        console.log(this.state.file['0']);
+        // console.log(this.state.file['0']);
         if(this.state.file['0'] !== undefined) {
             store.dispatch(uploadSocketFile(this.state.file['0']));
         }
@@ -87,6 +109,8 @@ class Dashboard extends Component {
     }
 
     render () {
+
+
         const user = store.getState().authentication.user;
         return (
 
@@ -111,6 +135,29 @@ class Dashboard extends Component {
                 {/*    </CCol>*/}
 
                 {/*</React.Fragment>*/}
+                {this.state.fileUpload
+                ?<CToaster
+                        position={'top-right'}
+                        key={'toaster' + 1}
+                    >
+                        {
+                            <CToast
+                                key={'toast' + 1}
+                                show={true}
+                                autohide={true && 3000}
+                                fade={true}
+                            >
+                                <CToastHeader closeButton={this.state.modal}>
+                                    File Upload
+                                </CToastHeader>
+                                <CToastBody>
+                                    {`File Uploaded successfully`}
+                                </CToastBody>
+                            </CToast>
+                        }
+                    </CToaster>
+                :<div></div>}
+
 
                 <CCard>
                     <CCardBody>

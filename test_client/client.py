@@ -10,6 +10,8 @@ import jwt
 import socketio
 
 global host
+global port
+global socket_port
 global chunk_size
 global frequency
 
@@ -63,19 +65,20 @@ class Client(threading.Thread):
     def run(self):
         self.user_name = "client" + str(self.id)
 
-        resp = requests.put("http://" + host + ":4000/auth/login/" + self.user_name)  # TODO : create user with role
+        resp = requests.put("http://" + host + port + "/auth/login/" + self.user_name)  # TODO : create user with role
 
         if resp.status_code != 201:
-            resp = requests.post("http://" + host + ":4000/auth/signup",
+            resp = requests.post("http://" + host + port + "/auth/signup",
                                  {'name': self.user_name, 'role': 'user'})  # TODO : create user with role
-
+        print(resp.json())
         if resp.status_code == 201:
 
             resp = resp.json()
             decoded = jwt.decode(resp["jwt"], verify=False)
             self.user_id = decoded['user_id']
             access_token = decoded['access_token']
-            self.socket.connect("http://" + host + ":5000/", headers={'user_id': self.user_id, 'access_token': access_token})
+            print(resp['jwt'])
+            self.socket.connect("http://" + host + socket_port + "/", headers={'Authorization': resp['jwt']})
             print(str(self.id) + ": Connected")
             while True:
                 self.socket.emit('start-transfer', data=(self.f.name, self.f.tell()))
@@ -85,10 +88,15 @@ class Client(threading.Thread):
 
 
 if __name__ == "__main__":
-    numClients = 10
-    host = '127.0.0.1'
+    numClients = 3
+    # host = '127.0.0.1'
+    # port = ':4000'
+    # socket_port = ':5000'
+    port = ''
+    socket_port = ''
+    host = '34.78.126.194'
     chunk_size = 64 * 1024
-    frequency = [1, 3]
+    frequency = [1, 2]
 
     # print(jwt.decode(resp['jwt'], verify=False))
 

@@ -47,7 +47,7 @@ class Active extends Component {
             const event = store.getState().socketReducer.event;
             if (event === this.state.event) {
                 if (payload !== this.state.payload && (payload !== "" || payload !== undefined)) {
-                    console.log(JSON.parse(JSON.stringify(payload)));
+                    // console.log(JSON.parse(JSON.stringify(payload)));
                     this._isMounted && this.setState({data: [JSON.parse(JSON.stringify(payload))].concat(this.state.data)});
                 }
             }
