@@ -143,7 +143,7 @@ services:
       - docker_network
 
   sentinel-2:
-      build: diarmuidk/wacc:sentinels
+      image: diarmuidk/wacc:sentinels
       environment:
         - SENTINEL_DOWN_AFTER=5000
         - SENTINEL_FAILOVER=500
@@ -156,7 +156,7 @@ services:
         - docker_network
 
   sentinel-3:
-      build: diarmuidk/wacc:sentinels
+      image: diarmuidk/wacc:sentinels
       environment:
         - SENTINEL_DOWN_AFTER=5000
         - SENTINEL_FAILOVER=500
