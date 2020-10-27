@@ -6,8 +6,8 @@
     "password": ""
   },
   "aws": {
-    "access_key": "AKIA5UVQCCOP2IPAQU5J",
-    "secret_access_key": "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",
+    "access_key": "x",
+    "secret_access_key": "x",
     "upload_file_bucket": "weightsbucket",
     "upload_file_key": "weights"
   },
