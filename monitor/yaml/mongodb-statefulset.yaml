@@ -17,6 +17,9 @@ spec:
       containers:
       - name: mongo
         image: mongo
+        env:
+          - name: PRIMARY
+            value: "true"
         command:
         - mongod
         - "--bind_ip_all"
