@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: mongo
+  name: mongodb
 spec:
   selector:
     matchLabels:
-      app: mongo
+      app: mongodb
   serviceName: "mongo"
   replicas: 3
   template:
     metadata:
       labels:
-        app: mongo
+        app: mongodb
     spec:
       terminationGracePeriodSeconds: 10
       containers:
-      - name: mongo
-        image: mongo
+      - name: mongodb
+        image: mongodb
         env:
           - name: PRIMARY
             value: "true"
