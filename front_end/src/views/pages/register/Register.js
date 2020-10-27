@@ -18,7 +18,7 @@ import {
 import CIcon from '@coreui/icons-react'
 
 import store from "../../../_helpers/store";
-import {callRegister} from "../../../_actions";
+import {callRegister, disconnectSocket, Logout} from "../../../_actions";
 import connect from "react-redux/es/connect/connect";
 
 class Register extends Component {
@@ -38,7 +38,9 @@ class Register extends Component {
     }
 
     handleSubmit(event){
-        store.dispatch(callRegister(this.state.UID));
+        store.dispatch(disconnectSocket())
+        store.dispatch(Logout())
+        // store.dispatch(callRegister(this.state.UID));
         fetch("http://" + process.env.REACT_APP_HOST_IP + process.env.REACT_APP_AUTHENTICATION_PORT + "/auth/signup", {
             method: "POST",
             crossDomain: true,
@@ -51,7 +53,7 @@ class Register extends Component {
                 name: this.state.UID,
                 role: this.state.role,
             })
-        }).then(this.props.history.push('/login'));
+        }).then(this.props.history.goBack());
 
         // .then((response) => console.log(jwt(response['jwt'])['access_token'])) // TODO: pass token
 

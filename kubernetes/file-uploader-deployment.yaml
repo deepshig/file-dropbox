@@ -9,7 +9,7 @@ metadata:
     io.kompose.service: file-uploader
   name: file-uploader
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       io.kompose.service: file-uploader
@@ -37,18 +37,20 @@ spec:
         image: diarmuidk/wacc:file-uploader
         imagePullPolicy: Always
         name: file-uploader
-        volumeMounts:
-          - mountPath: "~/logs"
-            name: mypd
+#        volumeMounts:
+#          # name should match from volumes section
+#          - name: logs-volume-1
+#            mountPath: "/logs"
         ports:
         - containerPort: 3500
         resources: {}
       imagePullSecrets:
         - name: regcred
+
       restartPolicy: Always
       serviceAccountName: ""
-      volumes:
-        - name: mypd
-          persistentVolumeClaim:
-            claimName: pvc
+#      volumes:
+#        - name: logs-volume-1
+#          persistentVolumeClaim:
+#            claimName: nfs-logs-pvc
 status: {}

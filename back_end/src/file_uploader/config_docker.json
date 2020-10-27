@@ -1,11 +1,25 @@
 {
     "index_cache_config": {
-        "host": "redis",
-        "port": 6379
+        "service_name": "mymaster",
+        "master_host": "redis",
+        "master_port": 26379,
+        "slave_1_host": "sentinel-1",
+        "slave_1_port": 26379,
+        "slave_2_host": "sentinel-2",
+        "slave_2_port": 26379,
+        "slave_3_host": "sentinel-3",
+        "slave_3_port": 26379
     },
     "file_cache_config": {
-        "host": "redis",
-        "port": 6379
+        "service_name": "mymaster",
+        "master_host": "redis",
+        "master_port": 26379,
+        "slave_1_host": "sentinel-1",
+        "slave_1_port": 26379,
+        "slave_2_host": "sentinel-2",
+        "slave_2_port": 26379,
+        "slave_3_host": "sentinel-3",
+        "slave_3_port": 26379
     },
     "file_rabbitmq_config": {
         "user": "guest",

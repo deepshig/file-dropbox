@@ -10,8 +10,15 @@ from src.file_uploader.index_cache import IndexCache, ERROR_MAX_ATTEMPTS_REACHED
 from src.file_uploader.redis_driver import RedisDriver  # NOQA
 from src.file_uploader.rabbitmq import RabbitMQManager  # NOQA
 
-test_redis_config = {"host": "127.0.0.1",
-                     "port": 6379}
+test_redis_config = {"service_name": "mymaster",
+                     "master_host": "127.0.0.1",
+                     "master_port": 26379,
+                     "slave_1_host": "127.0.0.1",
+                     "slave_1_port": 26379,
+                     "slave_2_host": "127.0.0.1",
+                     "slave_2_port": 26379,
+                     "slave_3_host": "127.0.0.1",
+                     "slave_3_port": 26379}
 
 test_file_rabbitmq_config = {"user": "guest",
                              "password": "guest",

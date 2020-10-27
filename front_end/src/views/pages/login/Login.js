@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import { Link, Redirect, withRouter } from 'react-router-dom'
 import { connect } from 'react-redux';
-import {callLogin, createSocket, setLogin, setLoginfail} from "../../../_actions";
+import {callLogin, createSocket, Logout, setLogin, setLoginfail} from "../../../_actions";
 import store from "../../../_helpers/store";
 import jwt from 'jwt-decode';
 // import history from "../../../_helpers/history"
@@ -35,7 +35,8 @@ class Login extends Component {
     this.setState({ UID: evt.target.value });
   }
   handleClick(){
-    store.dispatch(callLogin(this.state.UID));
+      store.dispatch(Logout())
+      store.dispatch(callLogin(this.state.UID));
     fetch("http://" + process.env.REACT_APP_HOST_IP + process.env.REACT_APP_AUTHENTICATION_PORT + "/auth/login/" + this.state.UID, {
       method: "PUT",
       crossDomain: true,
@@ -55,7 +56,7 @@ class Login extends Component {
             }
         }
     ).then((response) => {
-        console.log(jwt(response['jwt'])['user_id']);
+        // console.log(jwt(response['jwt'])['user_id']);
         store.dispatch(setLogin(this.state.UID, jwt(response['jwt'])['access_token'], jwt(response['jwt'])['user_id']));
         store.dispatch(createSocket())
     }).catch((error) => {
@@ -64,7 +65,7 @@ class Login extends Component {
     })
 
         // .then((response) => console.log(jwt(response['jwt'])['access_token'])) // TODO: pass token
-        .then(this.props.history.push('/login'))
+        .then(this.props.history.goBack())
 
   }
   render()
@@ -92,7 +93,7 @@ class Login extends Component {
                         <CRow>
                           <CCol xs="6">
                             <Link to="/">
-                              <CButton onClick={() => this.handleClick()} color="primary" className="px-4">Login</CButton>
+                              <CButton type="submit" onClick={() => this.handleClick()} color="primary" className="px-4">Login</CButton>
                             </Link>
                           </CCol>
 

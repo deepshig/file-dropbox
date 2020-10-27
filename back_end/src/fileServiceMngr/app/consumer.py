@@ -60,8 +60,12 @@ class RabbitMQManager:
         logging.info(msg)
         key = msg["file_cache_key"]
         file_contents = serv.redis_client.get(key)
+        # logging.info(file_contents)
+        if not file_contents['success']:
+            logging.error(file_contents['error'])
+
         # print(file_contents)
-        file = io.BytesIO(bytes(file_contents["value"]))
+        # file = io.BytesIO(bytes(file_contents["value"]))
         try:
             ob_id = serv.gridfs_client.insert(
                 file_contents["value"], msg["file_name"])
@@ -73,17 +77,27 @@ class RabbitMQManager:
             headers, data = utils.create_fileUpload_request(
                 "uploaded_successfully", msg["file_name"], msg['user_id'], msg['user_name'])
             if INSIDE_CONTAINER:
-                response = requests.put(
-                    'http://file-uploader:3500/file/update/status', headers=headers, data=data)
+                try:
+                    response = requests.put(
+                        'http://file-uploader:3500/file/update/status', headers=headers, data=data)
+                except requests.exceptions.ConnectionError as e:
+                    print("CONNECTION ERROR: ")
+                    print(e)
+                    response = False
+
             else:
-                response = requests.put(
-                    'http://localhost:3500/file/update/status', headers=headers, data=data)
+                try:
+                    response = requests.put(
+                        'http://localhost:3500/file/update/status', headers=headers, data=data)
+                except requests.exceptions.ConnectionError as e:
+                    print("CONNECTION ERROR: ")
+                    print(e)
+                    response = False
             if response:
                 logging.info("Consumer Task Completed")
             else:
                 logging.error("Consumer Task Failed")
         except Exception as e:
-            logging.error("AWS S3- Upload fail")
             logging.error(e)
             headers, data = utils.create_fileUpload_request(
                 "upload_failed", msg["file_name"], msg['user_id'], msg['user_name'])

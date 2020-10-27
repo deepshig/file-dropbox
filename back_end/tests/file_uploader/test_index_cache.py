@@ -7,13 +7,21 @@ sys.path.append('../')
 from src.file_uploader import index_cache  # NOQA
 from src.file_uploader.redis_driver import RedisDriver, ERROR_KEY_NOT_FOUND  # NOQA
 
-test_redis_config = {"host": "127.0.0.1",
-                     "port": 6379}
+test_redis_config = {"service_name": "mymaster",
+                     "master_host": "127.0.0.1",
+                     "master_port": 26379,
+                     "slave_1_host": "127.0.0.1",
+                     "slave_1_port": 26379,
+                     "slave_2_host": "127.0.0.1",
+                     "slave_2_port": 26379,
+                     "slave_3_host": "127.0.0.1",
+                     "slave_3_port": 26379}
 
 
 def teardown_redis(redis_conn):
     if redis_conn is not None:
-        redis_conn.flushall()
+        master = redis_conn.master_for("mymaster")
+        master.flushall()
 
 
 def test_create(mocker):

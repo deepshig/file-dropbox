@@ -103,18 +103,80 @@ services:
       - docker_network
 
   redis:
-    image: "redis:alpine"
+    image: redis:3
     command: redis-server
     ports:
-    - 6379:6379
+      - 6379:6379
     volumes:
-    - ./redis-data:/var/lib/redis
-    - ./redis.conf:/usr/local/etc/redis/redis.conf
+      - ./redis-data:/var/lib/redis
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+    networks:
+      - docker_network
 
-#    environment:
-#    - REDIS_REPLICATION_MODE=master
+  redis-slave-1:
+    image: redis:3
+    command: redis-server --slaveof redis 6379
+    ports:
+      - 6379:6379
+    depends_on:
+      - redis
+    networks:
+      - docker_network
+
+  redis-slave-2:
+    image: redis:3
+    command: redis-server --slaveof redis 6379
+    ports:
+      - 6379:6379
+    depends_on:
+       - redis
     networks:
     - docker_network
+
+  sentinel-1:
+    image: diarmuidk/wacc:sentinels
+    ports:
+      - 26379:26379
+    environment:
+      - SENTINEL_DOWN_AFTER=5000
+      - SENTINEL_FAILOVER=500
+      - SENTINEL_QUORUM=2
+    depends_on:
+      - redis
+      - redis-slave-1
+      - redis-slave-2
+    networks:
+      - docker_network
+
+  sentinel-2:
+      image: diarmuidk/wacc:sentinels
+      ports:
+        - 26379:26379
+      environment:
+        - SENTINEL_DOWN_AFTER=5000
+        - SENTINEL_FAILOVER=500
+        - SENTINEL_QUORUM=2
+      depends_on:
+        - redis
+        - redis-slave-1
+        - redis-slave-2
+      networks:
+        - docker_network
+
+  sentinel-3:
+      image: diarmuidk/wacc:sentinels
+      ports:
+        - 26379:26379
+      environment:
+        - SENTINEL_DOWN_AFTER=5000
+        - SENTINEL_FAILOVER=500
+        - SENTINEL_QUORUM=2
+      depends_on:
+        - redis
+        - redis-slave-1
+        - redis-slave-2
+      networks:
+        - docker_network
 
 #  etcd:
 #    image: 'bitnami/etcd:latest'
@@ -197,10 +259,8 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./portainer-data:/data
-    # Enable you to access potainers web interface from your host machine
-    # using http://localhost:10001
     ports:
-      - "10001:9000"
+      - 10001:9000
 
 networks:
   docker_network:

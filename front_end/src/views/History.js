@@ -46,11 +46,18 @@ class History extends Component {
       const event = store.getState().socketReducer.event;
       if (event === ev) {
         if (payload !== this.state.payload && (payload !== "" || payload !== undefined)) {
-          console.log(payload);
-
           if(event === this.state.event) {
             this._isMounted && this.setState({data: JSON.parse(JSON.stringify(payload))});
-            console.log(this.state.data);
+            // console.log(this.state.data);
+          }
+          if(event === 'download-file') {
+            // this._isMounted && this.setState({data: JSON.parse(JSON.stringify(payload))});
+            console.log(payload);
+            var blob = new Blob([payload], { type: "text/npy" });
+            var url = URL.createObjectURL(blob);
+            // store.dispatch(stopSocketMessage("download-file"));
+
+            window.open(url);
           }
         }
       }
@@ -61,7 +68,9 @@ class History extends Component {
     this._isMounted = true;
     this._isMounted && this.startSubscribe(this.state.event);
     this._isMounted && this.startSubscribe("download-file");
-    store.dispatch(receiveSocketMessage(this.state.event, {'user_id': this.state.user_id}));
+    // store.dispatch(receiveSocketMessage(this.state.event, {'user_id': this.state.user_id}));
+    store.dispatch(sendSocketMessage(this.state.event, {'user_id': this.state.user_id}));
+
   }
   componentWillUnmount() {
     this.unsubscribe();
@@ -76,6 +85,7 @@ class History extends Component {
     this.setState({ user_id: evt.target.value });
   }
   downloadFile(file_id){
+
     store.dispatch(sendSocketMessage("download-file", {'file_id': file_id}));
 
   }
@@ -90,7 +100,7 @@ class History extends Component {
       </CRow>
       <CRow style={{padding: "5px"}}>
         <CCol>
-          <CInput value={this.state.UID} onChange={evt => this.updateInputValue(evt)} type="text"/>
+          <CInput value={this.state.user_id} onChange={evt => this.updateInputValue(evt)} type="text"/>
         </CCol>
         <CCol>
           <CButton onClick={() => this.getHistory()} color="primary" className="px-4">Get history</CButton>

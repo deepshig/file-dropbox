@@ -9,7 +9,7 @@ metadata:
     io.kompose.service: socket-gateway
   name: socket-gateway
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       io.kompose.service: socket-gateway
@@ -39,6 +39,7 @@ spec:
         resources: {}
       imagePullSecrets:
         - name: regcred
+
       restartPolicy: Always
       serviceAccountName: ""
       volumes: null

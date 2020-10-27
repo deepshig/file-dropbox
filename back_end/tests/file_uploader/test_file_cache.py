@@ -7,13 +7,21 @@ sys.path.append('../')
 from src.file_uploader.file_cache import FileCache, ERROR_FILE_NOT_FOUND, ERROR_EMPTY_FILE  # NOQA
 from src.file_uploader.redis_driver import RedisDriver, ERROR_KEY_NOT_FOUND  # NOQA
 
-test_redis_config = {"host": "127.0.0.1",
-                     "port": 6379}
+test_redis_config = {"service_name": "mymaster",
+                     "master_host": "127.0.0.1",
+                     "master_port": 26379,
+                     "slave_1_host": "127.0.0.1",
+                     "slave_1_port": 26379,
+                     "slave_2_host": "127.0.0.1",
+                     "slave_2_port": 26379,
+                     "slave_3_host": "127.0.0.1",
+                     "slave_3_port": 26379}
 
 
 def teardown_redis(redis_conn):
     if redis_conn is not None:
-        redis_conn.flushall()
+        master = redis_conn.get_master("mymaster")
+        master.flushall()
 
 
 def test_store(mocker):
@@ -103,12 +111,13 @@ def test_delete(mocker):
     """
     key = "file:" + file_name
     file_content = "Hello World".encode('utf-8')
-    cache.redis.connection.set(key, file_content)
+    master = cache.redis.connection.master_for(cache.redis.service)
+    master.set(key, file_content)
 
     result = cache.delete(file_name)
     assert result["success"] == True
 
-    value = cache.redis.connection.get(key)
+    value = master.get(key)
     assert value == None
 
     teardown_redis(cache.redis.connection)

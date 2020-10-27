@@ -9,13 +9,14 @@ import json
 import uuid
 import base64
 from datetime import datetime
+import jwt
 import os
 import pika
 import pathlib
 import sys
+
 from config import config
 from rabbitmq import RabbitMQManager
-# import etcd
 
 import logging
 import logging.handlers
@@ -32,6 +33,7 @@ INSIDE_CONTAINER = os.environ.get('IN_CONTAINER_FLAG', False)
 CORS(app, supports_credentials=True)
 socket = SocketIO(app, cors_allowed_origins="*")
 file_path = os.path.abspath(pathlib.Path().absolute()) + '/tmp/'
+
 
 print(config["rabbitmq_config"])
 
@@ -69,15 +71,16 @@ def connect():
     if request.args.get('access_token') is not None:
         token = request.args.get('access_token')
         user_id = request.args.get('user_id')
-    elif request.headers['access_token'] is not None:
-        token = request.headers['access_token']
-        user_id = request.headers['user_id']
+    elif request.headers['Authorization'] is not None:
+        token = request.headers['Authorization']
+        contents = jwt.decode(token, verify=False)
+        user_id = contents['user_id']
+        token = contents['access_token']
+        logging.info(str(user_id) + ": Connected")
     if INSIDE_CONTAINER:
-        resp = requests.get("http://auth:4000/auth/validate", data={'user_id': user_id, 'access_token': str(token)})
+        resp = requests.get("http://auth:4000/auth/validate", data={'user_id': user_id, 'access_token': token})
     else:
-        resp = requests.get("http://127.0.0.1:4000/auth/validate", data={'user_id': user_id, 'access_token': str(token)})
-
-    print(resp.status_code)
+        resp = requests.get("http://127.0.0.1:4000/auth/validate", data={'user_id': user_id, 'access_token': token})
 
     if not resp.status_code == 200:
         raise ConnectionRefusedError('unauthorized!')
@@ -122,7 +125,7 @@ def start_transfer(filename, size):
     :return: emit('start-transfer', {'id': id})
     """
 
-    print("starting")
+    # print("starting")
     _, ext = os.path.splitext(filename)
     if ext in ['.exe', '.bin', '.js', '.sh', '.py', '.php']:
         return False  # reject the upload
@@ -146,6 +149,7 @@ def write_chunk(filename, offset, data):
     :param data: data packet
     :return:
     """
+    logging.info("Received chunk for :" + str(filename))
 
     with open(file_path + filename, 'wb') as f:
         pass
@@ -172,30 +176,45 @@ def complete_upload(file_id, username, user_id):
     """
     print(file_id)
     # file_id = file_id.split('tmp/')[1]
-    print("Complete")
-    print(user_id)
+    # print("Complete")
+    # print(user_id)
     with open(file_path + file_id + '.json', 'rb') as f:
         data = json.load(f)
         data = json.dumps(data)
         # data = pickle.dump()
         eprint(data)
         eprint(type(data))
-    print(os.path.isfile(file_path + file_id))
+    # print(os.path.isfile(file_path + file_id))
 
-    with open(file_path + file_id, 'rb') as f:
-        eprint("sending")
-        print(f.read(4))
+    with open(file_path + file_id, 'rb') as f: # TODO: + '.npy'
+        # eprint("sending")
+        # print(f.read(4))
         if INSIDE_CONTAINER:
-            resp = requests.post('http://file-uploader:3500/file/upload', files={'file': f}, data={'user_id': user_id, 'user_name': username, 'metadata': data})
+            try:
+                resp = requests.post('http://file-uploader:3500/file/upload', files={'file': f},
+                                     data={'user_id': user_id, 'user_name': username, 'metadata': data})
+            except requests.exceptions.ConnectionError as e:
+                print("CONNECTION ERROR: ")
+                print(e)
         else:
-            resp = requests.post('http://127.0.0.1:3500/file/upload', files={'file': f}, data={'user_id': user_id, 'user_name': username, 'metadata': data})
+            try:
+                resp = requests.post('http://127.0.0.1:3500/file/upload', files={'file': f},
+                                     data={'user_id': user_id, 'user_name': username, 'metadata': data})
+            except requests.exceptions.ConnectionError as e:
+                print("CONNECTION ERROR: ")
+                print(e)
+
         # resp.status_code = 201
         eprint(resp.content)
         if resp.status_code == 201:
             emit('complete-upload', {'data': True})
+            os.remove(file_path + file_id)
+            os.remove(file_path + file_id + '.json')
         else:
             eprint(resp)
             emit('complete-upload', {'data': False})
+            os.remove(file_path + file_id)
+            os.remove(file_path + file_id + '.json')
 
 @socket.on('get-history')
 def getHistory(data, headers):
@@ -246,16 +265,28 @@ class RBMQThread(threading.Thread):
         self.queue_manager.chan.basic_qos(prefetch_count=1)
 
     def run(self):
-        # define the queue consumption
-        self.queue_manager.chan.basic_consume(queue=self.queue_manager.queue_name,
-                                         on_message_callback=self.callback)
-        # start consuming
-        self.queue_manager.chan.start_consuming()
+        while True:
+            try:
+                # define the queue consumption
+                self.queue_manager.chan.basic_consume(queue=self.queue_manager.queue_name,
+                                                      on_message_callback=self.callback)
+                # start consuming
+                self.queue_manager.chan.start_consuming()
+            except Exception as e:
+                logging.info(e)
+                try:
+                    if not self.queue_manager.connection or self.queue_manager.connection.is_closed:
+                        self.queue_manager.connection = self.queue_manager.__get_connection()
+                        self.queue_manager.__init_queue()
+                except Exception as e:
+                    logging.info(e)
+                    time.sleep(10)
+                    continue
 
     def callback(self, ch, method, props, body):
-        resp = self.queue_manager.receive_msg(ch, method, props, body)
-        print(resp)
-        my_json = resp.decode('utf8').replace("'", '"')
+        # resp = self.queue_manager.receive_msg(ch, method, props, body)
+        print(body)
+        my_json = body.decode('utf8').replace("'", '"')
         data = json.loads(my_json)
         s = json.dumps(data, indent=4, sort_keys=True)
         d = json.loads(s)
@@ -263,6 +294,7 @@ class RBMQThread(threading.Thread):
         print(type(d))
         logging.info(d)
         socket.emit('admin', {'data': d}) # TODO: recieve then process, then ack
+        ch.basic_ack(delivery_tag=method.delivery_tag)
         # send_message('admin', resp)
 
 
@@ -270,20 +302,10 @@ if __name__ == '__main__':
     port = 5000
     logger = logging.getLogger()
     fh = logging.handlers.RotatingFileHandler(filename=config["logging"]["file_path"], maxBytes=10240, backupCount=5)
-    # fh.setLevel(logging.DEBUG)#no matter what level I set here
     formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
     fh.setFormatter(formatter)
     logger.addHandler(fh)
     logger.setLevel(logging.INFO)
-    # if INSIDE_CONTAINER:
-    #     client = etcd.Client(host='etcd', port=2379)
-    #
-    # else:
-    #     client = etcd.Client(host='127.0.0.1', port=2379)
-    #
-    # print(client.machines)
-    # client.write('/nodes/n1', 5000)
-    # print(client.read('/nodes/n1').value)
     thread = threads()
     thread.start()
     rbmq = RBMQThread()

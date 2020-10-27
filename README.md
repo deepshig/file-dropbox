@@ -121,6 +121,7 @@ The project uses the following technological stack:
 * [Python 3.8](https://docs.python.org/3/whatsnew/3.8.html) : We chose Python as our working language because it provides easy to use and readily available libraries for all the other dependencies, with detailed documentation.
 * [React JS Redux State Management](https://react-redux.js.org/) : We use this for developing the web client.
 * [Redis](https://redis.io/) : We chose Redis to serve as in-memory cache store for caching file, as well as its associated indexing details.
+* [Sentinel](https://redis.io/topics/sentinel) : We are using this to incorporate fault-tolerance in redis.
 * [RabbitMQ](https://www.rabbitmq.com/) : We need to have asynchronous communication between file uploader service and file service manager once the file is cached. Also, file uplaoder service needs to notify the socket gateway about file status. We chose event queuing mechanism provided by RabbitmQ for this. We have used management plugin because it provides web UI for monitoring.
 * [PostgreSQL](https://www.postgresql.org/docs/12/index.html) : We used PostgreSQL to maintain the user authentication data in authentication service. It is a relational database with indexing over `user_id` and `user_name`. Thus, we chose PostgreSQL.
 * [GridFS](https://docs.mongodb.com/manual/core/gridfs/) : We chose this as a permananent storage for our files. It divides the file into chunks, and stores each of them separately. This gives us better scalability when larger files is considered.
@@ -149,14 +150,14 @@ The project uses the following technological stack:
 
 ### Kubernetes
 
-* To run the system in kubernetes a node cluster pool of minimum 5 nodes (without replicas) is required `gcloud container clusters resize project --node-pool default-pool --num-nodes 5`
+* To run the system in kubernetes a node cluster pool of minimum 4 nodes (without replicas) is required `gcloud container node-pools create default-pool --cluster=project --machine-type=n2-standard-2  --num-nodes=4`
+* 
 * Run the following commands from the `kubernetes/` directory
-* An Nginx Ingress instance is required on the cluster `kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.40.2/deploy/static/provider/cloud/deploy.yaml`
+* An Nginx Ingress instance is required on the cluster `kubectl apply -f .\nginx-deploy.yaml` _Important: Wait until the endpoints have been assigned before continuing_
 * Now start the Nginx Load balancer `kubectl apply -f .\nginx-ingress.yaml`
-* Note the host IP for the Nginx loadbalancer will need to be configured in `front_end/.env`for new deployments. This change will need to be built and pushed to docker hub. `cd front-end`, `docker build . -t diarmuidk/wacc:front-end`, `docker push diarmuidk/wacc:front-end`
+* Note the host IP for the Nginx loadbalancer will need to be configured in `front_end/.env`for new deployments. This change will need to be built and pushed to docker hub. `cd front-end`, `docker build . -f .\Dockerfile.prod -t diarmuidk/wacc:front-end`, `docker push diarmuidk/wacc:front-end`
 * Once the previous steps are complete start the following database deployments: logstash, mongodb, postgresdb, rabbitmq, redis using the following command
-`kubectl apply -f .\logstash-deployment.yaml,.\logstash-service.yaml,.\mongodb-deployment.yaml,.\mongodb-service.yaml,.\postgresdb-deployment.yaml,.\postgresdb-service.yaml,.\rabbitmq-deployment.yaml,.\rabbitmq-service.yaml,.\redis-deployment.yaml,.\redis-service.yaml`
-
+`kubectl apply -f data-layer.yaml`
 * Next start the following services: adminer, auth, elastic-search, file-uploader, front-end, fsm, kibana, socket-gateway using:
-`kubectl apply -f .\adminer-deployment.yaml,.\adminer-service.yaml,.\auth-deployment.yaml,.\auth-service.yaml,.\elasticsearch-deployment.yaml,.\elasticsearch-service.yaml,.\file-uploader-deployment.yaml,.\file-uploader-service.yaml,.\front-end-deployment.yaml,.\front-end-service.yaml,.\fsm-deployment.yaml,.\fsm-service.yaml,.\kibana-deployment.yaml,.\kibana-service.yaml,.\socket-gateway-deployment.yaml,.\socket-gateway-service.yaml`
+`kubectl apply -f service-layer.yaml`
 

@@ -6,14 +6,14 @@ metadata:
     kompose.version: 1.21.0 (992df58d8)
   creationTimestamp: null
   labels:
-    io.kompose.service: kibana
-  name: kibana
+    io.kompose.service: portainer
+  name: portainer
 spec:
   ports:
-  - name: "5601"
-    port: 5601
-    targetPort: 5601
+  - name: "portainer"
+    port: 9000
+    targetPort: 9000
   selector:
-    io.kompose.service: kibana
+    io.kompose.service: portainer
 status:
   loadBalancer: {}

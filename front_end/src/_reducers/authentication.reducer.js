@@ -29,7 +29,12 @@ export function authentication(state = initialState, action) {
                 user: action.UID,
             };
         case userConstants.LOGOUT:
-            return {};
+            return {
+                loggedIn: false,
+                user: '',
+                user_id: '',
+                token: ''
+            };
         default:
             return state
     }
