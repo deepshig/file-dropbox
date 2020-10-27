@@ -50,6 +50,10 @@ class RabbitMQManager:
     def publish(self, message_body):
         chan = None
         try:
+            if not self.connection or self.connection.is_closed:
+                self.connection = self.__get_connection()
+                self.__init_queue()
+
             chan = self.connection.channel()
             chan.basic_publish(exchange='', routing_key=self.queue_name,
                                body=message_body, properties=pika.BasicProperties(delivery_mode=2))

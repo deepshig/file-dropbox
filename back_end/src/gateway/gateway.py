@@ -196,7 +196,6 @@ def complete_upload(file_id, username, user_id):
             except requests.exceptions.ConnectionError as e:
                 print("CONNECTION ERROR: ")
                 print(e)
-                resp.status_code = 500
         else:
             try:
                 resp = requests.post('http://127.0.0.1:3500/file/upload', files={'file': f},
@@ -204,7 +203,6 @@ def complete_upload(file_id, username, user_id):
             except requests.exceptions.ConnectionError as e:
                 print("CONNECTION ERROR: ")
                 print(e)
-                resp.status_code = 500
 
         # resp.status_code = 201
         eprint(resp.content)
@@ -267,11 +265,23 @@ class RBMQThread(threading.Thread):
         self.queue_manager.chan.basic_qos(prefetch_count=1)
 
     def run(self):
-        # define the queue consumption
-        self.queue_manager.chan.basic_consume(queue=self.queue_manager.queue_name,
-                                         on_message_callback=self.callback)
-        # start consuming
-        self.queue_manager.chan.start_consuming()
+        while True:
+            try:
+                # define the queue consumption
+                self.queue_manager.chan.basic_consume(queue=self.queue_manager.queue_name,
+                                                      on_message_callback=self.callback)
+                # start consuming
+                self.queue_manager.chan.start_consuming()
+            except Exception as e:
+                logging.info(e)
+                try:
+                    if not self.queue_manager.connection or self.queue_manager.connection.is_closed:
+                        self.queue_manager.connection = self.queue_manager.__get_connection()
+                        self.queue_manager.__init_queue()
+                except Exception as e:
+                    logging.info(e)
+                    time.sleep(10)
+                    continue
 
     def callback(self, ch, method, props, body):
         # resp = self.queue_manager.receive_msg(ch, method, props, body)
