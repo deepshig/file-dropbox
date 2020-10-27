@@ -60,7 +60,7 @@ class RabbitMQManager:
         logging.info(msg)
         key = msg["file_cache_key"]
         file_contents = serv.redis_client.get(key)
-        logging.info(file_contents)
+        # logging.info(file_contents)
         if not file_contents['success']:
             logging.error(file_contents['error'])
 
@@ -69,7 +69,6 @@ class RabbitMQManager:
         try:
             ob_id = serv.gridfs_client.insert(
                 file_contents["value"], msg["file_name"])
-            logging.info("File insert GridFS")
             req_obj = utils.create_mongoDb_insert_obj(msg, ob_id)
             logging.info("Dict to be stored in MongoDb")
             logging.info(req_obj)
@@ -78,11 +77,22 @@ class RabbitMQManager:
             headers, data = utils.create_fileUpload_request(
                 "uploaded_successfully", msg["file_name"], msg['user_id'], msg['user_name'])
             if INSIDE_CONTAINER:
-                response = requests.put(
-                    'http://file-uploader:3500/file/update/status', headers=headers, data=data)
+                try:
+                    response = requests.put(
+                        'http://file-uploader:3500/file/update/status', headers=headers, data=data)
+                except requests.exceptions.ConnectionError as e:
+                    print("CONNECTION ERROR: ")
+                    print(e)
+                    response = False
+
             else:
-                response = requests.put(
-                    'http://localhost:3500/file/update/status', headers=headers, data=data)
+                try:
+                    response = requests.put(
+                        'http://localhost:3500/file/update/status', headers=headers, data=data)
+                except requests.exceptions.ConnectionError as e:
+                    print("CONNECTION ERROR: ")
+                    print(e)
+                    response = False
             if response:
                 logging.info("Consumer Task Completed")
             else:

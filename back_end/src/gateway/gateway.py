@@ -17,7 +17,6 @@ import sys
 
 from config import config
 from rabbitmq import RabbitMQManager
-# import etcd
 
 import logging
 import logging.handlers
@@ -77,6 +76,7 @@ def connect():
         contents = jwt.decode(token, verify=False)
         user_id = contents['user_id']
         token = contents['access_token']
+        logging.info(str(user_id) + ": Connected")
     if INSIDE_CONTAINER:
         resp = requests.get("http://auth:4000/auth/validate", data={'user_id': user_id, 'access_token': token})
     else:
@@ -149,6 +149,7 @@ def write_chunk(filename, offset, data):
     :param data: data packet
     :return:
     """
+    logging.info("Received chunk for :" + str(filename))
 
     with open(file_path + filename, 'wb') as f:
         pass
@@ -185,20 +186,37 @@ def complete_upload(file_id, username, user_id):
         eprint(type(data))
     # print(os.path.isfile(file_path + file_id))
 
-    with open(file_path + file_id, 'rb') as f:
+    with open(file_path + file_id, 'rb') as f: # TODO: + '.npy'
         # eprint("sending")
         # print(f.read(4))
         if INSIDE_CONTAINER:
-            resp = requests.post('http://file-uploader:3500/file/upload', files={'file': f}, data={'user_id': user_id, 'user_name': username, 'metadata': data})
+            try:
+                resp = requests.post('http://file-uploader:3500/file/upload', files={'file': f},
+                                     data={'user_id': user_id, 'user_name': username, 'metadata': data})
+            except requests.exceptions.ConnectionError as e:
+                print("CONNECTION ERROR: ")
+                print(e)
+                resp.status_code = 500
         else:
-            resp = requests.post('http://127.0.0.1:3500/file/upload', files={'file': f}, data={'user_id': user_id, 'user_name': username, 'metadata': data})
+            try:
+                resp = requests.post('http://127.0.0.1:3500/file/upload', files={'file': f},
+                                     data={'user_id': user_id, 'user_name': username, 'metadata': data})
+            except requests.exceptions.ConnectionError as e:
+                print("CONNECTION ERROR: ")
+                print(e)
+                resp.status_code = 500
+
         # resp.status_code = 201
         eprint(resp.content)
         if resp.status_code == 201:
             emit('complete-upload', {'data': True})
+            os.remove(file_path + file_id)
+            os.remove(file_path + file_id + '.json')
         else:
             eprint(resp)
             emit('complete-upload', {'data': False})
+            os.remove(file_path + file_id)
+            os.remove(file_path + file_id + '.json')
 
 @socket.on('get-history')
 def getHistory(data, headers):
@@ -256,9 +274,9 @@ class RBMQThread(threading.Thread):
         self.queue_manager.chan.start_consuming()
 
     def callback(self, ch, method, props, body):
-        resp = self.queue_manager.receive_msg(ch, method, props, body)
-        print(resp)
-        my_json = resp.decode('utf8').replace("'", '"')
+        # resp = self.queue_manager.receive_msg(ch, method, props, body)
+        print(body)
+        my_json = body.decode('utf8').replace("'", '"')
         data = json.loads(my_json)
         s = json.dumps(data, indent=4, sort_keys=True)
         d = json.loads(s)
@@ -266,6 +284,7 @@ class RBMQThread(threading.Thread):
         print(type(d))
         logging.info(d)
         socket.emit('admin', {'data': d}) # TODO: recieve then process, then ack
+        ch.basic_ack(delivery_tag=method.delivery_tag)
         # send_message('admin', resp)
 
 
@@ -273,20 +292,10 @@ if __name__ == '__main__':
     port = 5000
     logger = logging.getLogger()
     fh = logging.handlers.RotatingFileHandler(filename=config["logging"]["file_path"], maxBytes=10240, backupCount=5)
-    # fh.setLevel(logging.DEBUG)#no matter what level I set here
     formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
     fh.setFormatter(formatter)
     logger.addHandler(fh)
     logger.setLevel(logging.INFO)
-    # if INSIDE_CONTAINER:
-    #     client = etcd.Client(host='etcd', port=2379)
-    #
-    # else:
-    #     client = etcd.Client(host='127.0.0.1', port=2379)
-    #
-    # print(client.machines)
-    # client.write('/nodes/n1', 5000)
-    # print(client.read('/nodes/n1').value)
     thread = threads()
     thread.start()
     rbmq = RBMQThread()

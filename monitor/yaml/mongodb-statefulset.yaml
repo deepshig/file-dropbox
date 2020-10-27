@@ -16,7 +16,7 @@ spec:
       terminationGracePeriodSeconds: 10
       containers:
       - name: mongodb
-        image: mongodb
+        image: mongo
         env:
           - name: PRIMARY
             value: "true"

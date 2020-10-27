@@ -50,6 +50,15 @@ class History extends Component {
             this._isMounted && this.setState({data: JSON.parse(JSON.stringify(payload))});
             // console.log(this.state.data);
           }
+          if(event === 'download-file') {
+            // this._isMounted && this.setState({data: JSON.parse(JSON.stringify(payload))});
+            console.log(payload);
+            var blob = new Blob([payload], { type: "text/npy" });
+            var url = URL.createObjectURL(blob);
+            // store.dispatch(stopSocketMessage("download-file"));
+
+            window.open(url);
+          }
         }
       }
     });
@@ -76,6 +85,7 @@ class History extends Component {
     this.setState({ user_id: evt.target.value });
   }
   downloadFile(file_id){
+
     store.dispatch(sendSocketMessage("download-file", {'file_id': file_id}));
 
   }

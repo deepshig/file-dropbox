@@ -9,7 +9,7 @@ metadata:
     io.kompose.service: file-uploader
   name: file-uploader
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       io.kompose.service: file-uploader

@@ -1,5 +1,6 @@
 import os
 import json
+import sys
 import uuid
 
 import requests
@@ -47,20 +48,22 @@ class Client(threading.Thread):
                     if chunk_size > self.file_size:
                         chunk_size = self.file_size
 
-                    data = self.f.read(chunk_size-1) # TODO: Finalise and test this feature for larger files
+                    data = self.f.read(chunk_size-1)  # TODO: Finalise and test this feature for larger files
 
                     self.socket.emit('write-chunk', data=(str(self.file_id), offset, data))
                     offset += chunk_size
 
                 else:
-                    print("Upload Complete")
+                    print(str(self.id) + ": Upload Complete")
                     self.socket.emit('complete-upload', data=(str(self.file_id), self.user_name, self.user_id))
                     break
 
         @socket.on('complete-upload')
         def complete_upload(resp):
 
-            print("File uploaded: " + str(resp['data']))
+            print(str(self.id) + ": File uploaded response: " + str(resp['data']))
+            if not resp['data']:
+                sys.stderr.write(str(self.id) + ": Retrying upload\n")
 
     def run(self):
         self.user_name = "client" + str(self.id)
@@ -70,6 +73,9 @@ class Client(threading.Thread):
         if resp.status_code != 201:
             resp = requests.post("http://" + host + port + "/auth/signup",
                                  {'name': self.user_name, 'role': 'user'})  # TODO : create user with role
+            resp = requests.put(
+                "http://" + host + port + "/auth/login/" + self.user_name)  # TODO : create user with role
+
         print(resp.json())
         if resp.status_code == 201:
 
@@ -88,7 +94,7 @@ class Client(threading.Thread):
 
 
 if __name__ == "__main__":
-    numClients = 5
+    numClients = 3
     # host = '127.0.0.1'
     # port = ':4000'
     # socket_port = ':5000'
@@ -96,7 +102,7 @@ if __name__ == "__main__":
     socket_port = ''
     host = '34.78.126.194'
     chunk_size = 64 * 1024
-    frequency = [2, 5]
+    frequency = [5, 15]
 
     # print(jwt.decode(resp['jwt'], verify=False))
 
